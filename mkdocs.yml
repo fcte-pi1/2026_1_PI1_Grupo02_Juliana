@@ -1,0 +1,37 @@
+site_name: "2026.1 PI1 - Grupo 02 - Juliana"
+site_description: "Projeto Integrador I - Grupo 02 com Professora Juliana"
+site_author: "Grupo 02"
+site_url: "https://fcte-pi1.github.io/2026_1_PI1_Grupo02_Juliana/"
+repo_url: "https://github.com/fcte-pi1/2026_1_PI1_Grupo02_Juliana"
+repo_name: "GitHub Repository"
+edit_uri: "blob/main/docs/"
+
+theme:
+  name: material
+  language: pt
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - Guias:
+      - Como Começar: guides/start.md
+      - Como Contribuir: guides/contributing.md
+      - Referência Rápida: guides/quick-reference.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/fcte-pi1
+
+copyright: |
+  &copy; 2026 Grupo 02 - PI1
+  <br>
+  Última atualização: {% now 'utc', '%d de %B de %Y' %}
