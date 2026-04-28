@@ -3,10 +3,7 @@ name: Deploy MkDocs
 on:
   push:
     branches: ["Pages"]
-    paths:
-      - "docs/**"
-      - "mkdocs.yml"
-      - "requirements.txt"
+  workflow_dispatch:
 
 permissions:
   contents: write
