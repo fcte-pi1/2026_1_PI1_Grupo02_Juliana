@@ -139,7 +139,7 @@ PC1 = entregar capítulos **3, 4, 5 e 6** do `relatorio.tex`. Capítulos 7–10 
 | Campo | Valor |
 |---|---|
 | Dono primário | Samuel (gerente HW/Eletrônica) |
-| Contribuintes | João Rolim (esquemático), Aline, Pedro H., Guilherme (planilha) |
+| Contribuintes | João Rolim (esquemático), Aline, Jorge Vásquez (Diagrama de blocos), Pedro H., Guilherme (planilha) |
 | Status | 🔵 lista de componentes fechada · esquemático em andamento (João Rolim) · orçamento misto loja+ML (Samuel) |
 | Componentes confirmados (Samuel 25/04) | 1× ESP32 · 1× HC-SR04 (3× comprados pra reserva) · 1× MPU-6050 · 2× VL53L0X · 1× TB6612FNG · 2× N20 com encoder |
 | Decisão técnica | resistor 1 kΩ entre HC-SR04 (5V) e ESP32 (3.3V) — datasheet HC-SR04 |
@@ -496,7 +496,7 @@ Eletrônica implementa em C as funções `motor_run(dir, pwm)`, `sensor_read_cm(
 
 ### 8.2 Hardware/Eletrônica · Samuel
 
-**Membros confirmados:** Samuel (gerente), João Rolim, Aline, Pedro H., Guilherme (LID 110642786779265 — **≠ Guilherme Quirino** da Energia).
+**Membros confirmados:** Samuel (gerente), João Rolim, Jorge Vásquez, Aline, Pedro H., Guilherme (LID 110642786779265 — **≠ Guilherme Quirino** da Energia).
 
 **3 perguntas pra fechar até segunda 4/mai:**
 1. Há mais alguém na sub-equipe além desses 5?
