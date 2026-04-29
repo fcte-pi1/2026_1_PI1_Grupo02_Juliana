@@ -9,6 +9,11 @@ edit_uri: "blob/main/docs/"
 theme:
   name: material
   language: pt
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - content.code.focus
+    - content.code.highlight
 
 markdown_extensions:
   - admonition
@@ -23,6 +28,8 @@ nav:
   - Home: index.md
   - Guias:
       - Como Começar: guides/start.md
+      - Como usar LaTeX: guides/latextutorial.md
+      - Como usar MkDocs: guides/mkdocstutorial.md
       - Como Contribuir: guides/contributing.md
       - Referência Rápida: guides/quick-reference.md
 
