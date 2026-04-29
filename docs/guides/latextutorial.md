@@ -26,11 +26,18 @@ Clique nos seguintes arquivos:
  docs > relatorio > relatorio.tex
 ```
 
-Com **"relatorio.tex"** aberto, clique no "play verde" e aguarde o PDF ser feito.
+Com **"relatorio.tex"** aberto, clique no "play verde", no canto superior direito, e aguarde o PDF ser feito.
 
 ![pdf](https://res.cloudinary.com/dqeji5jup/image/upload/f_auto,q_auto/image19_eukpfv)
 
-Ao final do processo o arquivo **"relatorio.pdf"** será criado, abra ele para visualizar o pdf. As alterações feitas nos arquivos de LaTeX aparecerão automaticamente no PDF.  
+Ao final do processo o arquivo **"relatorio.pdf"** será criado, abra ele para visualizar o pdf. As alterações feitas nos arquivos de LaTeX aparecerão automaticamente no PDF.
+
+As edições no LaTeX são feitas nos arquivos .tex, para editar uma parte específica do relatório vá em: 
+
+```
+ docs > relatorio > editaveis
+```
+![editaveis](https://res.cloudinary.com/dqeji5jup/image/upload/f_auto,q_auto/image111_pzztui)
 
 ---
 
