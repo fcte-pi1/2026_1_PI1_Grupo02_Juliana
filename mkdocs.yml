@@ -31,6 +31,7 @@ nav:
       - Como usar LaTeX: guides/latextutorial.md
       - Como usar MkDocs: guides/mkdocstutorial.md
       - Como Contribuir: guides/contributing.md
+      - Como Usar o GitHub Desktop: guides/githubdesktoptutorial.md
       - Referência Rápida: guides/quick-reference.md
 
 extra:
