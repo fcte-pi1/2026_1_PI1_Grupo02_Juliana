@@ -87,13 +87,98 @@
             \item \textcolor{red}{ Banco de dados: Relacional (PostgreSQL, MySQL, etc) X NãoSQL (MongoDB,etc). }
         \item \textcolor{red}{Persistência de dados: Modelo Entidade‑Relacionamento (MER) e seu respectivo Diagrama Entidade‑Relacionamento (DER), aplicáveis quando a solução utiliza banco de dados relacional; alternativamente, diagrama de estrutura de documentos, empregado nos casos em que a arquitetura adota banco de dados não relacional.}
          \end{itemize}  
+
+\section{Modelo Entidade-Relacionamento (MER)}
+
+    O Modelo Entidade-Relacionamento (MER) foi desenvolvido com o objetivo de representar a estrutura lógica do sistema de monitoramento e execução do robô micromouse no labirinto.
+
+    \subsection{Entidades e Atributos}
+
+    \subsubsection{Micromouse}
+
+    Representa o robô responsável por percorrer o labirinto.
+
+    \begin{itemize}
+        \item \textbf{id} (PK)
+        \item nome
+        \item algoritmo
+        \item velocidade\_max
+    \end{itemize}
+
+    \subsubsection{Labirinto}
+
+    Representa o ambiente em que o micromouse realiza as tentativas.
+
+    \begin{itemize}
+        \item \textbf{id} (PK)
+        \item nome
+        \item dimensao
+    \end{itemize}
+
+    \subsubsection{Tentativa}
+
+    Representa uma execução realizada pelo micromouse em um determinado labirinto.
+
+    \begin{itemize}
+        \item \textbf{id} (PK)
+        \item tempo\_inicio
+        \item tempo\_fim
+        \item velocidade\_media
+        \item consumo\_bateria
+        \item micromouse\_id (FK)
+        \item labirinto\_id (FK)
+    \end{itemize}
+
+    \subsubsection{Posicao}
+
+    Representa as posições percorridas pelo micromouse durante uma tentativa.
+
+    \begin{itemize}
+        \item \textbf{id} (PK)
+        \item coordenada\_x
+        \item coordenada\_y
+        \item timestamp
+        \item passo
+        \item tentativa\_id (FK)
+    \end{itemize}
+
+    \subsection{Relacionamentos}
+
+    \subsubsection{Realiza}
+
+    Relaciona a entidade \textbf{Micromouse} à entidade \textbf{Tentativa}.
+
+    \begin{itemize}
+        \item Um micromouse pode realizar várias tentativas (1:N).
+        \item Cada tentativa é realizada por apenas um micromouse.
+    \end{itemize}
+
+    \subsubsection{Usa}
+
+    Relaciona a entidade \textbf{Tentativa} à entidade \textbf{Labirinto}.
+
+    \begin{itemize}
+        \item Um labirinto pode ser utilizado em várias tentativas (1:N).
+        \item Cada tentativa utiliza apenas um labirinto.
+    \end{itemize}
+
+    \subsubsection{Possui}
+
+    Relaciona a entidade \textbf{Tentativa} à entidade \textbf{Posicao}.
+
+    \begin{itemize}
+        \item Uma tentativa possui várias posições (1:N).
+        \item Cada posição pertence a apenas uma tentativa.
+    \end{itemize}
+
+\section{Diagrama Entidade-Relacionamento (DER)}
          
-        \begin{figure}
-            \centering
-            \includegraphics[width=0.8\textwidth]{../../docs/img/Diagrama_entidades.png}
-            \caption{Diagrama Entidade-Relacionamento}
-            \label{fig:diagrama_entidades}
-        \end{figure}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.8\textwidth]{../../docs/img/Diagrama_entidades.png}
+        \caption{Diagrama Entidade-Relacionamento}
+        \label{fig:diagrama_entidades}
+    \end{figure}
     
     \item \textcolor{red}{\textbf{ Roteiro de testes funcionais:} }
     \begin{itemize}
