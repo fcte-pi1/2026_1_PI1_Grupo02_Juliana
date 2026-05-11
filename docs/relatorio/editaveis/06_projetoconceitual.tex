@@ -340,87 +340,51 @@
     Na visão de dados, descreve-se a persistência das informações de operação no banco relacional PostgreSQL. Todas as entidades herdam de core.models.BaseModel, que fornece chave primária em UUID v7, ordenável temporalmente e nativo no PostgreSQL 18, além dos campos created\_at e updated\_at. As migrations seguem o padrão Django no diretório \textless{}app\textgreater{}/migrations/, com prefixo numérico, como 0001\_initial.py e 0002\_descricao.py.
     
 
+\subsection{Modelo Entidade-Relacionamento (MER)}
 
-    O Modelo Entidade-Relacionamento (MER) foi desenvolvido com o objetivo de representar a estrutura lógica do sistema de monitoramento e execução do robô micromouse no labirinto.
+\textbf{Entidades:}
 
-    \subsection{Entidades e Atributos}
+\begin{itemize}
+    \item MICROMOUSE
+    \item LABIRINTO
+    \item TENTATIVA
+    \item POSICAO
+\end{itemize}
 
-    \subsubsection{Micromouse}
+\vspace{0.5cm}
 
-    Representa o robô responsável por percorrer o labirinto.
+\textbf{Atributos:}
 
+\begin{itemize}
+    \item \textbf{MICROMOUSE} (\underline{id}, nome, algoritmo)
+
+    \item \textbf{LABIRINTO} (\underline{id}, nome, dimensao)
+
+    \item \textbf{TENTATIVA} (\underline{id}, tempo\_inicio, tempo\_fim, consumo\_bateria, velocidade\_media, sucesso, micromouse\_id, labirinto\_id)
+
+    \item \textbf{POSICAO} (\underline{id}, coordenada\_x, coordenada\_y, timestamp, passo, tentativa\_id)
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Relacionamentos:}
+
+\begin{itemize}
+    \item \textbf{REALIZA}
     \begin{itemize}
-        \item \textbf{id} (PK)
-        \item nome
-        \item algoritmo
+        \item MICROMOUSE (1:N) TENTATIVA
     \end{itemize}
 
-    \subsubsection{Labirinto}
-
-    Representa o ambiente em que o micromouse realiza as tentativas.
-
+    \item \textbf{USA}
     \begin{itemize}
-        \item \textbf{id} (PK)
-        \item nome
-        \item dimensao
+        \item LABIRINTO (1:N) TENTATIVA
     \end{itemize}
 
-    \subsubsection{Tentativa}
-
-    Representa uma execução realizada pelo micromouse em um determinado labirinto.
-
+    \item \textbf{POSSUI}
     \begin{itemize}
-        \item \textbf{id} (PK)
-        \item tempo\_inicio
-        \item tempo\_fim
-        \item consumo\_bateria
-        \item velocidade\_media
-        \item sucesso
-        \item micromouse\_id (FK)
-        \item labirinto\_id (FK)
+        \item TENTATIVA (1:N) POSICAO
     \end{itemize}
-
-    \subsubsection{Posicao}
-
-    Representa as posições percorridas pelo micromouse durante uma tentativa.
-
-    \begin{itemize}
-        \item \textbf{id} (PK)
-        \item coordenada\_x
-        \item coordenada\_y
-        \item timestamp
-        \item passo
-        \item tentativa\_id (FK)
-    \end{itemize}
-
-    \subsection{Relacionamentos}
-
-    \subsubsection{Realiza}
-
-    Relaciona a entidade \textbf{Micromouse} à entidade \textbf{Tentativa}.
-
-    \begin{itemize}
-        \item Um micromouse pode realizar várias tentativas (1:N).
-        \item Cada tentativa é realizada por apenas um micromouse.
-    \end{itemize}
-
-    \subsubsection{Usa}
-
-    Relaciona a entidade \textbf{Tentativa} à entidade \textbf{Labirinto}.
-
-    \begin{itemize}
-        \item Um labirinto pode ser utilizado em várias tentativas (1:N).
-        \item Cada tentativa utiliza apenas um labirinto.
-    \end{itemize}
-
-    \subsubsection{Possui}
-
-    Relaciona a entidade \textbf{Tentativa} à entidade \textbf{Posicao}.
-
-    \begin{itemize}
-        \item Uma tentativa possui várias posições (1:N).
-        \item Cada posição pertence a apenas uma tentativa.
-    \end{itemize}
+\end{itemize}
 
     \subsection{Diagrama Entidade-Relacionamento (DER)}
             
