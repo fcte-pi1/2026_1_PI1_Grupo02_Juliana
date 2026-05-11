@@ -35,6 +35,7 @@ nav:
       - Referência Rápida: guides/quick-reference.md
   - Software:
       - Casos de Teste: software/casosteste.md
+      - EAP Software: software/eap-software.md
 
 extra:
   social:
