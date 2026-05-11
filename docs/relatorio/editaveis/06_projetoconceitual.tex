@@ -82,6 +82,61 @@
 
         \end{itemize}
 
+    \item \textcolor{red}{ \textbf{Descrição da arquitetura da solução de \textit{software} proposta:}}
+    \begin{itemize}
+    
+        \item \textcolor{red}{ Esta subseção deve contemplar o documento de arquitetura do sistema e deve ser estruturado segundo as visões (4+1) previstas no processo unificado (UP): lógica, de processos;  implementação, implantação e dados (substuirá a visão de casos de uso).}
+        
+        \item \textcolor{red}{ Propósito do \textit{software} (qual o seu papel no sistema);}
+        \item \textcolor{red}{ Padrão adotado: MVC, MVP, Microsserviços, Monolítico, etc (Justificar);}
+        \item \textcolor{red}{ Linguagens de programação: Java, Python, C\#, JavaScript, etc.}
+        \item \textcolor{red}{ \textit{Frameworks} e bibliotecas: Spring Boot, .NET Core, React, Angular, Django, etc.}
+            \item \textcolor{red}{ Banco de dados: Relacional (PostgreSQL, MySQL, etc) X NãoSQL (MongoDB,etc). }
+        \item \textcolor{red}{Persistência de dados: Modelo Entidade‑Relacionamento (MER) e seu respectivo Diagrama Entidade‑Relacionamento (DER), aplicáveis quando a solução utiliza banco de dados relacional; alternativamente, diagrama de estrutura de documentos, empregado nos casos em que a arquitetura adota banco de dados não relacional.}
+         \end{itemize}
+
+    \subsection{Diagrama de Atividades UML}
+
+    Esta subseção apresenta o comportamento dinâmico do sistema por meio de dois diagramas de atividades em notação UML. O primeiro modela o fluxo da corrida do micromouse no labirinto, e o segundo modela o fluxo de consulta a relatórios históricos pelo juiz ou usuário no sistema web. Os dois casos de uso foram separados por terem atores e gatilhos independentes.
+
+    A modelagem reflete uma proposta de arquitetura para a frente de \textit{software}, ainda sujeita a alinhamento com a dupla e com o restante da equipe. A descrição detalhada da solução de \textit{software} (padrão arquitetural, linguagens, \textit{frameworks} e visões 4+1) será apresentada em subseção própria.
+
+    \subsubsection{Fluxo da corrida}
+
+    O fluxo começa com a inicialização dos periféricos, a calibração dos sensores e a conexão à rede WiFi. Após o \textit{handshake} com o \textit{broker} MQTT (Mosquitto), o \textit{firmware} executa um \textit{fork} que dispara quatro tarefas em paralelo, distribuídas entre os dois núcleos do ESP32.
+
+    O Core 1 (APP\_CPU) concentra as tarefas de tempo real:
+
+    \begin{itemize}
+        \item \textbf{Tarefa de aquisição:} lê os sensores ToF e os \textit{encoders} dos motores e publica as leituras em um buffer compartilhado.
+        \item \textbf{Tarefa de algoritmo:} consome do buffer, atualiza a matriz interna do labirinto, calcula a próxima célula a visitar e aciona os motores. Em caso de colisão ou falha, entra em estado de repouso até o reparo ser sinalizado.
+        \item \textbf{ISR de \textit{timer}} (aproximadamente 1\,kHz): executa o controle PID dos motores em frequência fixa, reduzindo o \textit{jitter} do escalonamento.
+    \end{itemize}
+
+    O Core 0 (PRO\_CPU), responsável pela \textit{stack} WiFi, executa a tarefa de telemetria: lê \textit{snapshots} do buffer compartilhado, empacota o estado atual (posição, delta da matriz, velocidade, bateria) e publica no tópico \texttt{micromouse/\{id\}/telemetria} com QoS 1. Ao receber a sinalização de desafio cumprido, a mesma tarefa publica uma mensagem final em \texttt{micromouse/\{id\}/evento} (QoS 1, \textit{retained}).
+
+    O \textit{backend} atua como \textit{subscriber} dos tópicos MQTT: recebe cada pacote, valida, persiste no banco de dados e empurra o evento para o \textit{dashboard} via WebSocket ou SSE. Ao receber o evento de desafio cumprido, consolida as métricas finais e registra o resultado da corrida.
+
+    A Figura \ref{fig:diagrama_atividade_corrida} apresenta o diagrama completo, com as raias dos dois núcleos do ESP32, o buffer compartilhado, o \textit{broker} MQTT, o \textit{backend} e o \textit{dashboard}.
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=\linewidth]{figuras/diagrama_atividade_corrida.png}
+        \caption{Diagrama de atividades UML: fluxo da corrida do micromouse.}
+        \label{fig:diagrama_atividade_corrida}
+    \end{figure}
+
+    \subsubsection{Fluxo de consulta a relatórios}
+
+    No segundo caso de uso, o juiz ou usuário solicita um relatório no \textit{dashboard} aplicando filtros como labirinto e data. O \textit{dashboard} chama a API do \textit{backend}, que consulta o banco de dados e monta o \textit{payload} contendo métricas históricas e trajetórias. O resultado é exibido no \textit{dashboard}. A Figura \ref{fig:diagrama_atividade_relatorio} apresenta esse fluxo.
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.75\linewidth]{figuras/diagrama_atividade_relatorio.png}
+        \caption{Diagrama de atividades UML: fluxo de consulta a relatórios históricos.}
+        \label{fig:diagrama_atividade_relatorio}
+    \end{figure}
+
     \subsection{Arquitetura de Software}
 
     O software embarcado e seus serviços de apoio têm como propósito permitir que o robô Micromouse percorra autonomamente um labirinto modular 4x4 e 8x8, explorando suas paredes por meio de sensoriamento ativo, atualizando um mapa interno, decidindo o próximo movimento por algoritmo flood-fill e executando o deslocamento por controle de motores. Além disso, os serviços de apoio, compostos por backend e dashboard, permitem uma operação supervisionada, como visualizar a trajetória, as leituras e o estado interno do sistema em tempo de execução.
@@ -129,6 +184,7 @@
     Os tópicos MQTT do produto são definidos da seguinte forma. O tópico micromouse/\textless{}id\textgreater{}/telemetria utiliza QoS 1, não é retained e contém pacotes periódicos entre 10 e 30 Hz, incluindo pose, matriz delta, velocidade e bateria. O tópico micromouse/\textless{}id\textgreater{}/evento utiliza QoS 1, é retained e contém eventos como início, colisão, reparo e desafio cumprido. O tópico micromouse/\textless{}id\textgreater{}/status utiliza QoS 1, é retained e contém o heartbeat, indicando online ou offline, com uso de Last Will and Testament pelo broker. A pinagem do ESP32 e o detalhamento elétrico pertencem à seção de hardware, no Capítulo 6, Seção 6.3; portanto, esta visão limita-se ao mapeamento lógico-físico do software.
 
     Na visão de dados, descreve-se a persistência das informações de operação no banco relacional PostgreSQL. Todas as entidades herdam de core.models.BaseModel, que fornece chave primária em UUID v7, ordenável temporalmente e nativo no PostgreSQL 18, além dos campos created\_at e updated\_at. As migrations seguem o padrão Django no diretório \textless{}app\textgreater{}/migrations/, com prefixo numérico, como 0001\_initial.py e 0002\_descricao.py.
+    
 
     \subsection{Backlog do Produto}
 
