@@ -137,6 +137,7 @@
         \label{fig:diagrama_atividade_relatorio}
     \end{figure}
 
+%=========================================================================================    
     \subsection{Backlog do Produto}
 
     Para identificar as principais necessidades do sistema, foram levantados os requisitos funcionais e não funcionais do micromouse, que descrevem tanto os comportamentos esperados quanto os critérios de qualidade e desempenho do sistema. Além disso, foi utilizada a técnica de priorização MoSCoW para classificar os requisitos de acordo com seu nível de importância para o desenvolvimento do projeto. Essa técnica organiza os requisitos em quatro categorias: Must Have, para requisitos essenciais; Should Have, para requisitos importantes; Could Have, para funcionalidades desejáveis; e Won’t Have, para funcionalidades que não serão implementadas na versão atual do projeto.
@@ -251,10 +252,45 @@
     \end{tabular}
     }
 
-
     \label{tab:rnf}
     \end{center}
 
+    \subsection{Histórias de Usuário}
+      As histórias de usuário foram definidas a partir dos requisitos funcionais e não funcionais levantados para o sistema. Todas as histórias foram documentadas juntamente com seus respectivos critérios de avaliação no repositório do GitHub do projeto. Além disso, a equipe desenvolveu um protótipo para as histórias relacionadas aos requisitos de telemetria, o qual pode ser visualizado nas respectivas issues de telemetria do repositório.
+    \begin{center}
+
+    \begin{multicols}{2}
+    \begin{itemize}
+        \item HU01 -- Movimentação frontal
+        \item HU02 -- Rotação do micromouse
+        \item HU03 -- Reconhecimento de paredes
+        \item HU04 -- Medição de distância
+        \item HU05 -- Identificação de caminhos livres
+        \item HU06 -- Navegação até o objetivo
+        \item HU07 -- Detecção de chegada ao objetivo
+        \item HU08 -- Prevenção de colisões
+        \item HU09 -- Cálculo de velocidade média
+        \item HU10 -- Cálculo de consumo energético
+        \item HU11 -- Salvamento do caminho percorrido
+        \item HU12 -- Mapeamento do labirinto
+        \item HU13 -- Armazenamento do mapa
+        \item HU14 -- Exibição de telemetria
+        \item HU15 -- Envio de telemetria
+        \item HU16 -- Monitoramento da bateria
+        \item HU17 -- Registro de tempo de operação
+        \item HU18 -- Indicação de conclusão do desafio
+        \item HU19 -- Controle dos motores
+        \item HU20 -- Aquisição de dados dos sensores
+        \item HU21 -- Monitoramento da alimentação elétrica
+        \item HU22 -- Controle remoto da execução
+    \end{itemize}
+    \end{multicols}        
+    \end{center}
+
+
+
+
+%=========================================================================================    
     \subsection{Arquitetura de Software}
 
     O software embarcado e seus serviços de apoio têm como propósito permitir que o robô Micromouse percorra autonomamente um labirinto modular 4x4 e 8x8, explorando suas paredes por meio de sensoriamento ativo, atualizando um mapa interno, decidindo o próximo movimento por algoritmo flood-fill e executando o deslocamento por controle de motores. Além disso, os serviços de apoio, compostos por backend e dashboard, permitem uma operação supervisionada, como visualizar a trajetória, as leituras e o estado interno do sistema em tempo de execução.
@@ -406,6 +442,7 @@
 %    \end{itemize}
 %\end{itemize}
 
+%=========================================================================================
 \subsection{Detalhamento dos Casos de Teste}
 
     \subsubsection{CT01 - Validação do Sistema Sensorial e Precisão}
