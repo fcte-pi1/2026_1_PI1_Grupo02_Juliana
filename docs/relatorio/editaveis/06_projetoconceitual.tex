@@ -60,50 +60,653 @@
 
 \section{Descrição de \textit{software}}
 
-\textcolor{red}{Itens fundamentais:}
+%\textcolor{red}{Itens fundamentais:}
+%
+%\begin{itemize}
+%    \item \textcolor{red}{ \textbf{Diagrama Atividades UML:}  descrever e explicar o fluxo do comportamento funcional do produto proposto, evidenciando, de forma clara e estruturada, como as atividades são executadas, em que ordem e sob quais condições. Esse diagrama permite compreender o funcionamento dinâmico do sistema, destacando:}
+%
+%    \begin{itemize}
+%        \item \textcolor{red}{ os principais atores (usuários ou sistemas externos) envolvidos no processo;
+%        \item as atividades de negócio realizadas por cada ator ou pelo próprio sistema;
+%        \item os insumos (entradas) necessários para a execução das atividades;
+%        \item os resultados (saídas) gerados ao longo do fluxo;
+%        \item os pontos de decisão, paralelismo e sincronização das atividades;
+%        \item Entre as notações mais relevantes, destacam-se o estado iniciail e final, atividades, nós de decisão e junção, barras de bifurcação, Raias (\textit{swimlanes}) e Fluxos de controle. }
+%        \end{itemize}
+%
+%    \item \textcolor{red}{\textbf{\textit{Backlog} do Produto}}
+%    \begin{itemize}
+%        \item \textcolor{red}{ Descrever os   requisitos funcionais (RF) com a técnica de documentação e especificação de história de usuário (HU);}
+%        \item \textcolor{red}{ Descrever os requisitos não-funcionais (RNF) de forma objetiva; Mais facilmente, mais rapidamente, mais responsivo, de fácil uso, são descrições subjetivas não-válidas. Um exemplo de requisito não-funcional de desempenho: ``a página deve carregar em até 5s quando em conexão 4G''. }
+%        \item \textcolor{red}{ Ao descrever os requisitos (RF e RNF), usar a  classificação MoSCoW (\textit{Must have}, \textit{Should have} e \textit{Could have}),  para auxiliar a priorização dos itens do backlog.}
+%        \item \textcolor{red}{ Protótipos de interfafe gráfica do \textit{software} em alta fidelidade.}
+%        \begin{itemize}
+%            \item \textcolor{red}{\textbf{ Todas HUs devem conter sua descrição (Eu-Como-Para), critérios de aceitação e protótipos de interface, documentadas no github. }}
+%            \end{itemize} 
+%
+%        \end{itemize}
+%
+%    \item \textcolor{red}{ \textbf{Descrição da arquitetura da solução de \textit{software} proposta:}}
+%    \begin{itemize}
+%    
+%        \item \textcolor{red}{ Esta subseção deve contemplar o documento de arquitetura do sistema e deve ser estruturado segundo as visões (4+1) previstas no processo unificado (UP): lógica, de processos;  implementação, implantação e dados (substuirá a visão de casos de uso).}
+%        
+%        \item \textcolor{red}{ Propósito do \textit{software} (qual o seu papel no sistema);}
+%        \item \textcolor{red}{ Padrão adotado: MVC, MVP, Microsserviços, Monolítico, etc (Justificar);}
+%        \item \textcolor{red}{ Linguagens de programação: Java, Python, C\#, JavaScript, etc.}
+%        \item \textcolor{red}{ \textit{Frameworks} e bibliotecas: Spring Boot, .NET Core, React, Angular, Django, etc.}
+%            \item \textcolor{red}{ Banco de dados: Relacional (PostgreSQL, MySQL, etc) X NãoSQL (MongoDB,etc). }
+%        \item \textcolor{red}{Persistência de dados: Modelo Entidade‑Relacionamento (MER) e seu respectivo Diagrama Entidade‑Relacionamento (DER), aplicáveis quando a solução utiliza banco de dados relacional; alternativamente, diagrama de estrutura de documentos, empregado nos casos em que a arquitetura adota banco de dados não relacional.}
+%         \end{itemize}
+
+    \subsection{Diagrama de Atividades UML}
+
+    Esta subseção apresenta o comportamento dinâmico do sistema por meio de dois diagramas de atividades em notação UML. O primeiro modela o fluxo da corrida do micromouse no labirinto, e o segundo modela o fluxo de consulta a relatórios históricos pelo juiz ou usuário no sistema web. Os dois casos de uso foram separados por terem atores e gatilhos independentes.
+
+    A modelagem reflete uma proposta de arquitetura para a frente de \textit{software}, ainda sujeita a alinhamento com a dupla e com o restante da equipe. A descrição detalhada da solução de \textit{software} (padrão arquitetural, linguagens, \textit{frameworks} e visões 4+1) será apresentada em subseção própria.
+
+    \subsubsection{Fluxo da corrida}
+
+    O fluxo começa com a inicialização dos periféricos, a calibração dos sensores e a conexão à rede WiFi. Após o \textit{handshake} com o \textit{broker} MQTT (Mosquitto), o \textit{firmware} executa um \textit{fork} que dispara quatro tarefas em paralelo, distribuídas entre os dois núcleos do ESP32.
+
+    O Core 1 (APP\_CPU) concentra as tarefas de tempo real:
+
+    \begin{itemize}
+        \item \textbf{Tarefa de aquisição:} lê os sensores ToF e os \textit{encoders} dos motores e publica as leituras em um buffer compartilhado.
+        \item \textbf{Tarefa de algoritmo:} consome do buffer, atualiza a matriz interna do labirinto, calcula a próxima célula a visitar e aciona os motores. Em caso de colisão ou falha, entra em estado de repouso até o reparo ser sinalizado.
+        \item \textbf{ISR de \textit{timer}} (aproximadamente 1\,kHz): executa o controle PID dos motores em frequência fixa, reduzindo o \textit{jitter} do escalonamento.
+    \end{itemize}
+
+    O Core 0 (PRO\_CPU), responsável pela \textit{stack} WiFi, executa a tarefa de telemetria: lê \textit{snapshots} do buffer compartilhado, empacota o estado atual (posição, delta da matriz, velocidade, bateria) e publica no tópico \texttt{micromouse/\{id\}/telemetria} com QoS 1. Ao receber a sinalização de desafio cumprido, a mesma tarefa publica uma mensagem final em \texttt{micromouse/\{id\}/evento} (QoS 1, \textit{retained}).
+
+    O \textit{backend} atua como \textit{subscriber} dos tópicos MQTT: recebe cada pacote, valida, persiste no banco de dados e empurra o evento para o \textit{dashboard} via WebSocket ou SSE. Ao receber o evento de desafio cumprido, consolida as métricas finais e registra o resultado da corrida.
+
+    A Figura \ref{fig:diagrama_atividade_corrida} apresenta o diagrama completo, com as raias dos dois núcleos do ESP32, o buffer compartilhado, o \textit{broker} MQTT, o \textit{backend} e o \textit{dashboard}.
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=\linewidth]{figuras/diagrama_atividade_corrida.png}
+        \caption{Diagrama de atividades UML: fluxo da corrida do micromouse.}
+        \label{fig:diagrama_atividade_corrida}
+    \end{figure}
+
+    \subsubsection{Fluxo de consulta a relatórios}
+
+    No segundo caso de uso, o juiz ou usuário solicita um relatório no \textit{dashboard} aplicando filtros como labirinto e data. O \textit{dashboard} chama a API do \textit{backend}, que consulta o banco de dados e monta o \textit{payload} contendo métricas históricas e trajetórias. O resultado é exibido no \textit{dashboard}. A Figura \ref{fig:diagrama_atividade_relatorio} apresenta esse fluxo.
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.75\linewidth]{figuras/diagrama_atividade_relatorio.png}
+        \caption{Diagrama de atividades UML: fluxo de consulta a relatórios históricos.}
+        \label{fig:diagrama_atividade_relatorio}
+    \end{figure}
+
+%=========================================================================================    
+    \subsection{Backlog do Produto}
+
+    Para identificar as principais necessidades do sistema, foram levantados os requisitos funcionais e não funcionais do micromouse, que descrevem tanto os comportamentos esperados quanto os critérios de qualidade e desempenho do sistema. Além disso, foi utilizada a técnica de priorização MoSCoW para classificar os requisitos de acordo com seu nível de importância para o desenvolvimento do projeto. Essa técnica organiza os requisitos em quatro categorias: Must Have, para requisitos essenciais; Should Have, para requisitos importantes; Could Have, para funcionalidades desejáveis; e Won’t Have, para funcionalidades que não serão implementadas na versão atual do projeto.
+    
+    A tabela abaixo apresenta os requisitos elicitados e suas respectivas classificações segundo a técnica MoSCoW.
+
+    \begin{center}
+    \captionof{table}{Requisitos funcionais de navegação.}
+    \resizebox{0.95\textwidth}{!}{
+    \begin{tabular}{|p{6cm}|p{9cm}|c|}
+    \hline
+    \textbf{Requisito} & \textbf{Descrição} & \textbf{MoSCoW} \\ \hline
+
+    RF01 - \textbf{Mover-se para frente} & O micromouse deverá ser capaz de mover-se para frente durante a navegação no labirinto. & Must \\ \hline
+
+    RF02 - \textbf{Rotacionar em até 180°} & O micromouse deverá ser capaz de realizar rotações de até 180° para alterar sua direção no labirinto. & Must \\ \hline
+
+    RF03 - \textbf{Reconhecer paredes} & O sistema deverá ser capaz de reconhecer paredes ao redor do micromouse durante a navegação. & Must \\ \hline
+
+    RF04 - \textbf{Medir distância até a parede} & O sistema deverá medir a distância entre o micromouse e as paredes do labirinto. & Must \\ \hline
+
+    RF05 - \textbf{Identificar o caminho livre} & O micromouse deverá identificar caminhos livres disponíveis para navegação no labirinto. & Must \\ \hline
+
+    RF06 - \textbf{Encontrar o caminho até o centro do labirinto} & O micromouse deverá encontrar o caminho até o centro do labirinto de forma autônoma. & Must \\ \hline
+
+    RF07 - \textbf{Detectar a chegada ao objetivo do labirinto} & O sistema deverá detectar quando o micromouse alcançar o objetivo do labirinto. & Must \\ \hline
+
+    RF08 - \textbf{Evitar colisões com as paredes} & O micromouse deverá evitar colisões com as paredes durante sua navegação. & Must \\ \hline
+
+    RF09 - \textbf{Controlar os motores de locomoção do micromouse} & O sistema deverá controlar os motores responsáveis pela locomoção do micromouse. & Must \\ \hline
+
+    RF10 - \textbf{Adquirir dados dos sensores de distância} & O sistema deverá adquirir dados dos sensores de distância utilizados pelo micromouse. & Must \\ \hline
+
+    \end{tabular}
+    }
+
+
+    \label{tab:navegacao}
+    \end{center}
+
+    \vspace{0.5cm}
+
+    \begin{center}
+    \captionof{table}{Requisitos funcionais de telemetria.}
+    \resizebox{0.95\textwidth}{!}{
+    \begin{tabular}{|p{6cm}|p{9cm}|c|}
+    \hline
+    \textbf{Requisito} & \textbf{Descrição} & \textbf{MoSCoW} \\ \hline
+
+    RF11 - \textbf{Calcular velocidade média} & O sistema deverá calcular a velocidade média do micromouse durante a execução. & Must \\ \hline
+
+    RF12 - \textbf{Calcular consumo de energia} & O sistema deverá calcular o consumo de energia do micromouse durante sua operação. & Must \\ \hline
+
+    RF13 - \textbf{Salvar o caminho percorrido} & O sistema deverá salvar o trajeto percorrido pelo micromouse durante a navegação. & Must \\ \hline
+
+    RF14 - \textbf{Mapear o labirinto} & O sistema deverá gerar um mapa do labirinto durante a execução. & Must \\ \hline
+
+    RF15 - \textbf{Armazenar o mapa descoberto} & O sistema deverá armazenar o mapa descoberto pelo micromouse. & Must \\ \hline
+
+    RF16 - \textbf{Exibir dados de telemetria em tempo real} & O sistema deverá exibir os dados de telemetria do micromouse em tempo real. & Must \\ \hline
+
+    RF17 - \textbf{Enviar dados de telemetria em tempo real} & O micromouse deverá enviar os dados de telemetria em tempo real para o sistema web. & Must \\ \hline
+
+    RF18 - \textbf{Monitorar o nível da bateria do sistema} & O sistema deverá monitorar o nível da bateria do micromouse. & Must \\ \hline
+
+    RF19 - \textbf{Registrar o tempo total de operação do micromouse} & O sistema deverá registrar o tempo total de operação do micromouse. & Must \\ \hline
+
+    RF20 - \textbf{Indicar o status de conclusão do desafio} & O sistema deverá indicar o status de conclusão do desafio após a execução do labirinto. & Must \\ \hline
+
+    RF21 - \textbf{Monitorar a tensão da alimentação elétrica} & O sistema deverá monitorar a tensão da alimentação elétrica do micromouse. & Must \\ \hline
+
+    RF22 - \textbf{Controlar remotamente a execução do micromouse} & O sistema deverá permitir iniciar e interromper remotamente a execução do micromouse. & Must \\ \hline
+
+    \end{tabular}
+    }
+
+
+    \label{tab:telemetria}
+    \end{center}
+
+    \vspace{0.5cm}
+
+    \begin{center}
+    \captionof{table}{Requisitos não funcionais do micromouse.}
+    \resizebox{0.95\textwidth}{!}{
+    \begin{tabular}{|p{6cm}|p{9cm}|c|}
+    \hline
+    \textbf{Requisito} & \textbf{Descrição} & \textbf{MoSCoW} \\ \hline
+
+    RNF01 - \textbf{Funcionamento autônomo} & O micromouse deverá funcionar de forma autônoma durante toda a execução do labirinto. & Must \\ \hline
+
+    RNF02 - \textbf{Comunicação sem fio} & A comunicação entre o micromouse e o sistema de telemetria deverá ocorrer sem o uso de conexões cabeadas. & Must \\ \hline
+
+    RNF03 - \textbf{Tempo de carregamento da telemetria} & A página de telemetria deverá carregar em até 5 segundos. & Must \\ \hline
+
+    RNF04 - \textbf{Latência da telemetria} & A latência entre o envio e a exibição dos dados de telemetria deverá ser inferior a 1 segundo. & Must \\ \hline
+
+    RNF05 - \textbf{Frequência de atualização} & O sistema deverá atualizar os dados de telemetria a cada 500 ms. & Must \\ \hline
+
+    RNF06 - \textbf{Resistência a variações de iluminação} & O micromouse deverá continuar operando mesmo com variações de iluminação no ambiente. & Must \\ \hline
+
+    RNF07 - \textbf{Precisão da medição} & O sistema deverá medir distâncias com precisão mínima de 1 cm. & Must \\ \hline
+
+    RNF08 - \textbf{Autonomia energética} & O micromouse deverá possuir autonomia suficiente para concluir o labirinto em menos de 30 minutos. & Should \\ \hline
+
+    RNF09 - \textbf{Dimensões máximas} & O micromouse deverá possuir dimensões inferiores a 18 cm × 18 cm. & Must \\ \hline
+
+    RNF10 - \textbf{Estabilidade elétrica} & O sistema deverá operar sem reinicializações causadas por oscilações de tensão durante a execução do labirinto. & Must \\ \hline
+
+    RNF11 - \textbf{Resistência a colisões} & O micromouse deverá continuar operacional após 10 colisões leves consecutivas. & Should \\ \hline
+
+    \end{tabular}
+    }
+
+    \label{tab:rnf}
+    \end{center}
+
+    \subsection{Histórias de Usuário}
+      As histórias de usuário foram definidas a partir dos requisitos funcionais e não funcionais levantados para o sistema. Todas as histórias foram documentadas juntamente com seus respectivos critérios de avaliação no repositório do GitHub do projeto. Além disso, a equipe desenvolveu um protótipo para as histórias relacionadas aos requisitos de telemetria, o qual pode ser visualizado nas respectivas issues de telemetria do repositório.
+    \begin{center}
+
+    \begin{multicols}{2}
+    \begin{itemize}
+        \item HU01 -- Movimentação frontal
+        \item HU02 -- Rotação do micromouse
+        \item HU03 -- Reconhecimento de paredes
+        \item HU04 -- Medição de distância
+        \item HU05 -- Identificação de caminhos livres
+        \item HU06 -- Navegação até o objetivo
+        \item HU07 -- Detecção de chegada ao objetivo
+        \item HU08 -- Prevenção de colisões
+        \item HU09 -- Cálculo de velocidade média
+        \item HU10 -- Cálculo de consumo energético
+        \item HU11 -- Salvamento do caminho percorrido
+        \item HU12 -- Mapeamento do labirinto
+        \item HU13 -- Armazenamento do mapa
+        \item HU14 -- Exibição de telemetria
+        \item HU15 -- Envio de telemetria
+        \item HU16 -- Monitoramento da bateria
+        \item HU17 -- Registro de tempo de operação
+        \item HU18 -- Indicação de conclusão do desafio
+        \item HU19 -- Controle dos motores
+        \item HU20 -- Aquisição de dados dos sensores
+        \item HU21 -- Monitoramento da alimentação elétrica
+        \item HU22 -- Controle remoto da execução
+    \end{itemize}
+    \end{multicols}        
+    \end{center}
+
+
+
+
+%=========================================================================================    
+    \subsection{Arquitetura de Software}
+
+    O software embarcado e seus serviços de apoio têm como propósito permitir que o robô Micromouse percorra autonomamente um labirinto modular 4x4 e 8x8, explorando suas paredes por meio de sensoriamento ativo, atualizando um mapa interno, decidindo o próximo movimento por algoritmo flood-fill e executando o deslocamento por controle de motores. Além disso, os serviços de apoio, compostos por backend e dashboard, permitem uma operação supervisionada, como visualizar a trajetória, as leituras e o estado interno do sistema em tempo de execução.
+
+    A arquitetura adotada é distribuída em quatro componentes principais, integrados por meio de um message broker, com o objetivo de desacoplar o produtor, que é o robô, do consumidor, que é o backend. O nó embarcado corresponde ao firmware executado no microcontrolador ESP32 dual-core, sendo responsável pelas malhas de tempo crítico, como sensoriamento, algoritmo de navegação, controle dos motores e publicação de telemetria. O broker MQTT, implementado com Mosquitto, faz a mediação da comunicação assíncrona entre o robô e o backend, utilizando entrega confiável com QoS 1 e retenção de mensagens de estado. O backend atua como serviço HTTP que assina os tópicos MQTT, persiste os dados de execução, expõe uma API REST para consultas históricas e propaga atualizações ao dashboard por meio de um canal push. Por fim, o frontend é uma single-page application de dashboard, acessada pelo navegador, voltada à operação supervisionada e à análise dos dados do robô.
+
+    Essa separação arquitetural se justifica porque o microcontrolador não possui recursos suficientes para servir interfaces web, porque os requisitos de tempo crítico do controle dos motores inviabilizam o acoplamento da malha de controle a operações de rede e porque o uso de um broker MQTT entre robô e backend fornece entrega garantida com QoS 1, persistência de estado por mensagens retained, suporte nativo a múltiplos consumidores, como backend, logger e monitor de debug, além de ser um padrão consolidado em aplicações de IoT.
+
+    No firmware, será utilizada a linguagem C++17 com ESP-IDF, FreeRTOS e cliente MQTT. Os drivers de baixo nível serão implementados em C, seguindo o padrão C99, com cabeçalhos C consumidos pelo firmware em C++. O broker MQTT será implementado com Eclipse Mosquitto em Docker. O backend será desenvolvido em Python 3.14, utilizando Django 6, Django REST Framework, Celery com Redis para o worker subscriber MQTT, a biblioteca httpx e gerenciamento por uv. O frontend será desenvolvido em TypeScript com modo strict, usando React 19, Vite, Mantine v9, TanStack Query v5, React Router v7 e gerenciamento por pnpm. A autenticação será baseada em JWT, com djangorestframework-simplejwt, e o banco de dados será PostgreSQL 18, aproveitando suporte nativo a UUID v7.
+
+    A descrição da arquitetura segue o modelo 4+1 proposto por Kruchten. Assim, a arquitetura é descrita a partir das visões lógica, de processos, de implementação, de implantação e de dados.
+
+    Na visão lógica, o sistema é decomposto em componentes que encapsulam responsabilidades funcionais, independentemente do nó físico ou da linguagem em que cada componente será implementado. O componente de sensoriamento abstrai os sensores HC-SR04, VL53L0X e MPU-6050, fornecendo leituras de distância de paredes nas direções frontal, esquerda e direita, além de orientação angular já tratada. Para o HC-SR04, prevê-se o uso de filtro de média móvel, enquanto a fusão sensorial para integração da IMU ainda está a confirmar. O componente de localização mantém a estimativa atual da posição do robô em coordenadas de célula do labirinto, representadas por x e y, bem como sua orientação cardinal, isto é, norte, sul, leste ou oeste, atualizadas por odometria dos encoders e correção pela IMU.
+
+    O componente de mapeamento representa o labirinto como uma matriz 4x4, ou 8x8, em que cada célula possui quatro flags de parede, correspondentes a norte, sul, leste e oeste, além dos valores de flood. O componente de planejamento, baseado em flood-fill, utiliza o mapa atual para calcular o próximo movimento alvo, considerando a célula central como objetivo. O controle de movimento converte o movimento alvo em sinais PWM para o driver TB6612FNG, fechando a malha sobre os encoders dos motores N20. Ainda está a confirmar se esse controle será implementado como PID, P-only ou bang-bang, bem como os ganhos que deverão ser calibrados.
+
+    A comunicação embarcada, realizada por um publisher MQTT, empacota o estado do robô, incluindo posição, matriz delta, velocidade e bateria, publicando essas informações no broker MQTT em tópicos organizados por identificador de robô. A decisão arquitetural é enviar a matriz delta já calculada, e não os dados crus dos sensores, evitando duplicação de lógica entre firmware e backend. O broker MQTT, implementado com Mosquitto, faz a mediação da comunicação entre robô e backend com QoS 1 e mensagens retained para eventos de estado. O serviço de operação, implementado no backend Django, possui um worker Celery que assina os tópicos MQTT, processa as mensagens recebidas por meio de use cases, persiste runs, leituras e mapas no PostgreSQL, expõe uma API REST em /api/v1/ e fornece um canal WebSocket para o frontend. O dashboard de operação, desenvolvido em React, visualiza o labirinto, a posição do robô, a trajetória percorrida, as leituras em tempo real e os controles de operação. O diagrama de componentes correspondente deverá ser apresentado na Figura da visão lógica, ainda a inserir no diretório de figuras.
+
+    Na visão de processos, descreve-se como os componentes lógicos são realizados em tasks, threads ou processos em tempo de execução, considerando seus períodos, prioridades e mecanismos de sincronização. No firmware embarcado, o ESP32 possui dois núcleos: o PRO\_CPU, ou Core 0, e o APP\_CPU, ou Core 1. Como a stack Wi-Fi possui afinidade nativa com o Core 0, a carga é distribuída de modo que o Core 1 execute as tarefas de tempo real, incluindo aquisição de sensores, algoritmo de navegação flood-fill e uma ISR de timer dedicada ao controle dos motores, com frequência entre 1 e 5 kHz, ainda a calibrar. O uso de ISR para o controle isola essa rotina do scheduler do FreeRTOS, garantindo frequência fixa. Já o Core 0 executa as tarefas de comunicação, incluindo stack Wi-Fi, cliente MQTT publisher e tarefa de telemetria.
+
+    Os componentes de aquisição, algoritmo e telemetria não acessam diretamente os sensores de forma concorrente, para evitar contenção no barramento I2C. Em vez disso, a aquisição lê o sensor uma única vez e publica os dados em um buffer compartilhado, implementado com FreeRTOS Queue e Mutex. A partir desse buffer, o algoritmo e a telemetria consomem os dados independentemente.
+
+    No firmware ESP32, a tarefa de aquisição atua como produtora no Core 1, com período ditado pelo sensor mais lento, prioridade alta e escrita no buffer compartilhado. O sensor HC-SR04 opera com intervalo mínimo de 60 ms entre leituras consecutivas, equivalente a no máximo 16 Hz, para evitar leituras falsas causadas por eco residual. O sensor VL53L0X opera com período estimado de 50 ms, ou 20 Hz, enquanto o sensor MPU-6050 opera com período estimado de 10 ms, ou 100 Hz. O algoritmo de navegação executa no Core 1 sob demanda, com prioridade média, lendo o buffer e escrevendo no mapa. A ISR de PID dos motores executa no Core 1 com frequência entre 1 e 5 kHz por timer dedicado, ficando isolada do scheduler. A tarefa de telemetria executa no Core 0 a cada 100 a 200 ms, equivalente a 10 a 30 Hz, com prioridade baixa, lendo o buffer e publicando via MQTT. A stack Wi-Fi e o cliente MQTT executam no Core 0 em modelo orientado a eventos, com prioridade média. Todos esses períodos são estimativas iniciais de projeto e estão sujeitos a calibração durante a implementação.
+
+    No backend, três processos cooperam. O primeiro é o web server, composto por Gunicorn e Django, responsável por servir a API REST em /api/v1/. O segundo é o worker Celery, que executa em paralelo o subscriber MQTT, consumindo mensagens dos tópicos micromouse/+/telemetria e micromouse/+/evento, disparando use cases de persistência e propagação ao frontend. O terceiro é o canal push para o dashboard, ainda a confirmar. Caso seja adotado WebSocket, será utilizado um processo Django Channels separado para manter as conexões; caso seja adotado SSE, o endpoint poderá ser mantido no mesmo Gunicorn, sem processo adicional.
+
+    No frontend, executa-se uma única instância da SPA no navegador do operador. Essa aplicação utiliza TanStack Query para gerenciamento do estado de servidor, incluindo cache e invalidations, Mantine v9 para a interface de usuário e um canal push, via WebSocket ou SSE ainda a confirmar, para receber a telemetria propagada pelo backend.
+
+    Na visão de implementação, descreve-se como o código é organizado em pacotes, módulos e repositórios. Propõe-se a adoção de um monorepo, espelhando a estrutura canônica do template do projeto, com os diretórios src/firmware, src/backend e src/frontend. O firmware possuirá um diretório main, responsável pelo ponto de entrada FreeRTOS e pelo registro das tasks; um diretório sensores, contendo wrappers C++ sobre os drivers C; um diretório localizacao, responsável pela estimativa de pose e mapa; um diretório planejamento, contendo o algoritmo flood-fill; um diretório controle, responsável pela ISR de PID dos motores; um diretório comunicacao, contendo o cliente MQTT publisher e a serialização; e um diretório drivers, contendo a implementação em C dos drivers, como o HC-SR04.
+
+    O backend será organizado como uma aplicação Django com DRF e Celery. Haverá um diretório config contendo as configurações base, local, test e production, além do arquivo celery\_app.py, configurado com Redis como broker, e urls.py. Dentro de src, haverá o app core, responsável por BaseModel com UUID v7, erros e envelope de resposta. Também haverá o diretório integrations, com integração MQTT por meio de cliente Mosquitto subscriber e integração com storage. O app principal será runs, representando as execuções do robô. Esse app conterá models.py com entidades como Run, Leitura, Decisao e Labirinto; selectors.py para leituras read-only com kw-only; um diretório use\_cases, seguindo o padrão de um use case para cada ação, como PersistirTelemetria; um diretório api com urls, views e serializers; tasks.py com tarefas Celery enxutas, conectando o subscriber MQTT aos use cases; e testes organizados em factories, test\_use\_cases e test\_api.
+
+    O frontend será desenvolvido com Vite, React 19 e Mantine v9. Sua estrutura incluirá componentes organizados segundo Atomic Design, com atoms, molecules e templates. O domínio auth será responsável por JWT e por um apiClient único baseado em axios. O domínio runs será o domínio principal de visualização da corrida, contendo funções de API, como fetchRuns e createRun, tipos TypeScript espelhando os serializers do DRF, hooks como useRuns e useCreateRun com TanStack Query, componentes como Maze, Trajectory e ControlsPanel, além de páginas como RunsListPage e RunDetailPage. Também haverá arquivos auxiliares em lib, como queryClient, formatters e types, além de router.tsx com createBrowserRouter e ProtectedRoute, e main.tsx com MantineProvider e QueryClientProvider.
+
+    A subequipe de Eletrônica entregará os drivers em C com headers fixados, que serão consumidos pela camada de firmware em C++. Esse contrato de interfaces será o principal ponto de delegação entre as subequipes.
+
+    Na visão de implantação, os componentes são mapeados para nós físicos. O sistema é composto por quatro nós principais. O primeiro é o nó embarcado, correspondente ao ESP32 do robô, que executa o firmware dual-core. Esse nó se comunica com os periféricos por barramentos digitais: o HC-SR04 por trigger e echo via GPIO, o VL53L0X por I2C no endereço 0x29, o MPU-6050 por I2C nos endereços 0x68 ou 0x69, compartilhando o barramento I2C, o TB6612FNG por GPIO e PWM, e os encoders por interrupções GPIO. Esse nó publica telemetria via Wi-Fi para o broker MQTT.
+
+    O segundo nó é o nó de broker, implementado com Mosquitto em container Docker no mesmo host do backend. Ele recebe os publishes do robô e os entrega aos consumidores. Durante o desenvolvimento e a competição, esse broker será executado na rede local da bancada. Para produção, ainda está a confirmar se ele permanecerá no mesmo host ou se será adotado um broker em nuvem, como HiveMQ ou similar.
+
+    O terceiro nó é o nó de serviços, correspondente ao servidor backend. Nele são executados o processo Django com Gunicorn, o worker Celery que atua como subscriber MQTT, o Redis como broker do Celery e o PostgreSQL 18. Esse conjunto será empacotado em docker-compose para rodar localmente, ainda sendo necessário confirmar se haverá deploy em um servidor de bancada dedicado para IPP ou APT.
+
+    O quarto nó é o nó de apresentação, correspondente ao navegador do operador. Ele executa a SPA React e se conecta ao backend por HTTP, usando /api/v1/, além de utilizar um canal push, por WebSocket ou SSE ainda a confirmar, para receber telemetria em tempo real propagada pelo backend.
+
+    Os tópicos MQTT do produto são definidos da seguinte forma. O tópico micromouse/\textless{}id\textgreater{}/telemetria utiliza QoS 1, não é retained e contém pacotes periódicos entre 10 e 30 Hz, incluindo pose, matriz delta, velocidade e bateria. O tópico micromouse/\textless{}id\textgreater{}/evento utiliza QoS 1, é retained e contém eventos como início, colisão, reparo e desafio cumprido. O tópico micromouse/\textless{}id\textgreater{}/status utiliza QoS 1, é retained e contém o heartbeat, indicando online ou offline, com uso de Last Will and Testament pelo broker. A pinagem do ESP32 e o detalhamento elétrico pertencem à seção de hardware, no Capítulo 6, Seção 6.3; portanto, esta visão limita-se ao mapeamento lógico-físico do software.
+
+    Na visão de dados, descreve-se a persistência das informações de operação no banco relacional PostgreSQL. Todas as entidades herdam de core.models.BaseModel, que fornece chave primária em UUID v7, ordenável temporalmente e nativo no PostgreSQL 18, além dos campos created\_at e updated\_at. As migrations seguem o padrão Django no diretório \textless{}app\textgreater{}/migrations/, com prefixo numérico, como 0001\_initial.py e 0002\_descricao.py.
+    
+
+\subsection{Modelo Entidade-Relacionamento (MER)}
+
+\textbf{Entidades:}
 
 \begin{itemize}
-    \item \textcolor{red}{ \textbf{Diagrama BPMN para entender o \textit{software} proposto:} deve deixar claro os principais atores do sistema, suas atividades (de negócios), insumos e resultados.}
-    \item \textcolor{red}{\textbf{\textit{Backlog} funcional do \textit{software}:}}
+    \item MICROMOUSE
+    \item LABIRINTO
+    \item TENTATIVA
+    \item POSICAO
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Atributos:}
+
+\begin{itemize}
+    \item \textbf{MICROMOUSE} (\underline{id}, nome, algoritmo)
+
+    \item \textbf{LABIRINTO} (\underline{id}, nome, dimensao)
+
+    \item \textbf{TENTATIVA} (\underline{id}, tempo\_inicio, tempo\_fim, consumo\_bateria, velocidade\_media, sucesso, micromouse\_id, labirinto\_id)
+
+    \item \textbf{POSICAO} (\underline{id}, coordenada\_x, coordenada\_y, timestamp, passo, tentativa\_id)
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Relacionamentos:}
+
+\begin{itemize}
+    \item \textbf{REALIZA}
     \begin{itemize}
-        \item \textcolor{red}{ Escrito no formato de histórias de usuário ou casos de uso (decisão da equipe);}
-        \item \textcolor{red}{ Ao declarar o \textit{backlog} de requisitos funcionais, usar a  classificação de MoSCoW (\textit{Must have}, \textit{Should have} e \textit{Could have}),  para um melhor entendimento do próprio \textit{backlog}.}
+        \item MICROMOUSE (1:N) TENTATIVA
     \end{itemize}
-    \item \textcolor{red}{\textbf{ \textit{Backlog} não-funcional do \textit{software}:}}
+
+    \item \textbf{USA}
     \begin{itemize}
-        \item \textcolor{red}{ Descrever os requisitos não-funcionais de forma objetiva;}
-        \item \textcolor{red}{ Mais facilmente, mais rapidamente, são descrições subjetivas não-válidas. Um exemplo de requisito não-funcional de desempenho: ``a página deve carregar em até 5s quando em conexão 4G''. }
+        \item LABIRINTO (1:N) TENTATIVA
     \end{itemize}
-    \item \textcolor{red}{ \textbf{Diagrama de casos de uso,} contendo os atores do sistema, os requisitos com os quais eles interagem e os tipos de relacionamentos entre requisitos realizados por um mesmo ator (ex.: \textit{include}, \textit{extend}). Obs.: este é um diagrama sobre requisitos funcionais.}
-    \item \textcolor{red}{ \textbf{Descrição da arquitetura da solução de \textit{software} proposta:}}
+
+    \item \textbf{POSSUI}
     \begin{itemize}
-        \item \textcolor{red}{ Propósito do \textit{software} (qual o seu papel no sistema);}
-        \item \textcolor{red}{ Estilo arquitetural contendo:}
-        \begin{itemize}
-            \item \textcolor{red}{ Padrão adotado: MVC, MVP, Microsserviços, Monolítico, etc (Justificar);}
-            \item \textcolor{red}{ Linguagens de programação: Java, Python, C\#, JavaScript, etc.}
-            \item \textcolor{red}{ \textit{Frameworks} e bibliotecas: Spring Boot, .NET Core, React, Angular, Django, etc.}
-            \item \textcolor{red}{ Banco de dados: Relacional (PostgreSQL, MySQL, etc) X NãoSQL (MongoDB,etc). }
-        \end{itemize}
-        \item \textcolor{red}{ Diagrama de alto nível: representação esquemática dos componentes da arquitetura, suas responsabilidades e comunicações, esclarecendo a composição do \textit{front-end} e do \textit{back-end}.}
-    \end{itemize}
-    \item \textcolor{red}{ \textbf{Persistência de dados:} diagrama de entidade relacionamento do banco de dados usado na solução proposta.}
-    \item \textcolor{red}{ \textbf{Análise de dados:} as variáveis definidas nos requisitos do projeto em abordagem numérica e gráfica.}
-    \item \textcolor{red}{ \textbf{Diagrama de estados} esclarecendo os estados assumidos pelo \textit{software} e os eventos que causam as mudanças de estado do \textit{software}.}
-    \item \textcolor{red}{ \textbf{Protótipo funcional do \textit{software}, navegável.}}
-    \item \textcolor{red}{\textbf{ Roteiro de testes funcionais:} }
-    \begin{itemize}
-        \item \textcolor{red}{Código do caso de teste;}
-        \item \textcolor{red}{Nome do caso de teste;}
-        \item \textcolor{red}{Tipo do caso de teste (unitário, integrado ou sistema);}
-        \item \textcolor{red}{ Objetivo do caso de teste;}
-        \item \textcolor{red}{ Pré-condições do sistema para o teste ser realizado;}
-        \item \textcolor{red}{ Descrição dos procedimentos a serem executados para o teste;}
-        \item \textcolor{red}{ Resultado esperado para o teste ser aprovado (pós-condição após realizado o teste);}
-        \item \textcolor{red}{ Especificação do reparo a ser executado (caso o teste não seja aprovado);}
-        \item \textcolor{red}{ Resultado após reparo (o caso do teste ser necessário de ser repetido após reparo).}
+        \item TENTATIVA (1:N) POSICAO
     \end{itemize}
 \end{itemize}
+
+\vspace{0.3cm}
+
+    \subsection{Diagrama Entidade-Relacionamento (DER)}
+            
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{../../docs/img/Diagrama_entidades.png}
+            \caption{Diagrama Entidade-Relacionamento}
+            \label{fig:diagrama_entidades}
+        \end{figure}
+        
+%    \item \textcolor{red}{\textbf{ Roteiro de testes funcionais:} }
+%    \begin{itemize}
+%        \item \textcolor{red}{Código do caso de teste;}
+%        \item \textcolor{red}{Nome do caso de teste;}
+%        \item \textcolor{red}{ Objetivo do caso de teste;}
+%        \item \textcolor{red}{ Pré-condições do sistema para o teste ser realizado, quando se aplicar;}
+%        \item \textcolor{red}{ Descrição dos procedimentos a serem executados para o teste;}
+%        \item \textcolor{red}{ Resultado esperado para o teste ser aprovado (pós-condição após realizado o teste);}
+%    \end{itemize}
+%\end{itemize}
+
+%=========================================================================================
+\subsection{Detalhamento dos Casos de Teste}
+
+    \subsubsection{CT01 - Validação do Sistema Sensorial e Precisão}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT01 - Leitura e Calibração dos Sensores de Distância (RF03, RF04, RF10, RNF07).
+        \item \textbf{Objetivo do caso de teste:} Validar se o sistema reconhece as paredes, adquire os dados corretamente e mede a distância com a precisão mínima exigida.
+        \item \textbf{Pré-condições:} Micromouse montado e posicionado em uma célula de teste; monitor serial ou telemetria ativos.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Posicionar o robô a distâncias 6cm, 12cm, 18cm(que corresponde ao tamanho de uma célula) de uma parede.
+            \item Registrar o valor reportado pelo sistema para cada sensor.
+            \item Verificar se o software identifica a presença de parede quando a distância for inferior ao limite da célula.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O erro de medição deve ser inferior a 1 cm, conforme o requisito RNF07. O sistema deve sinalizar corretamente a existência de obstruções à frente e nas laterais.
+    \end{itemize}
+
+    \subsubsection{CT02 - Controle de Trajetória e Estabilidade Elétrica}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT02 - Deslocamento Retilíneo e Controle de Motores (RF01, RF08, RF09, RNF10).
+        \item \textbf{Objetivo do caso de teste:} Validar a capacidade de mover-se para frente controlando os motores para evitar colisões sem reinicializações elétricas.
+        \item \textbf{Pré-condições:} Bateria carregada; corredor reto livre de obstáculos imprevistos.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Acionar o comando de avanço para percorrer três células consecutivas.
+            \item Observar se o robô mantém a trajetória centralizada usando o controle dos motores.
+            \item Monitorar se ocorrem quedas de tensão que causem o reset do microcontrolador.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O robô deve completar o percurso sem tocar nas paredes laterais e o sistema deve permanecer estável, sem oscilações de tensão que interrompam a execução.
+    \end{itemize}
+
+    \subsubsection{CT03 - Precisão de Manobra e Alteração de Direção}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT03 - Rotação e Mudança de Orientação (RF02, RF09).
+        \item \textbf{Objetivo do caso de teste:} Garantir que o micromouse realize rotações de até 180° através do controle preciso dos motores.
+        \item \textbf{Pré-condições:} Robô parado no centro de uma célula.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Comandar uma rotação de 90° para a esquerda e medir o ângulo final.
+            \item Comandar uma rotação de 90° para a direita e medir o ângulo final.
+            \item Comandar uma rotação de 180° (meia-volta).
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O robô deve realizar as rotações solicitadas com erro angular mínimo, permitindo que ele continue a navegação alinhado ao novo corredor.
+    \end{itemize}
+
+    \subsubsection{CT04 - Inteligência e Navegação Autônoma}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT04 - Mapeamento e Busca do Centro (RF05, RF06, RF07, RF14, RNF01).
+        \item \textbf{Objetivo do caso de teste:} Validar o funcionamento autônomo na identificação de caminhos, geração do mapa e alcance do objetivo central.
+        \item \textbf{Pré-condições:} Labirinto desconhecido pelo robô; algoritmo de navegação (ex: Flood Fill) carregado.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Iniciar o robô na célula inicial (0,0) em modo autônomo.
+            \item Observar se o robô identifica caminhos livres e mapeia as paredes encontradas.
+            \item Verificar se o sistema detecta a chegada ao objetivo central do labirinto.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O micromouse deve encontrar o caminho até o centro de forma autônoma e o mapa gerado internamente deve corresponder à realidade física do labirinto.
+    \end{itemize}
+
+    \subsubsection{CT05 - Telemetria e Comunicação sem Fio}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT05 - Validação de Telemetria em Tempo Real (RF16, RF17, RNF04).
+        \item \textbf{Objetivo:} Verificar se os dados de navegação são enviados e exibidos na interface web com a latência exigida.
+        \item \textbf{Pré-condições:} Micromouse conectado à rede sem fio; sistema web de telemetria ativo e aguardando conexão.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Iniciar a movimentação do robô no labirinto.
+            \item Observar a atualização dos campos de velocidade e posição na interface web.
+            \item Cronometrar o tempo entre um evento físico (ex: detecção de parede) e sua exibição na tela.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} Os dados devem ser atualizados a cada 500 ms (RNF05) com latência inferior a 1 segundo (RNF04). A interface deve exibir corretamente a posição X e Y enviada pelo robô.
+    \end{itemize}
+
+    \subsubsection{CT06 - Mapeamento e Persistência no Banco de Dados}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT06 - Armazenamento de Tentativas e Mapas (RF13, RF15).
+        \item \textbf{Objetivo:} Garantir que os dados da "Tentativa" e as "Posições" percorridas sejam salvos corretamente no banco de dados seguindo o MER.
+        \item \textbf{Pré-condições:} Banco de dados operacional; robô ter finalizado uma execução completa.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Executar uma tentativa de travessia do labirinto até o centro.
+            \item Acessar o banco de dados e realizar uma consulta na tabela "Tentativa" e "Posicao".
+            \item Verificar se os IDs (PK/FK) estão relacionados corretamente entre Micromouse e Tentativa.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O banco de dados deve conter o registro da tentativa com tempo de início/fim e todas as coordenadas (X, Y) percorridas vinculadas ao ID da tentativa realizada.
+    \end{itemize}
+
+    \subsubsection{CT07 - Monitoramento Energético e Estabilidade}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT07 - Monitoramento de Tensão e Consumo (RF12, RF18, RF21).
+        \item \textbf{Objetivo:} Validar se o sistema monitora a bateria e se mantém estável sob carga (RNF10).
+        \item \textbf{Pré-condições:} Robô com bateria em carga parcial (aprox. 50\%).
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Iniciar o robô e monitorar o log de tensão da bateria via telemetria.
+            \item Simular um esforço maior (aceleração máxima) para observar quedas de tensão (voltage sag).
+            \item Verificar se o software registra o consumo estimado em Joules conforme a fórmula $E = V \cdot I \cdot t$ definida no projeto.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O sistema não deve reiniciar durante picos de corrente (RNF10). O nível da bateria deve ser reportado com precisão e o cálculo de consumo energético deve ser salvo ao final da tentativa.
+    \end{itemize}
+
+    \subsubsection{CT08 - Conformidade Física e Operação Autônoma}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT08 - Verificação de Dimensões e Autonomia de Início (RNF09, RNF01).
+        \item \textbf{Objetivo:} Garantir que o robô respeite os limites físicos do labirinto e inicie sem intervenção humana física.
+        \item \textbf{Pré-condições:} Labirinto padrão de 18 cm de largura por célula.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Medir o robô com um paquímetro ou régua.
+            \item Posicionar o robô na célula inicial.
+            \item Acionar o comando "Iniciar" remotamente via sistema web (RF22).
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O robô deve medir menos de 18 cm x 18 cm (RNF09). Após o comando remoto, o robô deve iniciar a exploração de forma totalmente autônoma (RNF01) sem auxílio manual para partida.
+    \end{itemize}
+
+    \subsubsection{CT09 - Salvamento e Recuperação do Caminho Percorrido}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT09 - Persistência de Trajetória em Memória (RF11, RF13).
+        \item \textbf{Objetivo:} Validar que o caminho completo percorrido pelo robô é salvo corretamente em memória e recuperável após desligamento.
+        \item \textbf{Pré-condições:} Robô com memória flash disponível; sistema de arquivos operacional no microcontrolador.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Iniciar uma execução do robô no labirinto e deixá-lo navegar por um tempo determinado.
+            \item Desligar o robô durante a navegação.
+            \item Religar o robô e verificar se consegue acessar o histórico de posições armazenadas.
+            \item Comparar o caminho salvo com o caminho esperado baseado nas movimentações registradas.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O sistema deve recuperar o histórico completo de posições e orientações antes do desligamento, permitindo análise posterior da trajetória percorrida.
+    \end{itemize}
+
+    \subsubsection{CT10 - Integração de Múltiplos Sensores}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT10 - Validação de Fusão de Dados Sensoriais (RF20, RF04, RF03).
+        \item \textbf{Objetivo:} Garantir que todos os sensores de distância funcionam simultaneamente e fornecem dados consistentes durante a navegação.
+        \item \textbf{Pré-condições:} Todos os sensores calibrados; célula de teste com configuração conhecida.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Posicionar o robô com diferentes distâncias em relação às paredes (frente, laterais).
+            \item Registrar as leituras de todos os sensores simultaneamente.
+            \item Verificar a coerência entre os dados (ex: lateral esquerda e direita em corredor simétrico devem ser aproximadamente iguais).
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} Todos os sensores devem funcionar sem travamentos e fornecer valores consistentes sem discrepâncias anormais entre eles.
+    \end{itemize}
+
+    \subsubsection{CT11 - Robustez sob Variações de Iluminação}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT11 - Operação em Diferentes Condições de Luz (RNF06).
+        \item \textbf{Objetivo:} Validar que o sistema sensorial do robô funciona corretamente sob variações de iluminação do ambiente.
+        \item \textbf{Pré-condições:} Robô em ambiente controlável com possibilidade de ajuste de iluminação; labirinto montado.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Executar uma travessia do labirinto com iluminação ambiente normal.
+            \item Repetir a mesma travessia com luz reduzida (50\% de iluminação).
+            \item Repetir com luz mínima (aceso apenas com iluminação do robô).
+            \item Comparar os resultados das três execuções.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O robô deve completar a trajetória com sucesso em todas as condições de iluminação testadas sem perda de orientação ou detecção incorreta de paredes.
+    \end{itemize}
+
+    \subsubsection{CT12 - Autonomia Energética Completa}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT12 - Teste de Duração Máxima (RF10, RNF08).
+        \item \textbf{Objetivo:} Validar que a bateria fornece autonomia suficiente para completar o desafio do labirinto em menos de 30 minutos conforme RNF08.
+        \item \textbf{Pré-condições:} Bateria carregada completamente; labirinto de tamanho competitivo (16x16 células).
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Registrar a tensão inicial da bateria.
+            \item Iniciar o robô em modo autônomo para explorar o labirinto completamente.
+            \item Cronometrar o tempo total até a conclusão.
+            \item Registrar a tensão final da bateria e o consumo energético total calculado.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O robô deve completar a exploração e navegação até o centro em menos de 30 minutos, e a bateria deve manter nível superior a 10\% de carga ao final.
+    \end{itemize}
+
+    \subsubsection{CT13 - Resistência Estrutural a Impactos}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT13 - Durabilidade Mecânica e Funcionabilidade (RNF11).
+        \item \textbf{Objetivo:} Garantir que o robô continua operacional após sofrer múltiplas colisões leves conforme RNF11.
+        \item \textbf{Pré-condições:} Robô montado e testado; parede de teste ou célula de colisão preparada.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Realizar 10 colisões leves consecutivas contra uma parede a velocidade reduzida.
+            \item Inspecionar visualmente o robô para detectar danos óbvios.
+            \item Executar um teste de navegação pós-colisão para validar funcionalidade.
+            \item Verificar se sensores e motores ainda respondem corretamente.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O robô deve manter todas as funcionalidades após as colisões, sem danos estruturais relevantes ou perda de capacidade sensorial/motora.
+    \end{itemize}
+
+    \subsubsection{CT14 - Comunicação Sem Fio em Longo Alcance}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT14 - Conectividade Wireless em Diferentes Distâncias (RNF02, RNF04).
+        \item \textbf{Objetivo:} Validar que a comunicação sem fio permanece estável e com latência aceitável em diferentes distâncias entre o robô e o ponto de acesso.
+        \item \textbf{Pré-condições:} Sistema de telemetria web ativo; medidor de sinal wireless disponível; labirinto em área com WiFi.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Iniciar transmissão de telemetria com o robô a 1 metro do ponto de acesso.
+            \item Afastar progressivamente o robô (3m, 5m, 10m) e monitorar a qualidade do sinal.
+            \item Registrar a latência e perdas de pacotes em cada distância.
+            \item Testar com obstáculos entre o robô e o ponto de acesso (paredes, móveis).
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} Latência deve permanecer inferior a 1 segundo em até 10 metros de distância com sinal mínimo de -70 dBm. Com obstáculos, deve manter comunicação funcional até 5 metros.
+    \end{itemize}
+
+    \subsubsection{CT15 - Tempo de Carregamento da Interface de Telemetria}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT15 - Performance da Página Web (RNF03).
+        \item \textbf{Objetivo:} Verificar que a página de telemetria carrega em até 5 segundos conforme RNF03.
+        \item \textbf{Pré-condições:} Servidor web em execução; conexão WiFi estável; navegador web atualizado.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Acessar a página de telemetria via URL no navegador.
+            \item Medir o tempo desde o carregamento até a exibição completa (primeiros dados visíveis).
+            \item Repetir o teste 5 vezes e calcular a média.
+            \item Verificar também o carregamento com cache limpo.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} Tempo de carregamento completo deve ser inferior a 5 segundos, incluindo renderização de todos os elementos gráficos principais.
+    \end{itemize}
+
+    \subsubsection{CT16 - Frequência de Atualização de Telemetria}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT16 - Taxa de Refresh dos Dados (RNF05).
+        \item \textbf{Objetivo:} Validar que os dados de telemetria são atualizados a cada 500 ms conforme RNF05.
+        \item \textbf{Pré-condições:} Robô em movimento no labirinto; página de telemetria aberta; ferramenta de monitoramento de rede disponível.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Iniciar captura de pacotes de rede durante execução do robô.
+            \item Medir o intervalo entre atualizações consecutivas de dados de posição.
+            \item Registrar a variação no intervalo (jitter).
+            \item Verificar se todas as atualizações contêm dados válidos e íntegros.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} Intervalo entre atualizações deve ser 500 ms ± 50 ms. Não deve haver perdas de pacotes que causem lacunas maiores que 1 segundo.
+    \end{itemize}
+
+    \subsubsection{CT17 - Controle Remoto de Execução via Interface Web}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT17 - Controle de Início e Parada Remota (RF22).
+        \item \textbf{Objetivo:} Garantir que o robô pode ser iniciado e parado remotamente pela interface web sem atrasos significativos.
+        \item \textbf{Pré-condições:} Robô posicionado na célula inicial; interface web de controle acessível; WiFi conectado.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Clicar no botão "Iniciar" na interface web e cronometrar a resposta do robô.
+            \item Deixar o robô navegar por 30 segundos.
+            \item Clicar no botão "Parar" e verificar se o robô para em tempo aceitável.
+            \item Repetir o ciclo de início e parada 5 vezes.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} Tempo de resposta entre clique no botão e ação do robô deve ser inferior a 1 segundo. Parada deve ocorrer em menos de 100 ms após comando.
+    \end{itemize}
+
+    \subsubsection{CT18 - Recuperação Após Falha de Sensor}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT18 - Tratamento de Erro de Sensor (RF20, RF04, RF05).
+        \item \textbf{Objetivo:} Validar o comportamento do sistema quando um sensor falha ou fornece dados inconsistentes durante a navegação.
+        \item \textbf{Pré-condições:} Robô em movimento; possibilidade de bloquear manualmente um sensor; sistema com validação de dados.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Iniciar navegação do robô no labirinto.
+            \item Durante a navegação, obstruir físico um dos sensores de distância.
+            \item Observar como o sistema reage ao valor anômalo.
+            \item Verificar se o robô continua funcionando ou ativa protocolo de segurança.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O sistema deve detectar a leitura anômala, descartar ou suavizar o valor, e continuar navegando de forma segura ou registrar um aviso sem parar completamente.
+    \end{itemize}
+
+    \subsubsection{CT19 - Variação de Temperatura Operacional}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT19 - Estabilidade em Diferentes Temperaturas (RNF10).
+        \item \textbf{Objetivo:} Validar que o sistema permanece estável e funcional sob variações de temperatura que possam afetar componentes eletrônicos.
+        \item \textbf{Pré-condições:} Câmara climática disponível ou ambiente com controle de temperatura; robô totalmente montado.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Executar teste de navegação em temperatura ambiente (20-25°C).
+            \item Repetir em ambiente aquecido (30-35°C) simulando competição com iluminação.
+            \item Repetir em ambiente mais frio (10-15°C).
+            \item Registrar consumo de energia e tensão da bateria em cada condição.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O robô deve funcionar sem erros em todas as condições testadas. Consumo de energia pode variar, mas o sistema não deve sofrer reset ou perda de comunicação devido à temperatura.
+    \end{itemize}
+
+    \subsubsection{CT20 - Validação Completa do Sistema Integrado}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT20 - Teste de Aceitação Final (Todos os RF/RNF).
+        \item \textbf{Objetivo:} Realizar um teste final integrado que valida o sistema completo funcionando de forma holística, cobrindo todos os requisitos funcionais e não-funcionais.
+        \item \textbf{Pré-condições:} Sistema totalmente montado e testado; labirinto padrão de competição; interface web operacional; todas as dependências resolvidas.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Carregar bateria completamente.
+            \item Posicionar robô na célula inicial (0,0).
+            \item Iniciar via comando remoto na interface web.
+            \item Monitorar telemetria em tempo real durante toda a execução.
+            \item Registrar o tempo de conclusão, consumo energético e qualidade dos dados.
+            \item Validar que o mapa foi armazenado corretamente no banco de dados.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O robô deve completar uma execução bem-sucedida do labirinto com todos os requisitos atendidos: navegação autônoma, coleta de dados correta, comunicação sem perdas significativas, e conclusão em menos de 30 minutos.
+    \end{itemize}
 
 
 % \textcolor{red}{Com relação ao \textit{software}, será necessário apresentar os seguintes itens: % pacotes de componentes de \textit{software}, suas funções e características, e explicar as decisões de projeto:
