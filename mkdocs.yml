@@ -33,8 +33,7 @@ nav:
       - Como Contribuir: guides/contributing.md
       - Como Usar o GitHub Desktop: guides/githubdesktoptutorial.md
       - Referência Rápida: guides/quick-reference.md
-  - Casos de Teste: test/casosTeste.md
-  
+
 extra:
   social:
     - icon: fontawesome/brands/github
