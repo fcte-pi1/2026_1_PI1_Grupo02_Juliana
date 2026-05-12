@@ -19,7 +19,27 @@ O produto consiste em um robô autônomo que resolve labirintos. O robô pode re
 
 \section{Estrutura}
 
-\textcolor{red}{Apresentar desenho em CAD, indicar dimensões por lado/aresta/cota, indicar materiais utilizados e explicar o desenho e as decisões de projeto.}
+A estrutura mecânica do robô foi modelada em CAD com o objetivo de acomodar todos os componentes eletrônicos, motores e baterias em um volume compatível com as dimensões máximas previstas pelo regulamento IEEE Micromouse (25\,cm de comprimento e 25\,cm de largura). O chassi foi concebido em dois níveis de placa, unidos por espaçadores de nylon, de modo a separar os subsistemas de tração e energia no nível inferior dos subsistemas de controle e sensoriamento no nível superior.
+
+A Figura \ref{fig:cad_iso} apresenta a vista isométrica do robô, na qual é possível observar a disposição geral das peças. As duas baterias de 3,7\,V são fixadas ao chassi por abraçadeiras em U, posicionadas próximas ao centro geométrico do robô para favorecer o equilíbrio de massa. Os motores N20 com encoder de 6\,V também são travados por abraçadeiras dedicadas, garantindo o alinhamento das rodas em relação ao eixo transversal. Na parte frontal inferior, uma esfera deslizante atua como apoio livre, dispensando a necessidade de um terceiro motor ou roda direcional.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figuras/cad_micromouse_isometrico.jpeg}
+    \caption{Vista isométrica do modelo CAD do micromouse, com identificação dos principais componentes mecânicos.}
+    \label{fig:cad_iso}
+\end{figure}
+
+A Figura \ref{fig:cad_superior} mostra a vista superior, na qual são identificados a placa de componentes eletrônicos, o microcontrolador Raspberry Pi Pico W, a ponte H TB6612FNG responsável pelo acionamento dos motores, os sensores de distância VL53L0X e HC-SR04 utilizados na percepção das paredes do labirinto e o giroscópio MPU-6050 utilizado na correção da orientação. Os sensores frontais estão posicionados de forma a cobrir as três direções de interesse para a navegação, isto é, frente, esquerda e direita, conforme exigido pelo algoritmo de flood-fill descrito na Seção 6.5.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figuras/cad_micromouse_superior.jpeg}
+    \caption{Vista superior do modelo CAD do micromouse, com identificação da placa eletrônica e dos sensores.}
+    \label{fig:cad_superior}
+\end{figure}
+
+Os materiais previstos para a estrutura são placa de fenolite para a base eletrônica, conforme indicado no orçamento (Capítulo 7), chassi em chapa de MDF para as duas plataformas e fixadores de nylon nos espaçadores e abraçadeiras, escolhidos por sua leveza e custo reduzido. As dimensões finais e a cotagem detalhada serão consolidadas após a etapa de prototipagem inicial, prevista para a próxima fase do projeto.
 
 \section{Descrição de \textit{hardware}}
 
@@ -231,9 +251,9 @@ desempenho do robô durante as competições.
 
     A Figura \ref{fig:diagrama_atividade_corrida} apresenta o diagrama completo, com as raias dos dois núcleos do Raspberry Pi Pico W, o buffer compartilhado, o \textit{broker} MQTT, o \textit{backend} e o \textit{dashboard}.
 
-    \begin{figure}[htbp]
+    \begin{figure}[H]
         \centering
-        \includegraphics[width=\linewidth]{figuras/diagrama_atividade_corrida.png}
+        \includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{figuras/diagrama_atividade_corrida.png}
         \caption{Diagrama de atividades UML: fluxo da corrida do micromouse.}
         \label{fig:diagrama_atividade_corrida}
     \end{figure}
@@ -242,9 +262,9 @@ desempenho do robô durante as competições.
 
     No segundo caso de uso, o juiz ou usuário solicita um relatório no \textit{dashboard} aplicando filtros como labirinto e data. O \textit{dashboard} chama a API do \textit{backend}, que consulta o banco de dados e monta o \textit{payload} contendo métricas históricas e trajetórias. O resultado é exibido no \textit{dashboard}. A Figura \ref{fig:diagrama_atividade_relatorio} apresenta esse fluxo.
 
-    \begin{figure}[htbp]
+    \begin{figure}[H]
         \centering
-        \includegraphics[width=0.75\linewidth]{figuras/diagrama_atividade_relatorio.png}
+        \includegraphics[width=0.85\linewidth,height=0.85\textheight,keepaspectratio]{figuras/diagrama_atividade_relatorio.png}
         \caption{Diagrama de atividades UML: fluxo de consulta a relatórios históricos.}
         \label{fig:diagrama_atividade_relatorio}
     \end{figure}
