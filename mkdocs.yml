@@ -33,6 +33,9 @@ nav:
       - Como Contribuir: guides/contributing.md
       - Como Usar o GitHub Desktop: guides/githubdesktoptutorial.md
       - Referência Rápida: guides/quick-reference.md
+  - Software:
+      - Casos de Teste: software/casosteste.md
+      - EAP Software: software/eap-software.md
 
 extra:
   social:
