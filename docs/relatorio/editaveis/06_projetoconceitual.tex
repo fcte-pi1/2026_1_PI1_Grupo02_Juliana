@@ -45,18 +45,125 @@
 
 \section{Análise de consumo energético}
 
-\textcolor{red}{Com relação ao consumo energético do produto desenvolvido, será necessário apresentar cálculos de consumo dos diversos componentes utilizados e explicar as decisões de projeto para atender a estas demandas.}
+A primeira etapa do dimensionamento energético do Micro Mouse consistiu na 
+definição das características eletrônicas do sistema, com base nos equipamentos 
+propostos e listados na Tabela 1. Por meio de um balanço de cargas, foi possível 
+estimar o consumo total do circuito e, a partir disso, selecionar uma bateria 
+adequada às demandas da aplicação.
 
+\begin{center}
+\captionof{table}{Identificação dos Subsistemas Elétricos}
+\resizebox{0.95\textwidth}{!}{
+\begin{tabular}{|p{2.5cm}|p{4cm}|c|c|c|}
+\hline
+\textbf{Item} & \textbf{Especificação} & \textbf{Tensão (V)} & \textbf{Corrente (mA)} & \textbf{Energia consumida (J)} \\ \hline
 
-\begin{itemize}
-    \item \textcolor{red}{ \textbf{Identificação dos Subsistemas Elétricos:} liste todos os componentes que consumirão energia, como sensores, microcontroladores, atuadores e módulos de armazenamento de dados. Para cada componente, registre a tensão de operação (V), corrente média (mA) e tempo estimado de uso (s).}
-    \item \textcolor{red}{ \textbf{Cálculo da Energia Consumida por Componente:} utilize a fórmula: $E = V I t$, onde $E$ é a energia em joules, $V$ é a tensão em volts, $I$ a corrente em ampères e $t$ o tempo em segundos. Realize esse cálculo para cada componente do sistema.}
-    \item \textcolor{red}{ \textbf{Estimativa do Consumo Total de Energia:} some as energias de todos os componentes para obter o consumo energético total estimado do sistema por lançamento.}
-    \item \textcolor{red}{ \textbf{Escolha da Fonte de Alimentação:} com base no consumo total, converta para watt-hora: 1 Wh = 3600 J. Adicione e justifique uma margem de segurança (pesquisar o que é usual para este tipo de sistema) e selecione uma bateria ou fonte que supra a demanda.}
-    \item \textcolor{red}{ \textbf{Planejamento do Circuito de Alimentação:} analise a necessidade de inclusão de reguladores de tensão, proteções contra sobrecorrente, e isolamento para atuadores. Como as oscilações de tensão serão controladas?}
-    \item \textcolor{red}{ \textbf{Monitoramento via \textit{software}:} implemente, no \textit{software} embarcado, rotinas para medir a tensão da bateria e registrar dados de tempo de operação. Colete os dados para análise.}
-    \item \textcolor{red}{ \textbf{Validação com Testes Reais:} realize testes de campo para comparar o consumo estimado com o real. Ajuste a capacidade da fonte se necessário e refine o software de coleta de dados. Justifique a diferença de resultados (real x teórica), de acordo com a literatura.}
-\end{itemize}
+Sensor & VL53LOX & 2,8 & 150 & 7560 \\ \hline
+Sensor & HCSRO4 & 5 & 2 & 180 \\ \hline
+Sensor & TB6612FNG & 2,7 & 1200 & 34992 \\ \hline
+Sensor & MPU-6050 & 3,3 & 3,6 & 42,768 \\ \hline
+Motor & GA12-N20 & 3 & 100 & 2160 \\ \hline
+Placa & Placa de Fenolite & 0 & 0 & 0 \\ \hline
+Placa & Perclorato de Ferro & 0 & 0 & 0 \\ \hline
+Placa & Ferro de Solda & 0 & 0 & 0 \\ \hline
+Controlador & Raspberry Pi Pico W & - & - & 7,2 \\ \hline
+LED & --- & 2 & 20 & 0,04 \\ \hline
+
+\end{tabular}
+}
+\end{center}
+
+Para o acionamento dos motores de tração modelo GA12-N20, foi adotado o driver 
+de motor TB6612FNG, componente amplamente utilizado em sistemas de robótica 
+embarcada por suportar a corrente demandada e permitir o controle bidirecional 
+de velocidade e sentido de rotação de forma simples e eficiente. Em comparação 
+com drivers convencionais baseados em transistores bipolares, o TB6612FNG 
+apresenta menor dissipação de calor, maior eficiência energética e dimensões 
+reduzidas, características especialmente vantajosas em robôs móveis de pequeno 
+porte \cite{misra2018}.
+
+Como sensores de proximidade, foram incorporadas duas tecnologias distintas: o 
+sensor de distância por tempo de voo VL53L0X e o sensor ultrassônico HCSR04. 
+Essa abordagem dual confere flexibilidade ao sistema, permitindo que equipes 
+futuras avaliem e selecionem a tecnologia mais adequada durante os testes e o 
+desenvolvimento dos algoritmos de navegação. Os sensores foram dispostos nas 
+três direções principais — frontal e laterais —, ampliando o campo de percepção 
+do robô e possibilitando uma navegação mais precisa no labirinto (MISRA; ADLER, 
+2018). Para o monitoramento da orientação e movimentação do robô, foi 
+incorporado o sensor inercial MPU-6050, que integra acelerômetro e giroscópio de 
+três eixos, permitindo a estimativa de posição e o auxílio no controle de trajetória 
+durante a navegação \cite{feitosa2025}.
+
+Para o monitoramento do sistema elétrico em tempo real, foram integrados um 
+módulo sensor de corrente com capacidade de até 5 A e um módulo sensor de 
+tensão com faixa de operação de 0 a 25 V. Esses sensores permitem acompanhar 
+continuamente o estado da bateria e o consumo dos componentes durante a 
+operação, contribuindo para a segurança do sistema e para a análise de 
+desempenho energético \cite{rashid2014}.
+
+O microcontrolador selecionado foi o Raspberry Pi Pico W, em razão de seu bom 
+desempenho de processamento, ampla documentação disponível na literatura e, 
+principalmente, pela conectividade nativa Wi-Fi \cite{feitosa2025}.
+
+Com os componentes e seus respectivos consumos devidamente levantados, 
+conforme apresentado na Tabela X, o consumo total estimado do sistema é de 
+aproximadamente 1,8 A em operação nominal. Esse valor é dominado pelo driver 
+de motor TB6612FNG, responsável por cerca de 65\% do consumo total do circuito. 
+Procedeu-se então ao dimensionamento da fonte de energia, calculando a 
+capacidade necessária da bateria com base no consumo estimado de cada 
+componente ao longo do tempo de operação esperado.
+
+Sobre esse valor, foi aplicada uma margem de segurança de 50\%, prática 
+recomendada em projetos de sistemas embarcados \cite{rashid2014}, justificada por 
+três fatores principais neste projeto. O primeiro é o comportamento dos motores de 
+corrente contínua GA12-N20, que podem demandar correntes de partida e de 
+manobra de três a cinco vezes superiores à corrente nominal, elevando o consumo 
+total do sistema para valores próximos de 3,5 A a 4 A em situações de aceleração 
+brusca ou mudança de direção no labirinto. O segundo fator é a degradação natural 
+das células LiPo ao longo dos ciclos de carga e descarga: após 20 a 30 ciclos, a 
+capacidade real da bateria pode ser reduzida para 85 a 90\% do valor nominal, 
+comprometendo a autonomia do sistema caso não haja uma reserva energética 
+adequada. O terceiro fator são as eventuais imprecisões nas especificações 
+nominais dos componentes, que podem diferir do consumo real em condições de 
+operação \cite{rashid2014}.
+
+Com base nesse critério, optou-se por duas baterias de polímero de lítio (LiPo) de 
+3,7 V e capacidade de 3000 mAh cada, conectadas em série, resultando em uma 
+tensão nominal de 7,4 V e capacidade útil efetiva de 2000 mAh após a aplicação da 
+margem de segurança. Essa configuração proporciona uma autonomia estimada 
+de operação contínua superior a 60 minutos — valor significativamente acima do 
+tempo médio de uma rodada na competição Micro Mouse —, o que confere ao 
+sistema confiabilidade energética adequada para a aplicação proposta. A escolha 
+pela tecnologia LiPo justifica-se pela sua elevada densidade energética, baixo peso 
+e compatibilidade com sistemas embarcados de pequeno porte \cite{feitosa2025}.
+
+Após a montagem física do protótipo, deverão ser realizados testes experimentais 
+para validação do modelo energético teórico adotado. Durante esses ensaios, 
+serão monitorados parâmetros como corrente média consumida, temperatura dos 
+reguladores de tensão, estabilidade do sistema e autonomia prática da bateria. Os 
+resultados obtidos permitirão comparar os valores teóricos e reais de consumo 
+energético, possibilitando ajustes futuros tanto no dimensionamento da fonte 
+quanto nas estratégias de controle.
+
+Em síntese, os cálculos realizados com base no esquemático apresentado na 
+Tabela 1 permitem verificar o comportamento energético do sistema ao longo da 
+operação, relacionando o tempo de funcionamento do Micro Mouse ao consumo 
+estimado de energia, o que fornece subsídios para a avaliação da autonomia e do 
+desempenho do robô durante as competições.
+
+%
+%\textcolor{red}{Com relação ao consumo energético do produto desenvolvido, será necessário apresentar cálculos de consumo dos diversos componentes utilizados e explicar as decisões de projeto para atender a estas demandas.}
+%
+%
+%\begin{itemize}
+%    \item \textcolor{red}{ \textbf{Identificação dos Subsistemas Elétricos:} liste todos os componentes que consumirão energia, como sensores, microcontroladores, atuadores e módulos de armazenamento de dados. Para cada componente, registre a tensão de operação (V), corrente média (mA) e tempo estimado de uso (s).}
+%    \item \textcolor{red}{ \textbf{Cálculo da Energia Consumida por Componente:} utilize a fórmula: $E = V I t$, onde $E$ é a energia em joules, $V$ é a tensão em volts, $I$ a corrente em ampères e $t$ o tempo em segundos. Realize esse cálculo para cada componente do sistema.}
+%    \item \textcolor{red}{ \textbf{Estimativa do Consumo Total de Energia:} some as energias de todos os componentes para obter o consumo energético total estimado do sistema por lançamento.}
+%    \item \textcolor{red}{ \textbf{Escolha da Fonte de Alimentação:} com base no consumo total, converta para watt-hora: 1 Wh = 3600 J. Adicione e justifique uma margem de segurança (pesquisar o que é usual para este tipo de sistema) e selecione uma bateria ou fonte que supra a demanda.}
+%    \item \textcolor{red}{ \textbf{Planejamento do Circuito de Alimentação:} analise a necessidade de inclusão de reguladores de tensão, proteções contra sobrecorrente, e isolamento para atuadores. Como as oscilações de tensão serão controladas?}
+%    \item \textcolor{red}{ \textbf{Monitoramento via \textit{software}:} implemente, no \textit{software} embarcado, rotinas para medir a tensão da bateria e registrar dados de tempo de operação. Colete os dados para análise.}
+%    \item \textcolor{red}{ \textbf{Validação com Testes Reais:} realize testes de campo para comparar o consumo estimado com o real. Ajuste a capacidade da fonte se necessário e refine o software de coleta de dados. Justifique a diferença de resultados (real x teórica), de acordo com a literatura.}
+%\end{itemize}
 
 \section{Descrição de \textit{software}}
 
