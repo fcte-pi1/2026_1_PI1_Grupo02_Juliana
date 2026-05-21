@@ -2,7 +2,4 @@
 
 Esta pasta é destinada exclusivamente ao armazenamento de todos os arquivos relativos ao projeto e desenvolvimento do chassi do Ratinho.
 
-Os arquivos a serem incluídos nesta pasta serão prioritariamente arquivos CAD de peças e montagens (em formatos como `.FCStd`, `.STEP`, `.IGES`, etc.), porém desenhos técnicos e outros estudos podem ser adicionados futuramente caso sejam necessarios (em formato `.pdf`, `.md` ou até LaTeX).
-
----
-*Nota: Certifique-se de organizar os arquivos em subpastas caso o volume de dados cresça significativamente!*
+Se você deseja abrir o CAD do assembly final, baixe toda a pasta “assembly” e abra o arquivo micromouse1.catProduct. O download do resto da pasta com vários arquivos .catPart é necessário pois o assembly puxa essas partes para a construção do CAD de componentes mais complexos, como o motor e o microcontrolador.
