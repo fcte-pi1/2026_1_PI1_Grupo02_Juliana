@@ -19,27 +19,56 @@ O produto consiste em um robô autônomo que resolve labirintos. O robô pode re
 
 \section{Estrutura}
 
-A estrutura mecânica do robô foi modelada em CAD com o objetivo de acomodar todos os componentes eletrônicos, motores e baterias em um volume compatível com as dimensões máximas previstas pelo regulamento IEEE Micromouse (25\,cm de comprimento e 25\,cm de largura). O chassi foi concebido em dois níveis de placa, unidos por espaçadores de nylon, de modo a separar os subsistemas de tração e energia no nível inferior dos subsistemas de controle e sensoriamento no nível superior.
+A estrutura mecânica do micromouse foi desenhada em {\itshape Computer-Aided Design (CAD)} no software Catia V5, com o objetivo de acomodar todos os componentes eletrônicos, motores e baterias em um volume compatível com as dimensões máximas previstas pelo regulamento IEEE Micromouse (25\,cm de comprimento e 25\,cm de largura).
 
-A Figura \ref{fig:cad_iso} apresenta a vista isométrica do robô, na qual é possível observar a disposição geral das peças. As duas baterias de 3,7\,V são fixadas ao chassi por abraçadeiras em U, posicionadas próximas ao centro geométrico do robô para favorecer o equilíbrio de massa. Os motores N20 com encoder de 6\,V também são travados por abraçadeiras dedicadas, garantindo o alinhamento das rodas em relação ao eixo transversal. Na parte frontal inferior, uma esfera deslizante atua como apoio livre, dispensando a necessidade de um terceiro motor ou roda direcional.
+Atualmente, o micromouse possui dois níveis/andares para comportar confortavelmente as partes necessárias. A ideia inicial era que o chassi fosse composto por apenas um nível com todos os componentes, mas adicioná-los todos juntos faria com que ficassem apertados ou que as dimensões do robô ficassem grandes, e não queriamos comprometer a mobilidade, arriscando curvas apertadas. Logo, decidiu-se fazê-lo com dois níveis de chassi, com espessura de 4 mm cada. No primeiro nível encontram-se os dois motores N20 com encoders de 6V cada, as rodas, a placa de componentes eletrônicos e a esfera deslizante da frente. No segundo nível, estão as duas baterias de 3,7 V.
+
+Mesmo com o segundo nível, tentou-se manter o centro de gravidade do micromouse centralizado e o mais baixo possível, para que houvesse mais estabilidade e aderência do robô ao chão e minimizasse tombos. Assim, o chassi inferior está a 1,4 cm do chão, os espaçadores de nível têm 3 cm de altura e a bateria tem 2 cm de altura, logo soma-se um total de aproximadamente 7,5 cm altura em relação ao chão.
+
+As rodas e a esfera deslizante foram escolhidas a fim de nivelar o micromouse. O eixo do motor que conecta nas rodas está a 5 mm do chassi, e, com um rebaixo de 1 mm para comportar o motor no chassi de 4 mm (então motor numa área do chassi de 3 mm de profundidade), temos que uma roda de 22 mm de raio eleva o micromouse de 22 - 5 - 3 = 14 mm. A esfera deslizante, que fica na frente do micromouse, tem 15 mm de altura, portanto, também foi necessário um pocket por debaixo do chassi inferior na região da esfera com a profundidade de 1 mm, transformando a elevação da frente do micromouse também em 14 mm, nivelando perfeitamente o robô.
+
+A esfera deslizante é fixada no chassi por parafusos M3 (3 mm de diâmetro por 15 mm de profundidade). Já os espaçadores de nível são peças de nylon hexagonais com círculo circunscrito de diâmetro 5,6 mm e rosca de parafusos M3 (3 mm de diâmetro por 6 mm de profundidade), tendo ambos as roscas fêmea e macho, que serão complementadas por um parafuso M3 no chassi inferior e um inserto de latão no chassi superior. Os insertos de latão utilizados são peças serrilhadas termofixáveis que possuem rosca interna para facilitar a parafusação no chassi impresso em filamento. Eles são instalados com o leve aquecimento dos furos do chassi com um ferro de solda e a inserção. Para isso, é também necessário aumentar o diâmetro dos furos a serem impressos, dado que a peça possui espessura além do diâmetro da rosca interna, assim transformando os furos de 2 mm (parafuso M2) em 3,2 mm de diâmetro e os furos de 3 mm (parafuso M3) em 4,7 mm de diâmetro.
+
+Foram também modeladas abraçadeiras em U para a fixação dos motores e das baterias, que possuem as dimensões dos componentes que aportam, com uma pequena folga de 1 mm em cada dimensão para margem de segurança, presas ao chassi com 4 parafusos M2 (2 mm de diâmetro por 12 mm de profundidade), também acompanhados dos insertos de latão. Foram também adicionadas pequenas paredes aos lados das baterias como precaução contra o deslizamento, assim como dois furos para passagem dos fios que vão para o chassi inferior.
+
+A Figura \ref{fig:cad_iso} apresenta a vista isométrica do assembly do micromouse, na qual é possível observar as baterias de 3,7 V presas com uma abraçadeira no segundo nível e a separação entre os níveis.
+
+\vspace{0.4in}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\linewidth]{figuras/cad_micromouse_isometrico.jpeg}
-    \caption{Vista isométrica do modelo CAD do micromouse, com identificação dos principais componentes mecânicos.}
+    \includegraphics[width=0.85\linewidth]{figuras/rendermouse_isometrico.jpg}
+    \caption{Vista isométrica do CAD do assembly domicromouse.}
     \label{fig:cad_iso}
 \end{figure}
 
-A Figura \ref{fig:cad_superior} mostra a vista superior, na qual são identificados a placa de componentes eletrônicos, o microcontrolador Raspberry Pi Pico W, a ponte H TB6612FNG responsável pelo acionamento dos motores, os sensores de distância VL53L0X e HC-SR04 utilizados na percepção das paredes do labirinto e o giroscópio MPU-6050 utilizado na correção da orientação. Os sensores frontais estão posicionados de forma a cobrir as três direções de interesse para a navegação, isto é, frente, esquerda e direita, conforme exigido pelo algoritmo de flood-fill descrito na Seção 6.5.
+\vspace{0.15in}
+
+A Figura \ref{fig:cad_superior} mostra a vista superior do primeiro nível do micromouse, na qual são identificados a placa de componentes eletrônicos: o microcontrolador Raspberry Pi Pico W, a ponte H TB6612FNG, os sensores infravermelhos VL53L0X e o ultrassônico HC-SR04 e o giroscópio MPU-6050. Os sensores frontais estão posicionados de forma a cobrir as três direções de interesse para a navegação: frente, esquerda e direita, conforme requerido pelo algoritmo de flood-fill descrito na Seção 6.5. Além disso, pode-se identificar os dois motores N20, fixados por abraçadeiras em U e as rodas em seus respectivos eixos.
+
+\vspace{0.15in}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\linewidth]{figuras/cad_micromouse_superior.jpeg}
-    \caption{Vista superior do modelo CAD do micromouse, com identificação da placa eletrônica e dos sensores.}
+    \includegraphics[width=0.85\linewidth]{figuras/rendermouse_topview.jpg}
+    \caption{Vista superior do primeiro nível do micromouse.}
     \label{fig:cad_superior}
 \end{figure}
 
-Os materiais previstos para a estrutura são placa de fenolite para a base eletrônica, conforme indicado no orçamento (Capítulo 7), chassi em chapa de MDF para as duas plataformas e fixadores de nylon nos espaçadores e abraçadeiras, escolhidos por sua leveza e custo reduzido. As dimensões finais e a cotagem detalhada serão consolidadas após a etapa de prototipagem inicial, prevista para a próxima fase do projeto.
+\vspace{0.13in}
+
+O chassi e as abraçadeiras em U serão feitos com impressão 3D em filamento PETG, escolhido pelos benefícios proporcionados pela técnica, como a facilidade e agilidade de fabricação, a adaptação à geometrias personalizadas sem desperdício de material, assim como leveza, baixo custo e boa compatibilidade do material com as necessidades do projeto, como suportar cargas leves e resistir a perfurações.
+Já a placa de componentes eletrônicos será confeccionada em fenolite e mergulhada em percloreto de ferro para a formação das trilhas dos circuitos.
+
+A Figura \ref{fig:cad_drafting} mostra as cotas e dimensões estabelecidas para o micromouse, assim como a indicação da posição de cada componente.
+\begin{landscape} 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\linewidth]{figuras/micromouse_drafting_jpg.jpg}
+    \caption{Drafting do CAD do assembly do micromouse.}
+    \label{fig:cad_drafting}
+\end{figure}
+\end{landscape}
 
 \section{Descrição de \textit{hardware}}
 
@@ -48,7 +77,7 @@ Os materiais previstos para a estrutura são placa de fenolite para a base eletr
 O diagrama de blocos é uma ferramenta importante dentro de nosso projeto de engenharia, através do qual vamos apresentar uma visão geral da estrutura e interconexão entre os sistemas dos componentes eletrônicos de nosso modelo de projeto. O Diagrama foi realizado no site Lucidchart. Este é definido por blocos, cada um deles representando uma parte específica do processo ou sistema, os quais estarão conectados por meio de setas que se encarregam de mostrar de forma clara a direção do fluxo de dados e as linhas de alimentação com cores diferentes para maior compreensão.
 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{figuras/Diagrama_de_blocos.png}
     \caption{Diagrama de blocos com os principais sistemas do robô.}
@@ -57,7 +86,7 @@ O diagrama de blocos é uma ferramenta importante dentro de nosso projeto de eng
 
 \par O esquemático, neste contexto, apresenta uma representação lógica e organizada dos componentes eletrônicos do projeto e da forma como eles se interligam por meio de símbolos universais. O foco é mostrar o fluxo de sinais e a conectividade elétrica entre os elementos do mapa lógico, fornecendo uma visão clara da arquitetura do hardware utilizado.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{figuras/esquematico_novo.png}
     \caption{Esquemático das conexões elétricas entre os componentes do robô.}
@@ -68,14 +97,16 @@ O diagrama de blocos é uma ferramenta importante dentro de nosso projeto de eng
 
 A primeira etapa do dimensionamento energético do Micro Mouse consistiu na 
 definição das características eletrônicas do sistema, com base nos equipamentos 
-propostos e listados na Tabela 1. Por meio de um balanço de cargas, foi possível 
+propostos e listados na Tabela \ref{tab:subsistemas_eletricos}. Por meio de um balanço de cargas, foi possível 
 estimar o consumo total do circuito e, a partir disso, selecionar uma bateria 
 adequada às demandas da aplicação.
 
-\begin{center}
-\captionof{table}{Identificação dos Subsistemas Elétricos}
-\resizebox{0.95\textwidth}{!}{
-\begin{tabular}{|p{2.5cm}|p{4cm}|c|c|c|}
+\begin{table}[H]
+    \centering
+    \caption{Identificação dos Subsistemas Elétricos}
+    \label{tab:subsistemas_eletricos}
+    \resizebox{0.95\textwidth}{!}{%
+    \begin{tabular}{|p{2.5cm}|p{4cm}|c|c|c|}
 \hline
 \textbf{Item} & \textbf{Especificação} & \textbf{Tensão (V)} & \textbf{Corrente (mA)} & \textbf{Energia consumida (J)} \\ \hline
 
@@ -89,10 +120,9 @@ Placa & Perclorato de Ferro & 0 & 0 & 0 \\ \hline
 Placa & Ferro de Solda & 0 & 0 & 0 \\ \hline
 Controlador & Raspberry Pi Pico W & - & - & 7,2 \\ \hline
 LED & --- & 2 & 20 & 0,04 \\ \hline
-
-\end{tabular}
-}
-\end{center}
+    \end{tabular}%
+    }
+\end{table}
 
 Para o acionamento dos motores de tração modelo GA12-N20, foi adotado o driver 
 de motor TB6612FNG, componente amplamente utilizado em sistemas de robótica 
@@ -127,7 +157,7 @@ desempenho de processamento, ampla documentação disponível na literatura e,
 principalmente, pela conectividade nativa Wi-Fi \cite{feitosa2025}.
 
 Com os componentes e seus respectivos consumos devidamente levantados, 
-conforme apresentado na Tabela X, o consumo total estimado do sistema é de 
+conforme apresentado na Tabela \ref{tab:subsistemas_eletricos}, o consumo total estimado do sistema é de 
 aproximadamente 1,8 A em operação nominal. Esse valor é dominado pelo driver 
 de motor TB6612FNG, responsável por cerca de 65\% do consumo total do circuito. 
 Procedeu-se então ao dimensionamento da fonte de energia, calculando a 
@@ -166,8 +196,8 @@ resultados obtidos permitirão comparar os valores teóricos e reais de consumo
 energético, possibilitando ajustes futuros tanto no dimensionamento da fonte 
 quanto nas estratégias de controle.
 
-Em síntese, os cálculos realizados com base no esquemático apresentado na 
-Tabela 1 permitem verificar o comportamento energético do sistema ao longo da 
+Em síntese, os cálculos realizados com base no esquemático apresentado e na 
+Tabela \ref{tab:subsistemas_eletricos} permitem verificar o comportamento energético do sistema ao longo da 
 operação, relacionando o tempo de funcionamento do Micro Mouse ao consumo 
 estimado de energia, o que fornece subsídios para a avaliação da autonomia e do 
 desempenho do robô durante as competições.
