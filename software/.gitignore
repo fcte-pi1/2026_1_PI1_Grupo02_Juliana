@@ -1,0 +1,50 @@
+# Python / uv
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Django
+*.log
+db.sqlite3
+media/
+staticfiles/
+
+# Node / pnpm
+node_modules/
+.pnpm-store/
+dist/
+*.tsbuildinfo
+
+# Vite
+.vite/
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+secrets/
+tokens/
+
+# Docker volumes (data persistente local)
+.data/
+data/
+
+# Logs
+*.log
+logs/
