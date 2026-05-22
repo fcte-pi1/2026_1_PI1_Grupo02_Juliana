@@ -8,10 +8,17 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "127.0.0.1:5432:5432"
+    # Sem `ports:` exposto: backend acessa por hostname `postgres` na rede do compose.
+    # Quem tem postgres local em 5432 não conflita. Pra acessar via psql/DBeaver, use:
+    #   docker compose -f docker/compose.yml exec postgres psql -U $POSTGRES_USER $POSTGRES_DB
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      # Mount em /var/lib/postgresql (sem `/data`). Comportamento verificado:
+      # com `.../data`, postgres:18-alpine recusa subir e cascateia
+      # "dependency postgres failed to start" pros services dependentes.
+      # ATENÇÃO migração: se você já rodou o compose antes (volume `pgdata`
+      # com layout antigo), rode `make clear` antes de subir de novo,
+      # senão os dados antigos não vão ser enxergados pelo postgres novo.
+      - pgdata:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s

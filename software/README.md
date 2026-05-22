@@ -24,7 +24,7 @@ cp .env.example .env
 make build
 make up
 make migrate
-make superuser    # cria admin pra logar
+make seed         # cria groups (admin/gestor/membro) + superuser admin/admin123
 
 # 3. Acesse
 # Backend:        http://localhost:8000/api/v1/health/
@@ -75,7 +75,8 @@ software/
 | `make logs` | tail de todos os logs |
 | `make migrate` / `make migrations` | aplica / cria migrations |
 | `make shell` | `shell_plus` no backend |
-| `make superuser` | cria superuser Django |
+| `make superuser` | cria superuser Django (interativo) |
+| `make seed` | cria groups default (admin/gestor/membro) + superuser admin/admin123 (idempotente) |
 | `make test` / `make test-fast` | suite verbose / paralelo (`-n auto --reuse-db`) |
 | `make lint` / `make fmt` | ruff check / format |
 | `make restart-celery` | restart só do worker |
