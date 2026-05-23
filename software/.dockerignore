@@ -9,7 +9,15 @@ __pycache__
 *.pyo
 *.pyd
 .venv
+.venv/
+**/.venv
+**/.venv/
+backend/.venv
+backend/.venv/
 venv
+venv/
+**/venv
+**/venv/
 .pytest_cache
 .ruff_cache
 .mypy_cache
@@ -19,6 +27,9 @@ htmlcov
 
 # Node / frontend
 node_modules
+node_modules/
+**/node_modules
+**/node_modules/
 dist
 build
 .next

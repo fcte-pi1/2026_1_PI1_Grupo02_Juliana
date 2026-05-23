@@ -23,6 +23,10 @@ export const router = createBrowserRouter([
     element: withSuspense(<LoginPage />),
   },
   {
+    path: '/telemetry',
+    element: withSuspense(<DashboardPage />),
+  },
+  {
     path: '/',
     element: <ProtectedRoute />,
     children: [
