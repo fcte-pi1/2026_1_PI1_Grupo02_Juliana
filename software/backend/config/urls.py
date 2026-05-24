@@ -7,6 +7,7 @@ só monta:
 - /api/v1/token/          (JWT obtain)
 - /api/v1/token/refresh/  (JWT refresh)
 - /api/v1/healthcheck/    (app `healthcheck`, se existir)
+- /api/v1/runs/           (app `runs` — telemetria do micromouse)
 """
 import contextlib
 
@@ -26,3 +27,6 @@ urlpatterns = [
 # `healthcheck` app pode ainda não existir durante bootstrap. Inclui se disponível.
 with contextlib.suppress(ImportError):
     urlpatterns.append(path("api/v1/healthcheck/", include("healthcheck.api.urls")))
+
+with contextlib.suppress(ImportError):
+    urlpatterns.append(path("api/v1/runs/", include("runs.api.urls")))

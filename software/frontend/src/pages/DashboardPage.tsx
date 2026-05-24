@@ -1,8 +1,27 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useLogout } from '@/domains/auth';
+import {
+  enviarComando,
+  useRunSnapshot,
+  useTelemetryStream,
+  useTentativas,
+  type MazeState,
+  type Pose,
+  type RunSnapshot,
+} from '@/domains/runs';
 import './DashboardPage.css';
 
 type TelemetryView = 'dashboard' | 'maze' | 'sensors' | 'runs' | 'run';
 type Heading = 'Norte' | 'Leste' | 'Sul' | 'Oeste';
+
+// Mapeia o heading do backend (N/S/E/W) para o rótulo em PT exibido na UI.
+const HEADING_PT: Record<string, Heading> = { N: 'Norte', S: 'Sul', E: 'Leste', W: 'Oeste' };
+const STATUS_PT: Record<string, string> = {
+  em_curso: 'Run em andamento',
+  finalizada: 'Finalizada',
+  abortada: 'Abortada',
+};
 type RunStatus = 'Em curso' | 'Finalizada' | 'Abortada';
 
 interface SensorReading {
@@ -47,27 +66,13 @@ interface TelemetrySnapshot {
     name: string;
     detail: string;
   }>;
+  // ── Campos reais (vêm da telemetria MQTT): o labirinto e a pose ──
+  maze: MazeState;
+  dimensao: number;
+  mazePose: Pose | null;
 }
 
 const totalCells = 256;
-const mazeWalls = [
-  { x: 0, y: 0, w: 4, h: 2 },
-  { x: 4, y: 0, w: 1, h: 4 },
-  { x: 7, y: 0, w: 1, h: 2 },
-  { x: 12, y: 3, w: 3, h: 1 },
-  { x: 2, y: 5, w: 3, h: 1 },
-  { x: 6, y: 4, w: 1, h: 2 },
-  { x: 8, y: 5, w: 4, h: 1 },
-  { x: 12, y: 5, w: 1, h: 3 },
-  { x: 14, y: 6, w: 1, h: 2 },
-  { x: 3, y: 7, w: 1, h: 3 },
-  { x: 6, y: 8, w: 1, h: 3 },
-  { x: 9, y: 7, w: 1, h: 4 },
-  { x: 4, y: 11, w: 5, h: 1 },
-  { x: 11, y: 10, w: 1, h: 3 },
-  { x: 13, y: 12, w: 2, h: 1 },
-  { x: 12, y: 14, w: 1, h: 2 },
-];
 
 const exploredPath = [
   [0, 15],
@@ -88,8 +93,6 @@ const exploredPath = [
   [9, 9],
   [9, 8],
 ] as const;
-const mazeGoalPosition: [number, number] = [7, 7];
-const mazeGoalSize = 2;
 
 const runs: RunRow[] = [
   {
@@ -178,6 +181,9 @@ const initialTelemetry: TelemetrySnapshot = {
     { time: '10:42:36.220', type: 'EVT', name: 'rotation.complete', detail: '-90 graus' },
     { time: '10:42:34.105', type: 'WRN', name: 'wall.detected', detail: 'front - 2.1 cm' },
   ],
+  maze: {},
+  dimensao: 16,
+  mazePose: null,
 };
 
 function formatDuration(seconds: number) {
@@ -257,30 +263,69 @@ export function DashboardPage() {
   const [streaming, setStreaming] = useState(true);
   const [now, setNow] = useState(0);
   const [lastPacketAt, setLastPacketAt] = useState(0);
-  const [telemetry, setTelemetry] = useState<TelemetrySnapshot>(initialTelemetry);
-  const disconnected = lastPacketAt > 0 && now - lastPacketAt > 2000;
+  const [sim, setSim] = useState<TelemetrySnapshot>(initialTelemetry);
+  const logout = useLogout();
+
+  // Run real: ?run=<id> na URL, ou a tentativa mais recente.
+  const [params] = useSearchParams();
+  const tentativasQuery = useTentativas();
+  const runId = params.get('run') ?? tentativasQuery.data?.[0]?.id ?? null;
+  const snapshotQuery = useRunSnapshot(runId);
+  const { snapshot: live, connected } = useTelemetryStream(runId);
+  const real: RunSnapshot | null = live ?? snapshotQuery.data ?? null;
 
   useEffect(() => {
     const clock = window.setInterval(() => setNow(Date.now()), 250);
     return () => window.clearInterval(clock);
   }, []);
 
+  // Simulação cosmética: sensores/IMU/sparklines/eventos seguem simulados até o
+  // firmware enviá-los. O labirinto, a pose e as métricas principais são REAIS
+  // (sobrepostos abaixo a partir de `real`).
   useEffect(() => {
     if (!streaming) {
       return undefined;
     }
 
     const interval = window.setInterval(() => {
-      setTelemetry((current) => updateTelemetry(current));
+      setSim((current) => updateTelemetry(current));
       setLastPacketAt(Date.now());
     }, 500);
 
     return () => window.clearInterval(interval);
   }, [streaming]);
 
-  const statusLabel = disconnected ? 'Desconectado' : streaming ? 'Run em andamento' : 'Aguardando sinal';
-  const exploredPercent = ((telemetry.exploredCells / totalCells) * 100).toFixed(1);
+  const telemetry: TelemetrySnapshot = useMemo(() => {
+    if (!real) return sim;
+    const pose = real.pose;
+    const walls = Object.values(real.maze ?? {}).reduce(
+      (acc, w) => acc + Number(w.n) + Number(w.s) + Number(w.e) + Number(w.w),
+      0,
+    );
+    return {
+      ...sim,
+      speed: real.speed ?? real.velocidade_media ?? sim.speed,
+      battery: real.battery ?? sim.battery,
+      voltage: real.voltage ?? sim.voltage,
+      exploredCells: real.explored ?? sim.exploredCells,
+      position: pose ? [pose.x, pose.y] : sim.position,
+      heading: pose ? HEADING_PT[pose.heading] : sim.heading,
+      walls,
+      maze: real.maze ?? {},
+      dimensao: real.dimensao ?? sim.dimensao,
+      mazePose: pose,
+    };
+  }, [real, sim]);
+
+  const disconnected = !connected;
+  const statusLabel = real ? STATUS_PT[real.status] ?? real.status : streaming ? 'Run em andamento' : 'Aguardando sinal';
+  const total = telemetry.dimensao * telemetry.dimensao;
+  const exploredPercent = ((telemetry.exploredCells / total) * 100).toFixed(1);
   const recentRuns = useMemo(() => runs.slice(0, 4), []);
+
+  const comando = (acao: 'start' | 'stop') => {
+    if (runId) enviarComando(runId, acao).catch(() => undefined);
+  };
 
   return (
     <main className="telemetry-app">
@@ -321,11 +366,14 @@ export function DashboardPage() {
         <div className={disconnected ? 'connection-card offline' : 'connection-card'}>
           <span className="wifi-dot">⌁</span>
           <div>
-            <strong>Mouse-01</strong>
-            <span>{disconnected ? 'sem sinal' : '192.168.4.1 - 42ms'}</span>
+            <strong>Telemetria</strong>
+            <span>{connected ? 'stream ativo (SSE)' : 'aguardando stream'}</span>
           </div>
-          <button aria-label="Mais opções">...</button>
         </div>
+
+        <button className="ghost-button" onClick={logout}>
+          Sair
+        </button>
       </aside>
 
       <section className="telemetry-main">
@@ -345,17 +393,26 @@ export function DashboardPage() {
             </p>
           </div>
           <div className="actions">
-            <button className="ghost-button" onClick={() => setStreaming(false)}>
+            <button
+              className="ghost-button"
+              disabled={!runId}
+              onClick={() => {
+                setStreaming(false);
+                comando('stop');
+              }}
+            >
               ■ Parar run
             </button>
             <button
               className="primary-button"
+              disabled={!runId}
               onClick={() => {
                 setStreaming(true);
                 setLastPacketAt(Date.now());
+                comando('start');
               }}
             >
-              ▶ Nova run
+              ▶ Iniciar run
             </button>
           </div>
         </header>
@@ -711,61 +768,77 @@ function MiniSparkline({
   );
 }
 
+function mouseArrow(px: number, py: number, cell: number, heading: Heading): string {
+  const cx = px + cell / 2;
+  const cy = py + cell / 2;
+  const r = cell * 0.3;
+  const pts: Record<Heading, [number, number][]> = {
+    Norte: [[cx, cy - r], [cx - r, cy + r], [cx + r, cy + r]],
+    Sul: [[cx, cy + r], [cx - r, cy - r], [cx + r, cy - r]],
+    Leste: [[cx + r, cy], [cx - r, cy - r], [cx - r, cy + r]],
+    Oeste: [[cx - r, cy], [cx + r, cy - r], [cx + r, cy + r]],
+  };
+  return pts[heading].map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+}
+
+/**
+ * Renderiza o labirinto N×N a partir do estado real vindo do backend:
+ * `telemetry.maze` (paredes por célula), `telemetry.dimensao` e a pose.
+ * A grade clara mostra as células ainda não descobertas.
+ */
 function MazeCanvas({ telemetry, mode }: { telemetry: TelemetrySnapshot; mode: 'compact' | 'full' }) {
-  const cell = 100 / 16;
-  const visiblePath = exploredPath.slice(0, Math.max(6, Math.min(exploredPath.length, telemetry.exploredCells - 10)));
+  const n = Math.max(1, telemetry.dimensao);
+  const cell = 100 / n;
+  const stroke = Math.max(0.4, cell * 0.06);
+  const goalSize = n % 2 === 0 ? 2 : 1;
+  const goalMin = Math.floor((n - goalSize) / 2);
+  const cells = Object.entries(telemetry.maze);
+  const [px, py] = telemetry.position;
 
   return (
     <div className={mode === 'full' ? 'maze-canvas full' : 'maze-canvas'}>
-      <svg viewBox="0 0 100 100" aria-label="Mapa do labirinto 16 por 16 com rato em verde e área de chegada 2 por 2 em azul">
-        <rect width="100" height="100" rx="0.4" fill="#fbfcff" />
-        {visiblePath.map(([x, y], index) => (
-          <rect
-            key={`${x}-${y}`}
-            x={x * cell}
-            y={y * cell}
-            width={cell}
-            height={cell}
-            fill="#5548ea"
-            opacity={0.1 + (index / visiblePath.length) * 0.34}
-          />
+      <svg viewBox="0 0 100 100" aria-label={`Mapa do labirinto ${n} por ${n}, rato em verde e chegada em azul`}>
+        <rect width="100" height="100" fill="#fbfcff" />
+
+        {/* Grade completa (clara) — células ainda por descobrir */}
+        {Array.from({ length: n + 1 }, (_, i) => (
+          <g key={`grid-${i}`}>
+            <line x1={i * cell} y1={0} x2={i * cell} y2={100} stroke="#e6eaf2" strokeWidth={0.3} />
+            <line x1={0} y1={i * cell} x2={100} y2={i * cell} stroke="#e6eaf2" strokeWidth={0.3} />
+          </g>
         ))}
-        {mazeWalls.map((wall, index) => (
-          <rect
-            key={index}
-            x={wall.x * cell}
-            y={wall.y * cell}
-            width={Math.max(0.32, wall.w * cell)}
-            height={Math.max(0.32, wall.h * cell)}
-            fill="#1d2636"
-            opacity="0.86"
-          />
-        ))}
-        <rect
-          x={mazeGoalPosition[0] * cell}
-          y={mazeGoalPosition[1] * cell}
-          width={cell * mazeGoalSize}
-          height={cell * mazeGoalSize}
-          rx="0.08"
-          fill="#5145e8"
-        />
-        <rect
-          x={telemetry.position[0] * cell}
-          y={telemetry.position[1] * cell}
-          width={cell * 1.05}
-          height={cell * 1.05}
-          rx="0.08"
-          fill="#09a775"
-          stroke="#101827"
-          strokeWidth="0.4"
-        />
-        <path
-          d={`M ${(telemetry.position[0] + 0.52) * cell} ${(telemetry.position[1] + 0.28) * cell} l 1.45 1.45 l -1.45 1.45 l -1.45 -1.45 z`}
-          fill="#ffffff"
-        />
-        <text x="0" y="103" fill="#94a0b6" fontSize="2.2">(0,0)</text>
-        <text x="44" y="103" fill="#94a0b6" fontSize="2.2">16 x 16 cells</text>
-        <text x="92" y="103" fill="#94a0b6" fontSize="2.2">(15,15)</text>
+
+        {/* Células exploradas */}
+        {cells.map(([key]) => {
+          const [x, y] = key.split(',').map(Number);
+          return <rect key={`cell-${key}`} x={x * cell} y={y * cell} width={cell} height={cell} fill="#5548ea" opacity={0.1} />;
+        })}
+
+        {/* Chegada (centro) */}
+        <rect x={goalMin * cell} y={goalMin * cell} width={cell * goalSize} height={cell * goalSize} fill="#5145e8" opacity={0.55} />
+
+        {/* Paredes por célula */}
+        {cells.map(([key, walls]) => {
+          const [x, y] = key.split(',').map(Number);
+          const cx = x * cell;
+          const cy = y * cell;
+          const segs: [number, number, number, number][] = [];
+          if (walls.n) segs.push([cx, cy, cx + cell, cy]);
+          if (walls.s) segs.push([cx, cy + cell, cx + cell, cy + cell]);
+          if (walls.w) segs.push([cx, cy, cx, cy + cell]);
+          if (walls.e) segs.push([cx + cell, cy, cx + cell, cy + cell]);
+          return segs.map(([x1, y1, x2, y2], idx) => (
+            <line key={`wall-${key}-${idx}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#1d2636" strokeWidth={stroke} strokeLinecap="round" />
+          ));
+        })}
+
+        {/* Rato (verde, apontando conforme o heading) */}
+        {telemetry.mazePose && (
+          <polygon points={mouseArrow(px * cell, py * cell, cell, telemetry.heading)} fill="#09a775" stroke="#101827" strokeWidth={stroke * 0.5} />
+        )}
+
+        {/* Borda externa */}
+        <rect x={0} y={0} width={100} height={100} fill="none" stroke="#1d2636" strokeWidth={stroke} />
       </svg>
       <div className="maze-legend" aria-label="Legenda do mapa">
         <span><i className="mouse" /> Rato</span>

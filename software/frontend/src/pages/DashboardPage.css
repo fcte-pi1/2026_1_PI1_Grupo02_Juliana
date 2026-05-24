@@ -427,7 +427,7 @@ h2 {
 
 .maze-canvas {
   width: min(100%, 520px);
-  aspect-ratio: 1 / 0.82;
+  aspect-ratio: 1 / 1;
 }
 
 .maze-canvas.full {
@@ -438,7 +438,7 @@ h2 {
 
 .maze-canvas svg {
   width: 100%;
-  height: calc(100% - 28px);
+  height: 100%;
   overflow: visible;
 }
 

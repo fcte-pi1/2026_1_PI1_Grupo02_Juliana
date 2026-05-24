@@ -1,6 +1,6 @@
 import { lazy, Suspense, type ReactNode } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import { ProtectedRoute } from '@/domains/auth';
+import { ProtectedRoute, RequireAuth } from '@/domains/auth';
 import { FullPageLoader } from '@/components/atoms/FullPageLoader';
 
 const LoginPage = lazy(() =>
@@ -27,13 +27,16 @@ export const router = createBrowserRouter([
     element: withSuspense(<DashboardPage />),
   },
   {
+    // Dashboard full-screen (layout próprio) — guarda só checa o token, sem AppShell.
     path: '/',
+    element: <RequireAuth />,
+    children: [{ index: true, element: withSuspense(<DashboardPage />) }],
+  },
+  {
+    // Páginas internas com chrome padrão (header + Sair).
+    path: '/app',
     element: <ProtectedRoute />,
     children: [
-      {
-        index: true,
-        element: withSuspense(<DashboardPage />),
-      },
       {
         path: 'healthcheck',
         element: withSuspense(<HealthcheckListPage />),

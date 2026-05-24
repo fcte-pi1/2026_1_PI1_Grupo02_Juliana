@@ -38,6 +38,17 @@ services:
     networks:
       - default
 
+  mosquitto:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquittodata:/mosquitto/data
+    ports:
+      - "1883:1883"
+    networks:
+      - default
+
   minio:
     image: minio/minio:latest
     restart: unless-stopped
@@ -114,6 +125,28 @@ services:
     networks:
       - default
 
+  mqtt_subscriber:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    depends_on:
+      backend:
+        condition: service_started
+      mosquitto:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../backend:/app
+    command: uv run python manage.py mqtt_subscribe
+    networks:
+      - default
+
   frontend:
     build:
       context: ..
@@ -133,6 +166,7 @@ services:
 volumes:
   pgdata:
   miniodata:
+  mosquittodata:
   frontend_node_modules:
 
 networks:

@@ -1,7 +1,7 @@
 COMPOSE = docker compose --env-file .env -f docker/compose.yml
 
 .PHONY: help up down restart restart-celery build rebuild logs ps \
-        migrate migrations shell superuser seed \
+        migrate migrations shell superuser seed simulate \
         test test-fast lint fmt \
         frontend-lint frontend-typecheck \
         clear bash frontend-bash
@@ -72,6 +72,9 @@ superuser:
 
 seed:
 	$(COMPOSE) exec backend uv run python manage.py seed
+
+simulate:
+	$(COMPOSE) exec backend uv run python manage.py mqtt_simulate
 
 bash:
 	$(COMPOSE) exec backend bash
