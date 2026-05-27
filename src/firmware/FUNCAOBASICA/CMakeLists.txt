@@ -29,6 +29,7 @@ pico_sdk_init()
 # Define o seu arquivo de código principal
 add_executable(funcaobasica
     main.c
+    vl53l0x.c
 )
 
 # Vincula as bibliotecas do SDK
