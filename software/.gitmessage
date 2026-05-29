@@ -1,0 +1,47 @@
+# <type>(<scope>): <subject>
+#
+# <body>
+#
+# <footer>
+#
+# ─── Conventional Commits ────────────────────────────────────────────────────
+#
+# Type:
+#   feat:     nova feature
+#   fix:      bug fix
+#   docs:     mudança só em documentação (README, ADR, comentários)
+#   test:     adiciona/ajusta tests sem mudar código de produção
+#   refactor: muda código sem mudar comportamento (sem feature, sem fix)
+#   perf:     melhora performance sem mudar comportamento
+#   chore:    bumps de deps, configs, build, formatação automática
+#   ci:       mudança em CI/CD (.github/, GitHub Actions)
+#   revert:   reverte commit anterior — body cita SHA revertido
+#
+# Scope (opcional, lowercase, sem espaço):
+#   backend, frontend, core, devops, healthcheck, auth, integrations, tests, docs
+#   (ou nome do app/domain específico — ex: feat(clients): ...)
+#
+# Subject (linha 1):
+#   - imperativo presente ("adiciona", não "adicionado/adicionei")
+#   - sem ponto final
+#   - máximo 72 chars (limite hard 100)
+#   - lowercase exceto nomes próprios e siglas
+#
+# Body (opcional, linhas 3+):
+#   - explica o "porquê", não o "o quê" (o diff já mostra o quê)
+#   - linhas até 80 chars
+#   - bullets com `-` quando houver múltiplos pontos
+#
+# Footer (opcional):
+#   - `Closes #123` / `Refs #456` pra issues
+#   - `BREAKING CHANGE: <descrição>` quando aplicável (gera major bump em SemVer)
+#   - `Co-Authored-By: Nome <email>` quando há co-autoria
+#
+# Exemplos:
+#   feat(healthcheck): adiciona action de run manual no ServiceCheck
+#   fix(core): EnvelopeRenderer page_size lê do paginator real
+#   docs(backend): documenta convenção de management commands
+#   refactor(auth): extrai apiClient interceptor pra módulo separado
+#
+# Para ativar como template:
+#   git config commit.template .gitmessage

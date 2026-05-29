@@ -1,0 +1,140 @@
+name: micromouse
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    # Sem `ports:` exposto: backend acessa por hostname `postgres` na rede do compose.
+    # Quem tem postgres local em 5432 não conflita. Pra acessar via psql/DBeaver, use:
+    #   docker compose -f docker/compose.yml exec postgres psql -U $POSTGRES_USER $POSTGRES_DB
+    volumes:
+      # Mount em /var/lib/postgresql (sem `/data`). Comportamento verificado:
+      # com `.../data`, postgres:18-alpine recusa subir e cascateia
+      # "dependency postgres failed to start" pros services dependentes.
+      # ATENÇÃO migração: se você já rodou o compose antes (volume `pgdata`
+      # com layout antigo), rode `make clear` antes de subir de novo,
+      # senão os dados antigos não vão ser enxergados pelo postgres novo.
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - default
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - default
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../backend:/app
+    command: uv run python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    networks:
+      - default
+
+  celery_worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    depends_on:
+      backend:
+        condition: service_started
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../backend:/app
+    command: uv run celery -A config worker -l INFO
+    networks:
+      - default
+
+  celery_beat:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    depends_on:
+      backend:
+        condition: service_started
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../backend:/app
+    command: uv run celery -A config beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    networks:
+      - default
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    volumes:
+      - ../frontend:/app
+      - frontend_node_modules:/app/node_modules
+    command: pnpm dev --host 0.0.0.0
+    ports:
+      - "5173:5173"
+    networks:
+      - default
+
+volumes:
+  pgdata:
+  miniodata:
+  frontend_node_modules:
+
+networks:
+  default:
+    driver: bridge
