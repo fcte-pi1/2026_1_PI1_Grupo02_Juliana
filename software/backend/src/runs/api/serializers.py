@@ -32,3 +32,19 @@ class TentativaSerializer(serializers.ModelSerializer):
 
     def get_explored(self, obj) -> int:
         return len(obj.maze or {})
+
+
+class PosicaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = __import__("runs.models", fromlist=["Posicao"]).Posicao
+        fields = (
+            "id",
+            "coordenada_x",
+            "coordenada_y",
+            "timestamp",
+            "passo",
+            "orientacao",
+            "velocidade",
+            "bateria",
+        )
+        read_only_fields = fields

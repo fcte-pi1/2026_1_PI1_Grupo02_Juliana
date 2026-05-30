@@ -17,8 +17,8 @@ from loguru import logger
 
 from integrations.mqtt.client import build_client
 from runs import realtime
-from runs.use_cases.persistir_telemetria import PersistirTelemetria
 from runs.use_cases.registrar_evento import RegistrarEvento
+from runs.tasks import processar_telemetria
 
 
 class Command(BaseCommand):
@@ -48,11 +48,13 @@ class Command(BaseCommand):
 
         try:
             if msg.topic.endswith("/telemetria"):
-                snapshot = PersistirTelemetria().execute(payload=payload)
+                # Do not access DB here; enqueue Celery task to process telemetry
+                processar_telemetria.delay(payload)
             elif msg.topic.endswith("/evento"):
+                # events still handled synchronously via use case for now
                 snapshot = RegistrarEvento().execute(payload=payload)
+                realtime.publish_snapshot(snapshot["tentativa_id"], snapshot)
             else:
                 return
-            realtime.publish_snapshot(snapshot["tentativa_id"], snapshot)
         except Exception as exc:  # noqa: BLE001 — não derrubar o loop por 1 pacote ruim
             logger.error("Falha processando {}: {}", msg.topic, exc)

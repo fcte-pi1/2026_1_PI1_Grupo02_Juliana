@@ -26,3 +26,25 @@ def get_tentativa_em_curso(*, micromouse_id: str) -> Tentativa | None:
         .order_by("-id")
         .first()
     )
+
+
+def get_posicoes_tentativa(*, tentativa_id: str):
+    from runs.models import Posicao
+
+    return Posicao.objects.filter(tentativa_id=tentativa_id).order_by("passo")
+
+
+def get_trajetoria_tentativa(*, tentativa_id: str):
+    qs = get_posicoes_tentativa(tentativa_id=tentativa_id)
+    return [
+        {
+            "x": p.coordenada_x,
+            "y": p.coordenada_y,
+            "timestamp": p.timestamp,
+            "step": p.passo,
+            "orientation": p.orientacao,
+            "velocity": p.velocidade,
+            "battery": p.bateria,
+        }
+        for p in qs
+    ]

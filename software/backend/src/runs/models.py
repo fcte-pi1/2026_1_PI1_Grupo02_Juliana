@@ -84,6 +84,9 @@ class Posicao(BaseModel):
     coordenada_y = models.IntegerField()
     timestamp = models.DateTimeField()
     passo = models.PositiveIntegerField(default=0)
+    orientacao = models.CharField(max_length=4, blank=True, default="")
+    velocidade = models.FloatField(null=True, blank=True)
+    bateria = models.FloatField(null=True, blank=True)
 
     class Meta:
         ordering = ["passo"]

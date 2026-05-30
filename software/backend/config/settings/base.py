@@ -41,6 +41,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "django_filters",
     "django_celery_beat",
+    "channels",
 ]
 
 LOCAL_APPS = [
@@ -151,6 +152,14 @@ REST_FRAMEWORK = {
         "rest_framework.filters.OrderingFilter",
     ),
     "EXCEPTION_HANDLER": "core.errors.custom_exception_handler",
+}
+
+# ─── Channels / WebSocket ───────────────────────────────────────────────────
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {"hosts": [REDIS_URL]},
+    }
 }
 
 # ─── JWT ─────────────────────────────────────────────────────────────────────

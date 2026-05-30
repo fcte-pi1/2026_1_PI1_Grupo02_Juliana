@@ -12,6 +12,10 @@ from django.conf import settings
 
 from runs.models import Tentativa
 from runs.services.simulator import run_simulation
+from runs.use_cases.persistir_telemetria import PersistirTelemetria
+from runs import realtime
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 
 def _stop_key(run_id: str) -> str:
@@ -48,3 +52,54 @@ def simular_corrida(tentativa_id: str, hz: float = 2.0, steps: int = 48) -> bool
         tentativa.status = Tentativa.Status.ABORTADA
         tentativa.save(update_fields=["status", "updated_at"])
     return completed
+
+
+@shared_task(bind=True)
+def processar_telemetria(self, payload: dict) -> dict:
+    """Celery task: process MQTT payload and persist via use case.
+
+    Responsibilities:
+    - receive payload (dict)
+    - call the use case PersistirTelemetria
+    - publish snapshot to Redis (SSE bridge)
+    - forward a minimal update to the Channels group `telemetry` (WebSocket)
+    """
+    try:
+        usecase = PersistirTelemetria()
+        snapshot = usecase.execute(payload=payload)
+
+        # Publish snapshot to Redis channel for SSE consumers
+        tentativa_id = snapshot.get("tentativa_id")
+        if tentativa_id:
+            realtime.publish_snapshot(tentativa_id, snapshot)
+
+        # Send minimal event to Channels group for WebSocket clients
+        channel_layer = get_channel_layer()
+        event = {
+            "type": "telemetry.update",
+            "robot_id": payload.get("robot_id") or payload.get("robotId"),
+            "x": payload.get("position", {}).get("x") if isinstance(payload.get("position"), dict) else None,
+            "y": payload.get("position", {}).get("y") if isinstance(payload.get("position"), dict) else None,
+            "orientation": payload.get("orientation"),
+            "velocity": payload.get("velocity") or payload.get("speed"),
+            "battery": payload.get("battery"),
+            "step": None,
+        }
+        # try to extract step if available in snapshot or payload
+        try:
+            if isinstance(snapshot, dict):
+                # snapshot may include ts or other markers; extract passo from last pos
+                pass
+        except Exception:
+            pass
+
+        if channel_layer is not None:
+            async_to_sync(channel_layer.group_send)("telemetry", event)
+
+        return {"success": True, "snapshot": snapshot}
+    except Exception as exc:  # pragma: no cover - runtime errors handled in worker
+        # Log and re-raise so Celery records the failure
+        from loguru import logger
+
+        logger.exception("Error processing telemetry: {}", exc)
+        raise

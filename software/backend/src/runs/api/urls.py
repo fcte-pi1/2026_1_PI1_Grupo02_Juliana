@@ -6,6 +6,8 @@ from runs.api.views import TentativaViewSet
 
 router = DefaultRouter()
 router.register(r"tentativas", TentativaViewSet, basename="tentativa")
+router.register(r"micromouses", __import__("runs.api.views", fromlist=["MicromouseViewSet"]).MicromouseViewSet, basename="micromouse")
+router.register(r"labirintos", __import__("runs.api.views", fromlist=["LabirintoViewSet"]).LabirintoViewSet, basename="labirinto")
 
 urlpatterns = [
     # SSE fora do router (view Django plain, escapa do EnvelopeRenderer).
