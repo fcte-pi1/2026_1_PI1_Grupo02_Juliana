@@ -41,11 +41,13 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "django_filters",
     "django_celery_beat",
+    "channels",
 ]
 
 LOCAL_APPS = [
     "core.apps.CoreConfig",
     "healthcheck.apps.HealthcheckConfig",
+    "runs.apps.RunsConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -114,6 +116,15 @@ MINIO_BUCKET = config("MINIO_BUCKET", default="")
 MINIO_ROOT_USER = config("MINIO_ROOT_USER", default="")
 MINIO_ROOT_PASSWORD = config("MINIO_ROOT_PASSWORD", default="")
 
+# ─── MQTT (telemetria do robô) ───────────────────────────────────────────────
+# Broker Mosquitto. O firmware publica em micromouse/<id>/{telemetria,evento,status};
+# o backend assina via management command `mqtt_subscribe`.
+MQTT_HOST = config("MQTT_HOST", default="localhost")
+MQTT_PORT = config("MQTT_PORT", default=1883, cast=int)
+MQTT_BASE_TOPIC = config("MQTT_BASE_TOPIC", default="micromouse")
+MQTT_USERNAME = config("MQTT_USERNAME", default="")
+MQTT_PASSWORD = config("MQTT_PASSWORD", default="")
+
 # ─── Celery ──────────────────────────────────────────────────────────────────
 CELERY_BROKER_URL = config("CELERY_BROKER_URL", default="redis://localhost:6379/1")
 CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", default="redis://localhost:6379/2")
@@ -141,6 +152,14 @@ REST_FRAMEWORK = {
         "rest_framework.filters.OrderingFilter",
     ),
     "EXCEPTION_HANDLER": "core.errors.custom_exception_handler",
+}
+
+# ─── Channels / WebSocket ───────────────────────────────────────────────────
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {"hosts": [REDIS_URL]},
+    }
 }
 
 # ─── JWT ─────────────────────────────────────────────────────────────────────
