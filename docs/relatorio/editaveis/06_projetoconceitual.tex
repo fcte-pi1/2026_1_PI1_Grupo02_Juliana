@@ -2,106 +2,622 @@
 
 \section{Características gerais}
 
-\textcolor{red}{Descrever produto de forma geral. Apresentar itens teóricos sobre o projeto a serem aprofundados ou detalhados oportunamente.}
+O produto consiste em um robô autônomo que resolve labirintos. O robô pode resolver labirintos de distintos tamanhos e diversas configurações, além de transmitir em tempo real dados de consumo energético, velocidade e um mapa do labirinto. Essas informações são provenientes de sensores de distância infravermelhos e ultrasônicos, que enviam dados a um microcontrolador Raspberry Pi Pico, que os interpreta e calcula a distância do robô em relação as paredes. Além disso, para dados de consumo energético, o micromouse conta com sensores de tensão e corrente analógicos, que oferecem dados precisos do tempo de bateria restante. O Software é baseado nos projetos mais utilizados em competições de micromouse e foi projetado para resolver de maneira consistente cada problema apresentado. Por fim, o robô foi feito para ser compacto e robusto, capaz de navegar por entre os corredores apertados de maneira ágil e resistente a pequenos choques mecânicos em casos de acidentes.
+\begin{landscape}
+    \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{figuras/eap_pi1_correta.png}
+    \caption{Estrutura Analítica do Projeto (EAP)}
+    \label{fig:EAP}
+\end{figure}
+\end{landscape}
 
-\textcolor{red}{Apresentar e explicar a Estrutura Analítica do Projeto (EAP), tomando cuidado com a legibilidade da imagem. Se necessário, coloque a EAP dentro do comando ``\textsf{\textbackslash begin\{landscape\} \textbackslash end\{landscape\}}'' para que ela seja apresentada em uma página deitada.}
+
+
+
+% \textcolor{red}{Apresentar e explicar a Estrutura Analítica do Projeto (EAP), tomando cuidado com a legibilidade da imagem. Se necessário, coloque a EAP dentro do comando ``\textsf{\textbackslash begin\{landscape\} \textbackslash end\{landscape\}}'' para que ela seja apresentada em uma página deitada.}
 
 \section{Estrutura}
 
-\textcolor{red}{Apresentar desenho em CAD, indicar dimensões por lado/aresta/cota, indicar materiais utilizados e explicar o desenho e as decisões de projeto.}
+A estrutura mecânica do robô foi modelada em CAD com o objetivo de acomodar todos os componentes eletrônicos, motores e baterias em um volume compatível com as dimensões máximas previstas pelo regulamento IEEE Micromouse (25\,cm de comprimento e 25\,cm de largura). O chassi foi concebido em dois níveis de placa, unidos por espaçadores de nylon, de modo a separar os subsistemas de tração e energia no nível inferior dos subsistemas de controle e sensoriamento no nível superior.
+
+A Figura \ref{fig:cad_iso} apresenta a vista isométrica do robô, na qual é possível observar a disposição geral das peças. As duas baterias de 3,7\,V são fixadas ao chassi por abraçadeiras em U, posicionadas próximas ao centro geométrico do robô para favorecer o equilíbrio de massa. Os motores N20 com encoder de 6\,V também são travados por abraçadeiras dedicadas, garantindo o alinhamento das rodas em relação ao eixo transversal. Na parte frontal inferior, uma esfera deslizante atua como apoio livre, dispensando a necessidade de um terceiro motor ou roda direcional.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figuras/cad_micromouse_isometrico.jpeg}
+    \caption{Vista isométrica do modelo CAD do micromouse, com identificação dos principais componentes mecânicos.}
+    \label{fig:cad_iso}
+\end{figure}
+
+A Figura \ref{fig:cad_superior} mostra a vista superior, na qual são identificados a placa de componentes eletrônicos, o microcontrolador Raspberry Pi Pico W, a ponte H TB6612FNG responsável pelo acionamento dos motores, os sensores de distância VL53L0X e HC-SR04 utilizados na percepção das paredes do labirinto e o giroscópio MPU-6050 utilizado na correção da orientação. Os sensores frontais estão posicionados de forma a cobrir as três direções de interesse para a navegação, isto é, frente, esquerda e direita, conforme exigido pelo algoritmo de flood-fill descrito na Seção 6.5.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figuras/cad_micromouse_superior.jpeg}
+    \caption{Vista superior do modelo CAD do micromouse, com identificação da placa eletrônica e dos sensores.}
+    \label{fig:cad_superior}
+\end{figure}
+
+Os materiais previstos para a estrutura são placa de fenolite para a base eletrônica, conforme indicado no orçamento (Capítulo 7), chassi em chapa de MDF para as duas plataformas e fixadores de nylon nos espaçadores e abraçadeiras, escolhidos por sua leveza e custo reduzido. As dimensões finais e a cotagem detalhada serão consolidadas após a etapa de prototipagem inicial, prevista para a próxima fase do projeto.
 
 \section{Descrição de \textit{hardware}}
 
-\textcolor{red}{A descrição de \textit{hardware} no documento deve permitir que outras pessoas repliquem o produto proposto neste documento. Para isso, deve-se explicar de forma textual os principais sub-sistemas e as escolhas de projeto, além de indicar:}
+%textcolor{red}{A descrição de \textit{hardware} no documento deve permitir que outras pessoas repliquem o produto proposto neste documento. Para isso, deve-se explicar de forma textual os principais sub-sistemas e as escolhas de projeto, além de indicar:}
 
-\begin{itemize}
-    \item \textcolor{black}{ O diagrama de blocos é uma ferramenta importante dentro de nosso projeto de engenharia, através do qual vamos apresentar uma visão geral da estrutura e interconexão entre os sistemas dos componentes eletrônicos de nosso modelo de projeto. O Diagrama foi realizado no site Lucidchart. Este é definido por blocos, cada um deles representando uma parte específica do processo ou sistema, os quais estarão conectados por meio de setas que se encarregam de mostrar de forma clara a direção do fluxo de dados e as linhas de alimentação com cores diferentes para maior compreensão.}
+O diagrama de blocos é uma ferramenta importante dentro de nosso projeto de engenharia, através do qual vamos apresentar uma visão geral da estrutura e interconexão entre os sistemas dos componentes eletrônicos de nosso modelo de projeto. O Diagrama foi realizado no site Lucidchart. Este é definido por blocos, cada um deles representando uma parte específica do processo ou sistema, os quais estarão conectados por meio de setas que se encarregam de mostrar de forma clara a direção do fluxo de dados e as linhas de alimentação com cores diferentes para maior compreensão.
 
-\begin{figure}
+
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=1\linewidth]{figuras/Diagrama_de_blocos.png}
-    \caption{Diagrama de blocos mostrando os principais sistemas do robô}
+    \caption{Diagrama de blocos com os principais sistemas do robô.}
     \label{fig:diagrama_blocos}
 \end{figure}
-    %\item A lista de materiais \cite{bom}, que facilita a montagem do sistema, indicando tudo que deve ser adquirido. Aproveitem a lista de materiais para apresentarem o orçamento dos mesmos.
-    \item \textcolor{red}{ O esquemático \cite{esquematico}, que mostra as conexões elétricas entre os componentes. Deve-se indicar os componentes por nomes e símbolos, e as conexões entre eles, incluindo a pinagem dos componentes. Se o esquemático ficar muito grande, pode-se separa-lo em vários esquemáticos. A ligação em \textit{protoboard} não é considerada um esquemático adequado.}
-\end{itemize}
 
-\textcolor{red}{A Fig. \ref{fig:diagrama_blocos_e_esquematico} apresenta o diagrama de blocos e o esquemático de um circuito conversor de corrente alternada para corrente direta, a título de exemplo. Repare que o diagrama de blocos indica os subsistemas do circuito completo apresentado no esquemático.
-% Comecem com o diagrama de blocos, que é mais genérico, e depois indiquem os detalhes com a lista de materiais e os esquemáticos.
-}
+\par O esquemático, neste contexto, apresenta uma representação lógica e organizada dos componentes eletrônicos do projeto e da forma como eles se interligam por meio de símbolos universais. O foco é mostrar o fluxo de sinais e a conectividade elétrica entre os elementos do mapa lógico, fornecendo uma visão clara da arquitetura do hardware utilizado.
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.5\linewidth]{figuras/Exemplo-diagrama-de-blocos.png}
-    \includegraphics[width=0.5\linewidth]{figuras/Esquematico.png}
-    \caption{\textcolor{red}{Diagrama de blocos e esquemático de um circuito conversor de corrente alternada para corrente direta. Extraído de \cite{block_n_schematic}.}}
-    \label{fig:diagrama_blocos_e_esquematico}
+    \includegraphics[width=1\linewidth]{figuras/esquematico_novo.png}
+    \caption{Esquemático das conexões elétricas entre os componentes do robô.}
+    \label{fig:esquematico_novo}
 \end{figure}
 
 \section{Análise de consumo energético}
 
-\textcolor{red}{Com relação ao consumo energético do produto desenvolvido, será necessário apresentar cálculos de consumo dos diversos componentes utilizados e explicar as decisões de projeto para atender a estas demandas.}
+A primeira etapa do dimensionamento energético do Micro Mouse consistiu na 
+definição das características eletrônicas do sistema, com base nos equipamentos 
+propostos e listados na Tabela 1. Por meio de um balanço de cargas, foi possível 
+estimar o consumo total do circuito e, a partir disso, selecionar uma bateria 
+adequada às demandas da aplicação.
 
+\begin{center}
+\captionof{table}{Identificação dos Subsistemas Elétricos}
+\resizebox{0.95\textwidth}{!}{
+\begin{tabular}{|p{2.5cm}|p{4cm}|c|c|c|}
+\hline
+\textbf{Item} & \textbf{Especificação} & \textbf{Tensão (V)} & \textbf{Corrente (mA)} & \textbf{Energia consumida (J)} \\ \hline
 
-\begin{itemize}
-    \item \textcolor{red}{ \textbf{Identificação dos Subsistemas Elétricos:} liste todos os componentes que consumirão energia, como sensores, microcontroladores, atuadores e módulos de armazenamento de dados. Para cada componente, registre a tensão de operação (V), corrente média (mA) e tempo estimado de uso (s).}
-    \item \textcolor{red}{ \textbf{Cálculo da Energia Consumida por Componente:} utilize a fórmula: $E = V I t$, onde $E$ é a energia em joules, $V$ é a tensão em volts, $I$ a corrente em ampères e $t$ o tempo em segundos. Realize esse cálculo para cada componente do sistema.}
-    \item \textcolor{red}{ \textbf{Estimativa do Consumo Total de Energia:} some as energias de todos os componentes para obter o consumo energético total estimado do sistema por lançamento.}
-    \item \textcolor{red}{ \textbf{Escolha da Fonte de Alimentação:} com base no consumo total, converta para watt-hora: 1 Wh = 3600 J. Adicione e justifique uma margem de segurança (pesquisar o que é usual para este tipo de sistema) e selecione uma bateria ou fonte que supra a demanda.}
-    \item \textcolor{red}{ \textbf{Planejamento do Circuito de Alimentação:} analise a necessidade de inclusão de reguladores de tensão, proteções contra sobrecorrente, e isolamento para atuadores. Como as oscilações de tensão serão controladas?}
-    \item \textcolor{red}{ \textbf{Monitoramento via \textit{software}:} implemente, no \textit{software} embarcado, rotinas para medir a tensão da bateria e registrar dados de tempo de operação. Colete os dados para análise.}
-    \item \textcolor{red}{ \textbf{Validação com Testes Reais:} realize testes de campo para comparar o consumo estimado com o real. Ajuste a capacidade da fonte se necessário e refine o software de coleta de dados. Justifique a diferença de resultados (real x teórica), de acordo com a literatura.}
-\end{itemize}
+Sensor & VL53LOX & 2,8 & 150 & 7560 \\ \hline
+Sensor & HCSRO4 & 5 & 2 & 180 \\ \hline
+Sensor & TB6612FNG & 2,7 & 1200 & 34992 \\ \hline
+Sensor & MPU-6050 & 3,3 & 3,6 & 42,768 \\ \hline
+Motor & GA12-N20 & 3 & 100 & 2160 \\ \hline
+Placa & Placa de Fenolite & 0 & 0 & 0 \\ \hline
+Placa & Perclorato de Ferro & 0 & 0 & 0 \\ \hline
+Placa & Ferro de Solda & 0 & 0 & 0 \\ \hline
+Controlador & Raspberry Pi Pico W & - & - & 7,2 \\ \hline
+LED & --- & 2 & 20 & 0,04 \\ \hline
+
+\end{tabular}
+}
+\end{center}
+
+Para o acionamento dos motores de tração modelo GA12-N20, foi adotado o driver 
+de motor TB6612FNG, componente amplamente utilizado em sistemas de robótica 
+embarcada por suportar a corrente demandada e permitir o controle bidirecional 
+de velocidade e sentido de rotação de forma simples e eficiente. Em comparação 
+com drivers convencionais baseados em transistores bipolares, o TB6612FNG 
+apresenta menor dissipação de calor, maior eficiência energética e dimensões 
+reduzidas, características especialmente vantajosas em robôs móveis de pequeno 
+porte \cite{misra2018}.
+
+Como sensores de proximidade, foram incorporadas duas tecnologias distintas: o 
+sensor de distância por tempo de voo VL53L0X e o sensor ultrassônico HCSR04. 
+Essa abordagem dual confere flexibilidade ao sistema, permitindo que equipes 
+futuras avaliem e selecionem a tecnologia mais adequada durante os testes e o 
+desenvolvimento dos algoritmos de navegação. Os sensores foram dispostos nas 
+três direções principais — frontal e laterais —, ampliando o campo de percepção 
+do robô e possibilitando uma navegação mais precisa no labirinto (MISRA; ADLER, 
+2018). Para o monitoramento da orientação e movimentação do robô, foi 
+incorporado o sensor inercial MPU-6050, que integra acelerômetro e giroscópio de 
+três eixos, permitindo a estimativa de posição e o auxílio no controle de trajetória 
+durante a navegação \cite{feitosa2025}.
+
+Para o monitoramento do sistema elétrico em tempo real, foram integrados um 
+módulo sensor de corrente com capacidade de até 5 A e um módulo sensor de 
+tensão com faixa de operação de 0 a 25 V. Esses sensores permitem acompanhar 
+continuamente o estado da bateria e o consumo dos componentes durante a 
+operação, contribuindo para a segurança do sistema e para a análise de 
+desempenho energético \cite{rashid2014}.
+
+O microcontrolador selecionado foi o Raspberry Pi Pico W, em razão de seu bom 
+desempenho de processamento, ampla documentação disponível na literatura e, 
+principalmente, pela conectividade nativa Wi-Fi \cite{feitosa2025}.
+
+Com os componentes e seus respectivos consumos devidamente levantados, 
+conforme apresentado na Tabela X, o consumo total estimado do sistema é de 
+aproximadamente 1,8 A em operação nominal. Esse valor é dominado pelo driver 
+de motor TB6612FNG, responsável por cerca de 65\% do consumo total do circuito. 
+Procedeu-se então ao dimensionamento da fonte de energia, calculando a 
+capacidade necessária da bateria com base no consumo estimado de cada 
+componente ao longo do tempo de operação esperado.
+
+Sobre esse valor, foi aplicada uma margem de segurança de 50\%, prática 
+recomendada em projetos de sistemas embarcados \cite{rashid2014}, justificada por 
+três fatores principais neste projeto. O primeiro é o comportamento dos motores de 
+corrente contínua GA12-N20, que podem demandar correntes de partida e de 
+manobra de três a cinco vezes superiores à corrente nominal, elevando o consumo 
+total do sistema para valores próximos de 3,5 A a 4 A em situações de aceleração 
+brusca ou mudança de direção no labirinto. O segundo fator é a degradação natural 
+das células LiPo ao longo dos ciclos de carga e descarga: após 20 a 30 ciclos, a 
+capacidade real da bateria pode ser reduzida para 85 a 90\% do valor nominal, 
+comprometendo a autonomia do sistema caso não haja uma reserva energética 
+adequada. O terceiro fator são as eventuais imprecisões nas especificações 
+nominais dos componentes, que podem diferir do consumo real em condições de 
+operação \cite{rashid2014}.
+
+Com base nesse critério, optou-se por duas baterias de polímero de lítio (LiPo) de 
+3,7 V e capacidade de 3000 mAh cada, conectadas em série, resultando em uma 
+tensão nominal de 7,4 V e capacidade útil efetiva de 2000 mAh após a aplicação da 
+margem de segurança. Essa configuração proporciona uma autonomia estimada 
+de operação contínua superior a 60 minutos — valor significativamente acima do 
+tempo médio de uma rodada na competição Micro Mouse —, o que confere ao 
+sistema confiabilidade energética adequada para a aplicação proposta. A escolha 
+pela tecnologia LiPo justifica-se pela sua elevada densidade energética, baixo peso 
+e compatibilidade com sistemas embarcados de pequeno porte \cite{feitosa2025}.
+
+Após a montagem física do protótipo, deverão ser realizados testes experimentais 
+para validação do modelo energético teórico adotado. Durante esses ensaios, 
+serão monitorados parâmetros como corrente média consumida, temperatura dos 
+reguladores de tensão, estabilidade do sistema e autonomia prática da bateria. Os 
+resultados obtidos permitirão comparar os valores teóricos e reais de consumo 
+energético, possibilitando ajustes futuros tanto no dimensionamento da fonte 
+quanto nas estratégias de controle.
+
+Em síntese, os cálculos realizados com base no esquemático apresentado na 
+Tabela 1 permitem verificar o comportamento energético do sistema ao longo da 
+operação, relacionando o tempo de funcionamento do Micro Mouse ao consumo 
+estimado de energia, o que fornece subsídios para a avaliação da autonomia e do 
+desempenho do robô durante as competições.
+
+%
+%\textcolor{red}{Com relação ao consumo energético do produto desenvolvido, será necessário apresentar cálculos de consumo dos diversos componentes utilizados e explicar as decisões de projeto para atender a estas demandas.}
+%
+%
+%\begin{itemize}
+%    \item \textcolor{red}{ \textbf{Identificação dos Subsistemas Elétricos:} liste todos os componentes que consumirão energia, como sensores, microcontroladores, atuadores e módulos de armazenamento de dados. Para cada componente, registre a tensão de operação (V), corrente média (mA) e tempo estimado de uso (s).}
+%    \item \textcolor{red}{ \textbf{Cálculo da Energia Consumida por Componente:} utilize a fórmula: $E = V I t$, onde $E$ é a energia em joules, $V$ é a tensão em volts, $I$ a corrente em ampères e $t$ o tempo em segundos. Realize esse cálculo para cada componente do sistema.}
+%    \item \textcolor{red}{ \textbf{Estimativa do Consumo Total de Energia:} some as energias de todos os componentes para obter o consumo energético total estimado do sistema por lançamento.}
+%    \item \textcolor{red}{ \textbf{Escolha da Fonte de Alimentação:} com base no consumo total, converta para watt-hora: 1 Wh = 3600 J. Adicione e justifique uma margem de segurança (pesquisar o que é usual para este tipo de sistema) e selecione uma bateria ou fonte que supra a demanda.}
+%    \item \textcolor{red}{ \textbf{Planejamento do Circuito de Alimentação:} analise a necessidade de inclusão de reguladores de tensão, proteções contra sobrecorrente, e isolamento para atuadores. Como as oscilações de tensão serão controladas?}
+%    \item \textcolor{red}{ \textbf{Monitoramento via \textit{software}:} implemente, no \textit{software} embarcado, rotinas para medir a tensão da bateria e registrar dados de tempo de operação. Colete os dados para análise.}
+%    \item \textcolor{red}{ \textbf{Validação com Testes Reais:} realize testes de campo para comparar o consumo estimado com o real. Ajuste a capacidade da fonte se necessário e refine o software de coleta de dados. Justifique a diferença de resultados (real x teórica), de acordo com a literatura.}
+%\end{itemize}
 
 \section{Descrição de \textit{software}}
 
-\textcolor{red}{Itens fundamentais:}
+%\textcolor{red}{Itens fundamentais:}
+%
+%\begin{itemize}
+%    \item \textcolor{red}{ \textbf{Diagrama Atividades UML:}  descrever e explicar o fluxo do comportamento funcional do produto proposto, evidenciando, de forma clara e estruturada, como as atividades são executadas, em que ordem e sob quais condições. Esse diagrama permite compreender o funcionamento dinâmico do sistema, destacando:}
+%
+%    \begin{itemize}
+%        \item \textcolor{red}{ os principais atores (usuários ou sistemas externos) envolvidos no processo;
+%        \item as atividades de negócio realizadas por cada ator ou pelo próprio sistema;
+%        \item os insumos (entradas) necessários para a execução das atividades;
+%        \item os resultados (saídas) gerados ao longo do fluxo;
+%        \item os pontos de decisão, paralelismo e sincronização das atividades;
+%        \item Entre as notações mais relevantes, destacam-se o estado iniciail e final, atividades, nós de decisão e junção, barras de bifurcação, Raias (\textit{swimlanes}) e Fluxos de controle. }
+%        \end{itemize}
+%
+%    \item \textcolor{red}{\textbf{\textit{Backlog} do Produto}}
+%    \begin{itemize}
+%        \item \textcolor{red}{ Descrever os   requisitos funcionais (RF) com a técnica de documentação e especificação de história de usuário (HU);}
+%        \item \textcolor{red}{ Descrever os requisitos não-funcionais (RNF) de forma objetiva; Mais facilmente, mais rapidamente, mais responsivo, de fácil uso, são descrições subjetivas não-válidas. Um exemplo de requisito não-funcional de desempenho: ``a página deve carregar em até 5s quando em conexão 4G''. }
+%        \item \textcolor{red}{ Ao descrever os requisitos (RF e RNF), usar a  classificação MoSCoW (\textit{Must have}, \textit{Should have} e \textit{Could have}),  para auxiliar a priorização dos itens do backlog.}
+%        \item \textcolor{red}{ Protótipos de interfafe gráfica do \textit{software} em alta fidelidade.}
+%        \begin{itemize}
+%            \item \textcolor{red}{\textbf{ Todas HUs devem conter sua descrição (Eu-Como-Para), critérios de aceitação e protótipos de interface, documentadas no github. }}
+%            \end{itemize} 
+%
+%        \end{itemize}
+%
+%    \item \textcolor{red}{ \textbf{Descrição da arquitetura da solução de \textit{software} proposta:}}
+%    \begin{itemize}
+%    
+%        \item \textcolor{red}{ Esta subseção deve contemplar o documento de arquitetura do sistema e deve ser estruturado segundo as visões (4+1) previstas no processo unificado (UP): lógica, de processos;  implementação, implantação e dados (substuirá a visão de casos de uso).}
+%        
+%        \item \textcolor{red}{ Propósito do \textit{software} (qual o seu papel no sistema);}
+%        \item \textcolor{red}{ Padrão adotado: MVC, MVP, Microsserviços, Monolítico, etc (Justificar);}
+%        \item \textcolor{red}{ Linguagens de programação: Java, Python, C\#, JavaScript, etc.}
+%        \item \textcolor{red}{ \textit{Frameworks} e bibliotecas: Spring Boot, .NET Core, React, Angular, Django, etc.}
+%            \item \textcolor{red}{ Banco de dados: Relacional (PostgreSQL, MySQL, etc) X NãoSQL (MongoDB,etc). }
+%        \item \textcolor{red}{Persistência de dados: Modelo Entidade‑Relacionamento (MER) e seu respectivo Diagrama Entidade‑Relacionamento (DER), aplicáveis quando a solução utiliza banco de dados relacional; alternativamente, diagrama de estrutura de documentos, empregado nos casos em que a arquitetura adota banco de dados não relacional.}
+%         \end{itemize}
+
+    \subsection{Diagrama de Atividades UML}
+
+    Esta subseção apresenta o comportamento dinâmico do sistema por meio de dois diagramas de atividades em notação UML. O primeiro modela o fluxo da corrida do micromouse no labirinto, e o segundo modela o fluxo de consulta a relatórios históricos pelo juiz ou usuário no sistema web. Os dois casos de uso foram separados por terem atores e gatilhos independentes.
+
+    A modelagem reflete uma proposta de arquitetura para a frente de \textit{software}, ainda sujeita a alinhamento com a dupla e com o restante da equipe. A descrição detalhada da solução de \textit{software} (padrão arquitetural, linguagens, \textit{frameworks} e visões 4+1) será apresentada em subseção própria.
+
+    \subsubsection{Fluxo da corrida}
+
+    O fluxo começa com a inicialização dos periféricos, a calibração dos sensores e a conexão à rede WiFi. Após o \textit{handshake} com o \textit{broker} MQTT (Mosquitto), o \textit{firmware} executa um \textit{fork} que dispara quatro tarefas em paralelo, distribuídas entre os dois núcleos do Raspberry Pi Pico W.
+
+    O Core 1 concentra as tarefas de tempo real:
+
+    \begin{itemize}
+        \item \textbf{Tarefa de aquisição:} lê os sensores ToF e os \textit{encoders} dos motores e publica as leituras em um buffer compartilhado.
+        \item \textbf{Tarefa de algoritmo:} consome do buffer, atualiza a matriz interna do labirinto, calcula a próxima célula a visitar e aciona os motores. Em caso de colisão ou falha, entra em estado de repouso até o reparo ser sinalizado.
+        \item \textbf{ISR de \textit{timer}} (aproximadamente 1\,kHz): executa o controle PID dos motores em frequência fixa, reduzindo o \textit{jitter} do escalonamento.
+    \end{itemize}
+
+    O Core 0, dedicado às tarefas de comunicação, executa a \textit{stack} WiFi (módulo CYW43439 do Pico W, conectado por SPI) e a tarefa de telemetria. Esta lê \textit{snapshots} do buffer compartilhado, empacota o estado atual (posição, delta da matriz, velocidade, bateria) e publica no tópico \texttt{micromouse/\{id\}/telemetria} com QoS 1. Ao receber a sinalização de desafio cumprido, a mesma tarefa publica uma mensagem final em \texttt{micromouse/\{id\}/evento} (QoS 1, \textit{retained}).
+
+    O \textit{backend} atua como \textit{subscriber} dos tópicos MQTT: recebe cada pacote, valida, persiste no banco de dados e empurra o evento para o \textit{dashboard} via WebSocket ou SSE. Ao receber o evento de desafio cumprido, consolida as métricas finais e registra o resultado da corrida.
+
+    A Figura \ref{fig:diagrama_atividade_corrida} apresenta o diagrama completo, com as raias dos dois núcleos do Raspberry Pi Pico W, o buffer compartilhado, o \textit{broker} MQTT, o \textit{backend} e o \textit{dashboard}.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{figuras/diagrama_atividade_corrida.png}
+        \caption{Diagrama de atividades UML: fluxo da corrida do micromouse.}
+        \label{fig:diagrama_atividade_corrida}
+    \end{figure}
+
+    \subsubsection{Fluxo de consulta a relatórios}
+
+    No segundo caso de uso, o juiz ou usuário solicita um relatório no \textit{dashboard} aplicando filtros como labirinto e data. O \textit{dashboard} chama a API do \textit{backend}, que consulta o banco de dados e monta o \textit{payload} contendo métricas históricas e trajetórias. O resultado é exibido no \textit{dashboard}. A Figura \ref{fig:diagrama_atividade_relatorio} apresenta esse fluxo.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.85\linewidth,height=0.85\textheight,keepaspectratio]{figuras/diagrama_atividade_relatorio.png}
+        \caption{Diagrama de atividades UML: fluxo de consulta a relatórios históricos.}
+        \label{fig:diagrama_atividade_relatorio}
+    \end{figure}
+
+%=========================================================================================    
+    \subsection{Backlog do Produto}
+
+    Para identificar as principais necessidades do sistema, foram levantados os requisitos funcionais e não funcionais do micromouse, que descrevem tanto os comportamentos esperados quanto os critérios de qualidade e desempenho do sistema. Além disso, foi utilizada a técnica de priorização MoSCoW para classificar os requisitos de acordo com seu nível de importância para o desenvolvimento do projeto. Essa técnica organiza os requisitos em quatro categorias: Must Have, para requisitos essenciais; Should Have, para requisitos importantes; Could Have, para funcionalidades desejáveis; e Won’t Have, para funcionalidades que não serão implementadas na versão atual do projeto.
+    
+    A tabela abaixo apresenta os requisitos elicitados e suas respectivas classificações segundo a técnica MoSCoW.
+
+    \begin{center}
+    \captionof{table}{Requisitos funcionais de navegação.}
+    \resizebox{0.95\textwidth}{!}{
+    \begin{tabular}{|p{6cm}|p{9cm}|c|}
+    \hline
+    \textbf{Requisito} & \textbf{Descrição} & \textbf{MoSCoW} \\ \hline
+
+    RF01 - \textbf{Mover-se para frente} & O micromouse deverá ser capaz de mover-se para frente durante a navegação no labirinto. & Must \\ \hline
+
+    RF02 - \textbf{Rotacionar em até 180°} & O micromouse deverá ser capaz de realizar rotações de até 180° para alterar sua direção no labirinto. & Must \\ \hline
+
+    RF03 - \textbf{Reconhecer paredes} & O sistema deverá ser capaz de reconhecer paredes ao redor do micromouse durante a navegação. & Must \\ \hline
+
+    RF04 - \textbf{Medir distância até a parede} & O sistema deverá medir a distância entre o micromouse e as paredes do labirinto. & Must \\ \hline
+
+    RF05 - \textbf{Identificar o caminho livre} & O micromouse deverá identificar caminhos livres disponíveis para navegação no labirinto. & Must \\ \hline
+
+    RF06 - \textbf{Encontrar o caminho até o centro do labirinto} & O micromouse deverá encontrar o caminho até o centro do labirinto de forma autônoma. & Must \\ \hline
+
+    RF07 - \textbf{Detectar a chegada ao objetivo do labirinto} & O sistema deverá detectar quando o micromouse alcançar o objetivo do labirinto. & Must \\ \hline
+
+    RF08 - \textbf{Evitar colisões com as paredes} & O micromouse deverá evitar colisões com as paredes durante sua navegação. & Must \\ \hline
+
+    RF09 - \textbf{Controlar os motores de locomoção do micromouse} & O sistema deverá controlar os motores responsáveis pela locomoção do micromouse. & Must \\ \hline
+
+    RF10 - \textbf{Adquirir dados dos sensores de distância} & O sistema deverá adquirir dados dos sensores de distância utilizados pelo micromouse. & Must \\ \hline
+
+    \end{tabular}
+    }
+
+
+    \label{tab:navegacao}
+    \end{center}
+
+    \vspace{0.5cm}
+
+    \begin{center}
+    \captionof{table}{Requisitos funcionais de telemetria.}
+    \resizebox{0.95\textwidth}{!}{
+    \begin{tabular}{|p{6cm}|p{9cm}|c|}
+    \hline
+    \textbf{Requisito} & \textbf{Descrição} & \textbf{MoSCoW} \\ \hline
+
+    RF11 - \textbf{Calcular velocidade média} & O sistema deverá calcular a velocidade média do micromouse durante a execução. & Must \\ \hline
+
+    RF12 - \textbf{Calcular consumo de energia} & O sistema deverá calcular o consumo de energia do micromouse durante sua operação. & Must \\ \hline
+
+    RF13 - \textbf{Salvar o caminho percorrido} & O sistema deverá salvar o trajeto percorrido pelo micromouse durante a navegação. & Must \\ \hline
+
+    RF14 - \textbf{Mapear o labirinto} & O sistema deverá gerar um mapa do labirinto durante a execução. & Must \\ \hline
+
+    RF15 - \textbf{Armazenar o mapa descoberto} & O sistema deverá armazenar o mapa descoberto pelo micromouse. & Must \\ \hline
+
+    RF16 - \textbf{Exibir dados de telemetria em tempo real} & O sistema deverá exibir os dados de telemetria do micromouse em tempo real. & Must \\ \hline
+
+    RF17 - \textbf{Enviar dados de telemetria em tempo real} & O micromouse deverá enviar os dados de telemetria em tempo real para o sistema web. & Must \\ \hline
+
+    RF18 - \textbf{Monitorar o nível da bateria do sistema} & O sistema deverá monitorar o nível da bateria do micromouse. & Must \\ \hline
+
+    RF19 - \textbf{Registrar o tempo total de operação do micromouse} & O sistema deverá registrar o tempo total de operação do micromouse. & Must \\ \hline
+
+    RF20 - \textbf{Indicar o status de conclusão do desafio} & O sistema deverá indicar o status de conclusão do desafio após a execução do labirinto. & Must \\ \hline
+
+    RF21 - \textbf{Monitorar a tensão da alimentação elétrica} & O sistema deverá monitorar a tensão da alimentação elétrica do micromouse. & Must \\ \hline
+
+    RF22 - \textbf{Controlar remotamente a execução do micromouse} & O sistema deverá permitir iniciar e interromper remotamente a execução do micromouse. & Must \\ \hline
+
+    \end{tabular}
+    }
+
+
+    \label{tab:telemetria}
+    \end{center}
+
+    \vspace{0.5cm}
+
+    \begin{center}
+    \captionof{table}{Requisitos não funcionais do micromouse.}
+    \resizebox{0.95\textwidth}{!}{
+    \begin{tabular}{|p{6cm}|p{9cm}|c|}
+    \hline
+    \textbf{Requisito} & \textbf{Descrição} & \textbf{MoSCoW} \\ \hline
+
+    RNF01 - \textbf{Funcionamento autônomo} & O micromouse deverá funcionar de forma autônoma durante toda a execução do labirinto. & Must \\ \hline
+
+    RNF02 - \textbf{Comunicação sem fio} & A comunicação entre o micromouse e o sistema de telemetria deverá ocorrer sem o uso de conexões cabeadas. & Must \\ \hline
+
+    RNF03 - \textbf{Tempo de carregamento da telemetria} & A página de telemetria deverá carregar em até 5 segundos. & Must \\ \hline
+
+    RNF04 - \textbf{Latência da telemetria} & A latência entre o envio e a exibição dos dados de telemetria deverá ser inferior a 1 segundo. & Must \\ \hline
+
+    RNF05 - \textbf{Frequência de atualização} & O sistema deverá atualizar os dados de telemetria a cada 500 ms. & Must \\ \hline
+
+    RNF06 - \textbf{Resistência a variações de iluminação} & O micromouse deverá continuar operando mesmo com variações de iluminação no ambiente. & Must \\ \hline
+
+    RNF07 - \textbf{Precisão da medição} & O sistema deverá medir distâncias com precisão mínima de 1 cm. & Must \\ \hline
+
+    RNF08 - \textbf{Autonomia energética} & O micromouse deverá possuir autonomia suficiente para concluir o labirinto em menos de 30 minutos. & Should \\ \hline
+
+    RNF09 - \textbf{Dimensões máximas} & O micromouse deverá possuir dimensões inferiores a 18 cm × 18 cm. & Must \\ \hline
+
+    RNF10 - \textbf{Estabilidade elétrica} & O sistema deverá operar sem reinicializações causadas por oscilações de tensão durante a execução do labirinto. & Must \\ \hline
+
+    RNF11 - \textbf{Resistência a colisões} & O micromouse deverá continuar operacional após 10 colisões leves consecutivas. & Should \\ \hline
+
+    \end{tabular}
+    }
+
+    \label{tab:rnf}
+    \end{center}
+
+    \subsection{Histórias de Usuário}
+      As histórias de usuário foram definidas a partir dos requisitos funcionais e não funcionais levantados para o sistema. Todas as histórias foram documentadas juntamente com seus respectivos critérios de avaliação no repositório do GitHub do projeto. Além disso, a equipe desenvolveu um protótipo para as histórias relacionadas aos requisitos de telemetria, o qual pode ser visualizado nas respectivas issues de telemetria do repositório.
+    \begin{center}
+
+    \begin{multicols}{2}
+    \begin{itemize}
+        \item HU01 -- Movimentação frontal
+        \item HU02 -- Rotação do micromouse
+        \item HU03 -- Reconhecimento de paredes
+        \item HU04 -- Medição de distância
+        \item HU05 -- Identificação de caminhos livres
+        \item HU06 -- Navegação até o objetivo
+        \item HU07 -- Detecção de chegada ao objetivo
+        \item HU08 -- Prevenção de colisões
+        \item HU09 -- Cálculo de velocidade média
+        \item HU10 -- Cálculo de consumo energético
+        \item HU11 -- Salvamento do caminho percorrido
+        \item HU12 -- Mapeamento do labirinto
+        \item HU13 -- Armazenamento do mapa
+        \item HU14 -- Exibição de telemetria
+        \item HU15 -- Envio de telemetria
+        \item HU16 -- Monitoramento da bateria
+        \item HU17 -- Registro de tempo de operação
+        \item HU18 -- Indicação de conclusão do desafio
+        \item HU19 -- Controle dos motores
+        \item HU20 -- Aquisição de dados dos sensores
+        \item HU21 -- Monitoramento da alimentação elétrica
+        \item HU22 -- Controle remoto da execução
+    \end{itemize}
+    \end{multicols}        
+    \end{center}
+
+
+
+
+%=========================================================================================    
+    \subsection{Arquitetura de Software}
+
+    O software embarcado e seus serviços de apoio têm como propósito permitir que o robô Micromouse percorra autonomamente um labirinto modular 4x4 e 8x8, explorando suas paredes por meio de sensoriamento ativo, atualizando um mapa interno, decidindo o próximo movimento por algoritmo flood-fill e executando o deslocamento por controle de motores. Além disso, os serviços de apoio, compostos por backend e dashboard, permitem uma operação supervisionada, como visualizar a trajetória, as leituras e o estado interno do sistema em tempo de execução.
+
+    A arquitetura adotada é distribuída em quatro componentes principais, integrados por meio de um message broker, com o objetivo de desacoplar o produtor, que é o robô, do consumidor, que é o backend. O nó embarcado corresponde ao firmware executado no microcontrolador Raspberry Pi Pico W, baseado no RP2040 dual-core, sendo responsável pelas malhas de tempo crítico, como sensoriamento, algoritmo de navegação, controle dos motores e publicação de telemetria. O broker MQTT, implementado com Mosquitto, faz a mediação da comunicação assíncrona entre o robô e o backend, utilizando entrega confiável com QoS 1 e retenção de mensagens de estado. O backend atua como serviço HTTP que assina os tópicos MQTT, persiste os dados de execução, expõe uma API REST para consultas históricas e propaga atualizações ao dashboard por meio de um canal push. Por fim, o frontend é uma single-page application de dashboard, acessada pelo navegador, voltada à operação supervisionada e à análise dos dados do robô.
+
+    Essa separação arquitetural se justifica porque o microcontrolador não possui recursos suficientes para servir interfaces web, porque os requisitos de tempo crítico do controle dos motores inviabilizam o acoplamento da malha de controle a operações de rede e porque o uso de um broker MQTT entre robô e backend fornece entrega garantida com QoS 1, persistência de estado por mensagens retained, suporte nativo a múltiplos consumidores, como backend, logger e monitor de debug, além de ser um padrão consolidado em aplicações de IoT.
+
+    No firmware, será utilizada a linguagem C++17 com o Pico SDK, FreeRTOS e cliente MQTT. Os drivers de baixo nível serão implementados em C, seguindo o padrão C99, com cabeçalhos C consumidos pelo firmware em C++. O broker MQTT será implementado com Eclipse Mosquitto em Docker. O backend será desenvolvido em Python 3.14, utilizando Django 6, Django REST Framework, Celery com Redis para o worker subscriber MQTT, a biblioteca httpx e gerenciamento por uv. O frontend será desenvolvido em TypeScript com modo strict, usando React 19, Vite, Mantine v9, TanStack Query v5, React Router v7 e gerenciamento por pnpm. A autenticação será baseada em JWT, com djangorestframework-simplejwt, e o banco de dados será PostgreSQL 18, aproveitando suporte nativo a UUID v7.
+
+    A descrição da arquitetura segue o modelo 4+1 proposto por Kruchten. Assim, a arquitetura é descrita a partir das visões lógica, de processos, de implementação, de implantação e de dados.
+
+    Na visão lógica, o sistema é decomposto em componentes que encapsulam responsabilidades funcionais, independentemente do nó físico ou da linguagem em que cada componente será implementado. O componente de sensoriamento abstrai os sensores HC-SR04, VL53L0X e MPU-6050, fornecendo leituras de distância de paredes nas direções frontal, esquerda e direita, além de orientação angular já tratada. Para o HC-SR04, prevê-se o uso de filtro de média móvel, enquanto a fusão sensorial para integração da IMU ainda está a confirmar. O componente de localização mantém a estimativa atual da posição do robô em coordenadas de célula do labirinto, representadas por x e y, bem como sua orientação cardinal, isto é, norte, sul, leste ou oeste, atualizadas por odometria dos encoders e correção pela IMU.
+
+    O componente de mapeamento representa o labirinto como uma matriz 4x4, ou 8x8, em que cada célula possui quatro flags de parede, correspondentes a norte, sul, leste e oeste, além dos valores de flood. O componente de planejamento, baseado em flood-fill, utiliza o mapa atual para calcular o próximo movimento alvo, considerando a célula central como objetivo. O controle de movimento converte o movimento alvo em sinais PWM para o driver TB6612FNG, fechando a malha sobre os encoders dos motores N20. Ainda está a confirmar se esse controle será implementado como PID, P-only ou bang-bang, bem como os ganhos que deverão ser calibrados.
+
+    A comunicação embarcada, realizada por um publisher MQTT, empacota o estado do robô, incluindo posição, matriz delta, velocidade e bateria, publicando essas informações no broker MQTT em tópicos organizados por identificador de robô. A decisão arquitetural é enviar a matriz delta já calculada, e não os dados crus dos sensores, evitando duplicação de lógica entre firmware e backend. O broker MQTT, implementado com Mosquitto, faz a mediação da comunicação entre robô e backend com QoS 1 e mensagens retained para eventos de estado. O serviço de operação, implementado no backend Django, possui um worker Celery que assina os tópicos MQTT, processa as mensagens recebidas por meio de use cases, persiste runs, leituras e mapas no PostgreSQL, expõe uma API REST em /api/v1/ e fornece um canal WebSocket para o frontend. O dashboard de operação, desenvolvido em React, visualiza o labirinto, a posição do robô, a trajetória percorrida, as leituras em tempo real e os controles de operação. O diagrama de componentes correspondente deverá ser apresentado na Figura da visão lógica, ainda a inserir no diretório de figuras.
+
+    Na visão de processos, descreve-se como os componentes lógicos são realizados em tasks, threads ou processos em tempo de execução, considerando seus períodos, prioridades e mecanismos de sincronização. No firmware embarcado, o Raspberry Pi Pico W possui dois núcleos no RP2040, identificados como Core 0 e Core 1. Como decisão de projeto, a carga é distribuída de modo que o Core 1 execute as tarefas de tempo real, incluindo aquisição de sensores, algoritmo de navegação flood-fill e uma ISR de timer dedicada ao controle dos motores, com frequência entre 1 e 5 kHz, ainda a calibrar. O uso de ISR para o controle isola essa rotina do scheduler do FreeRTOS, garantindo frequência fixa. Já o Core 0 executa as tarefas de comunicação, incluindo a stack Wi-Fi do módulo CYW43439, acessado por SPI, o cliente MQTT publisher e a tarefa de telemetria. Essa separação isola o caminho crítico de controle das latências variáveis da comunicação sem fio.
+
+    Os componentes de aquisição, algoritmo e telemetria não acessam diretamente os sensores de forma concorrente, para evitar contenção no barramento I2C. Em vez disso, a aquisição lê o sensor uma única vez e publica os dados em um buffer compartilhado, implementado com FreeRTOS Queue e Mutex. A partir desse buffer, o algoritmo e a telemetria consomem os dados independentemente.
+
+    No firmware do Raspberry Pi Pico W, a tarefa de aquisição atua como produtora no Core 1, com período ditado pelo sensor mais lento, prioridade alta e escrita no buffer compartilhado. O sensor HC-SR04 opera com intervalo mínimo de 60 ms entre leituras consecutivas, equivalente a no máximo 16 Hz, para evitar leituras falsas causadas por eco residual. O sensor VL53L0X opera com período estimado de 50 ms, ou 20 Hz, enquanto o sensor MPU-6050 opera com período estimado de 10 ms, ou 100 Hz. O algoritmo de navegação executa no Core 1 sob demanda, com prioridade média, lendo o buffer e escrevendo no mapa. A ISR de PID dos motores executa no Core 1 com frequência entre 1 e 5 kHz por timer dedicado, ficando isolada do scheduler. A tarefa de telemetria executa no Core 0 a cada 100 a 200 ms, equivalente a 10 a 30 Hz, com prioridade baixa, lendo o buffer e publicando via MQTT. A stack Wi-Fi e o cliente MQTT executam no Core 0 em modelo orientado a eventos, com prioridade média. Todos esses períodos são estimativas iniciais de projeto e estão sujeitos a calibração durante a implementação.
+
+    No backend, três processos cooperam. O primeiro é o web server, composto por Gunicorn e Django, responsável por servir a API REST em /api/v1/. O segundo é o worker Celery, que executa em paralelo o subscriber MQTT, consumindo mensagens dos tópicos micromouse/+/telemetria e micromouse/+/evento, disparando use cases de persistência e propagação ao frontend. O terceiro é o canal push para o dashboard, ainda a confirmar. Caso seja adotado WebSocket, será utilizado um processo Django Channels separado para manter as conexões; caso seja adotado SSE, o endpoint poderá ser mantido no mesmo Gunicorn, sem processo adicional.
+
+    No frontend, executa-se uma única instância da SPA no navegador do operador. Essa aplicação utiliza TanStack Query para gerenciamento do estado de servidor, incluindo cache e invalidations, Mantine v9 para a interface de usuário e um canal push, via WebSocket ou SSE ainda a confirmar, para receber a telemetria propagada pelo backend.
+
+    Na visão de implementação, descreve-se como o código é organizado em pacotes, módulos e repositórios. Propõe-se a adoção de um monorepo, espelhando a estrutura canônica do template do projeto, com os diretórios src/firmware, src/backend e src/frontend. O firmware possuirá um diretório main, responsável pelo ponto de entrada FreeRTOS e pelo registro das tasks; um diretório sensores, contendo wrappers C++ sobre os drivers C; um diretório localizacao, responsável pela estimativa de pose e mapa; um diretório planejamento, contendo o algoritmo flood-fill; um diretório controle, responsável pela ISR de PID dos motores; um diretório comunicacao, contendo o cliente MQTT publisher e a serialização; e um diretório drivers, contendo a implementação em C dos drivers, como o HC-SR04.
+
+    O backend será organizado como uma aplicação Django com DRF e Celery. Haverá um diretório config contendo as configurações base, local, test e production, além do arquivo celery\_app.py, configurado com Redis como broker, e urls.py. Dentro de src, haverá o app core, responsável por BaseModel com UUID v7, erros e envelope de resposta. Também haverá o diretório integrations, com integração MQTT por meio de cliente Mosquitto subscriber e integração com storage. O app principal será runs, representando as execuções do robô. Esse app conterá models.py com entidades como Run, Leitura, Decisao e Labirinto; selectors.py para leituras read-only com kw-only; um diretório use\_cases, seguindo o padrão de um use case para cada ação, como PersistirTelemetria; um diretório api com urls, views e serializers; tasks.py com tarefas Celery enxutas, conectando o subscriber MQTT aos use cases; e testes organizados em factories, test\_use\_cases e test\_api.
+
+    O frontend será desenvolvido com Vite, React 19 e Mantine v9. Sua estrutura incluirá componentes organizados segundo Atomic Design, com atoms, molecules e templates. O domínio auth será responsável por JWT e por um apiClient único baseado em axios. O domínio runs será o domínio principal de visualização da corrida, contendo funções de API, como fetchRuns e createRun, tipos TypeScript espelhando os serializers do DRF, hooks como useRuns e useCreateRun com TanStack Query, componentes como Maze, Trajectory e ControlsPanel, além de páginas como RunsListPage e RunDetailPage. Também haverá arquivos auxiliares em lib, como queryClient, formatters e types, além de router.tsx com createBrowserRouter e ProtectedRoute, e main.tsx com MantineProvider e QueryClientProvider.
+
+    A subequipe de Eletrônica entregará os drivers em C com headers fixados, que serão consumidos pela camada de firmware em C++. Esse contrato de interfaces será o principal ponto de delegação entre as subequipes.
+
+    Na visão de implantação, os componentes são mapeados para nós físicos. O sistema é composto por quatro nós principais. O primeiro é o nó embarcado, correspondente ao Raspberry Pi Pico W do robô, que executa o firmware dual-core. Esse nó se comunica com os periféricos por barramentos digitais: o HC-SR04 por trigger e echo via GPIO, o VL53L0X por I2C no endereço 0x29, o MPU-6050 por I2C nos endereços 0x68 ou 0x69, compartilhando o barramento I2C, o TB6612FNG por GPIO e PWM, e os encoders por interrupções GPIO. Esse nó publica telemetria via Wi-Fi para o broker MQTT.
+
+    O segundo nó é o nó de broker, implementado com Mosquitto em container Docker no mesmo host do backend. Ele recebe os publishes do robô e os entrega aos consumidores. Durante o desenvolvimento e a competição, esse broker será executado na rede local da bancada. Para produção, ainda está a confirmar se ele permanecerá no mesmo host ou se será adotado um broker em nuvem, como HiveMQ ou similar.
+
+    O terceiro nó é o nó de serviços, correspondente ao servidor backend. Nele são executados o processo Django com Gunicorn, o worker Celery que atua como subscriber MQTT, o Redis como broker do Celery e o PostgreSQL 18. Esse conjunto será empacotado em docker-compose para rodar localmente, ainda sendo necessário confirmar se haverá deploy em um servidor de bancada dedicado para IPP ou APT.
+
+    O quarto nó é o nó de apresentação, correspondente ao navegador do operador. Ele executa a SPA React e se conecta ao backend por HTTP, usando /api/v1/, além de utilizar um canal push, por WebSocket ou SSE ainda a confirmar, para receber telemetria em tempo real propagada pelo backend.
+
+    Os tópicos MQTT do produto são definidos da seguinte forma. O tópico micromouse/\textless{}id\textgreater{}/telemetria utiliza QoS 1, não é retained e contém pacotes periódicos entre 10 e 30 Hz, incluindo pose, matriz delta, velocidade e bateria. O tópico micromouse/\textless{}id\textgreater{}/evento utiliza QoS 1, é retained e contém eventos como início, colisão, reparo e desafio cumprido. O tópico micromouse/\textless{}id\textgreater{}/status utiliza QoS 1, é retained e contém o heartbeat, indicando online ou offline, com uso de Last Will and Testament pelo broker. A pinagem do Raspberry Pi Pico W e o detalhamento elétrico pertencem à seção de hardware, no Capítulo 6, Seção 6.3; portanto, esta visão limita-se ao mapeamento lógico-físico do software.
+
+    Na visão de dados, descreve-se a persistência das informações de operação no banco relacional PostgreSQL. Todas as entidades herdam de core.models.BaseModel, que fornece chave primária em UUID v7, ordenável temporalmente e nativo no PostgreSQL 18, além dos campos created\_at e updated\_at. As migrations seguem o padrão Django no diretório \textless{}app\textgreater{}/migrations/, com prefixo numérico, como 0001\_initial.py e 0002\_descricao.py.
+    
+
+\subsection{Modelo Entidade-Relacionamento (MER)}
+
+\textbf{Entidades:}
 
 \begin{itemize}
-    \item \textcolor{red}{ \textbf{Diagrama BPMN para entender o \textit{software} proposto:} deve deixar claro os principais atores do sistema, suas atividades (de negócios), insumos e resultados.}
-    \item \textcolor{red}{\textbf{\textit{Backlog} funcional do \textit{software}:}}
+    \item MICROMOUSE
+    \item LABIRINTO
+    \item TENTATIVA
+    \item POSICAO
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Atributos:}
+
+\begin{itemize}
+    \item \textbf{MICROMOUSE} (\underline{id}, nome, algoritmo)
+
+    \item \textbf{LABIRINTO} (\underline{id}, nome, dimensao)
+
+    \item \textbf{TENTATIVA} (\underline{id}, tempo\_inicio, tempo\_fim, consumo\_bateria, velocidade\_media, sucesso, micromouse\_id, labirinto\_id)
+
+    \item \textbf{POSICAO} (\underline{id}, coordenada\_x, coordenada\_y, timestamp, passo, tentativa\_id)
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Relacionamentos:}
+
+\begin{itemize}
+    \item \textbf{REALIZA}
     \begin{itemize}
-        \item \textcolor{red}{ Escrito no formato de histórias de usuário ou casos de uso (decisão da equipe);}
-        \item \textcolor{red}{ Ao declarar o \textit{backlog} de requisitos funcionais, usar a  classificação de MoSCoW (\textit{Must have}, \textit{Should have} e \textit{Could have}),  para um melhor entendimento do próprio \textit{backlog}.}
+        \item MICROMOUSE (1:N) TENTATIVA
     \end{itemize}
-    \item \textcolor{red}{\textbf{ \textit{Backlog} não-funcional do \textit{software}:}}
+
+    \item \textbf{USA}
     \begin{itemize}
-        \item \textcolor{red}{ Descrever os requisitos não-funcionais de forma objetiva;}
-        \item \textcolor{red}{ Mais facilmente, mais rapidamente, são descrições subjetivas não-válidas. Um exemplo de requisito não-funcional de desempenho: ``a página deve carregar em até 5s quando em conexão 4G''. }
+        \item LABIRINTO (1:N) TENTATIVA
     \end{itemize}
-    \item \textcolor{red}{ \textbf{Diagrama de casos de uso,} contendo os atores do sistema, os requisitos com os quais eles interagem e os tipos de relacionamentos entre requisitos realizados por um mesmo ator (ex.: \textit{include}, \textit{extend}). Obs.: este é um diagrama sobre requisitos funcionais.}
-    \item \textcolor{red}{ \textbf{Descrição da arquitetura da solução de \textit{software} proposta:}}
+
+    \item \textbf{POSSUI}
     \begin{itemize}
-        \item \textcolor{red}{ Propósito do \textit{software} (qual o seu papel no sistema);}
-        \item \textcolor{red}{ Estilo arquitetural contendo:}
-        \begin{itemize}
-            \item \textcolor{red}{ Padrão adotado: MVC, MVP, Microsserviços, Monolítico, etc (Justificar);}
-            \item \textcolor{red}{ Linguagens de programação: Java, Python, C\#, JavaScript, etc.}
-            \item \textcolor{red}{ \textit{Frameworks} e bibliotecas: Spring Boot, .NET Core, React, Angular, Django, etc.}
-            \item \textcolor{red}{ Banco de dados: Relacional (PostgreSQL, MySQL, etc) X NãoSQL (MongoDB,etc). }
-        \end{itemize}
-        \item \textcolor{red}{ Diagrama de alto nível: representação esquemática dos componentes da arquitetura, suas responsabilidades e comunicações, esclarecendo a composição do \textit{front-end} e do \textit{back-end}.}
-    \end{itemize}
-    \item \textcolor{red}{ \textbf{Persistência de dados:} diagrama de entidade relacionamento do banco de dados usado na solução proposta.}
-    \item \textcolor{red}{ \textbf{Análise de dados:} as variáveis definidas nos requisitos do projeto em abordagem numérica e gráfica.}
-    \item \textcolor{red}{ \textbf{Diagrama de estados} esclarecendo os estados assumidos pelo \textit{software} e os eventos que causam as mudanças de estado do \textit{software}.}
-    \item \textcolor{red}{ \textbf{Protótipo funcional do \textit{software}, navegável.}}
-    \item \textcolor{red}{\textbf{ Roteiro de testes funcionais:} }
-    \begin{itemize}
-        \item \textcolor{red}{Código do caso de teste;}
-        \item \textcolor{red}{Nome do caso de teste;}
-        \item \textcolor{red}{Tipo do caso de teste (unitário, integrado ou sistema);}
-        \item \textcolor{red}{ Objetivo do caso de teste;}
-        \item \textcolor{red}{ Pré-condições do sistema para o teste ser realizado;}
-        \item \textcolor{red}{ Descrição dos procedimentos a serem executados para o teste;}
-        \item \textcolor{red}{ Resultado esperado para o teste ser aprovado (pós-condição após realizado o teste);}
-        \item \textcolor{red}{ Especificação do reparo a ser executado (caso o teste não seja aprovado);}
-        \item \textcolor{red}{ Resultado após reparo (o caso do teste ser necessário de ser repetido após reparo).}
+        \item TENTATIVA (1:N) POSICAO
     \end{itemize}
 \end{itemize}
 
+\vspace{0.3cm}
 
+    \subsection{Diagrama Entidade-Relacionamento (DER)}
+            
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{../../docs/img/Diagrama_entidades.png}
+            \caption{Diagrama Entidade-Relacionamento}
+            \label{fig:diagrama_entidades}
+        \end{figure}
+        
+%    \item \textcolor{red}{\textbf{ Roteiro de testes funcionais:} }
+%    \begin{itemize}
+%        \item \textcolor{red}{Código do caso de teste;}
+%        \item \textcolor{red}{Nome do caso de teste;}
+%        \item \textcolor{red}{ Objetivo do caso de teste;}
+%        \item \textcolor{red}{ Pré-condições do sistema para o teste ser realizado, quando se aplicar;}
+%        \item \textcolor{red}{ Descrição dos procedimentos a serem executados para o teste;}
+%        \item \textcolor{red}{ Resultado esperado para o teste ser aprovado (pós-condição após realizado o teste);}
+%    \end{itemize}
+%\end{itemize}
+
+%=========================================================================================
+\subsection{Detalhamento dos Casos de Teste}
+
+Abaixo estão alguns dos casos de testes que serão feitos para verificação e validação do desenvolvimento do micromouse. O link mostra todos os casos de testes com as suas caraterísticas e especificações mostradas na GitPages.
+
+GitPages: \url{https://fcte-pi1.github.io/2026_1_PI1_Grupo02_Juliana/software/casosteste/}
+
+    \subsubsection{CT01 - Validação do Sistema Sensorial e Precisão}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT01 - Leitura e Calibração dos Sensores de Distância (RF03, RF04, RF10, RNF07).
+        \item \textbf{Objetivo do caso de teste:} Validar se o sistema reconhece as paredes, adquire os dados corretamente e mede a distância com a precisão mínima exigida.
+        \item \textbf{Pré-condições:} Micromouse montado e posicionado em uma célula de teste; monitor serial ou telemetria ativos.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Posicionar o robô a distâncias 6cm, 12cm, 18cm(que corresponde ao tamanho de uma célula) de uma parede.
+            \item Registrar o valor reportado pelo sistema para cada sensor.
+            \item Verificar se o software identifica a presença de parede quando a distância for inferior ao limite da célula.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O erro de medição deve ser inferior a 1 cm, conforme o requisito RNF07. O sistema deve sinalizar corretamente a existência de obstruções à frente e nas laterais.
+    \end{itemize}
+
+    \subsubsection{CT02 - Controle de Trajetória e Estabilidade Elétrica}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT02 - Deslocamento Retilíneo e Controle de Motores (RF01, RF08, RF09, RNF10).
+        \item \textbf{Objetivo do caso de teste:} Validar a capacidade de mover-se para frente controlando os motores para evitar colisões sem reinicializações elétricas.
+        \item \textbf{Pré-condições:} Bateria carregada; corredor reto livre de obstáculos imprevistos.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Acionar o comando de avanço para percorrer três células consecutivas.
+            \item Observar se o robô mantém a trajetória centralizada usando o controle dos motores.
+            \item Monitorar se ocorrem quedas de tensão que causem o reset do microcontrolador.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O robô deve completar o percurso sem tocar nas paredes laterais e o sistema deve permanecer estável, sem oscilações de tensão que interrompam a execução.
+    \end{itemize}
+
+    \subsubsection{CT03 - Precisão de Manobra e Alteração de Direção}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT03 - Rotação e Mudança de Orientação (RF02, RF09).
+        \item \textbf{Objetivo do caso de teste:} Garantir que o micromouse realize rotações de até 180° através do controle preciso dos motores.
+        \item \textbf{Pré-condições:} Robô parado no centro de uma célula.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Comandar uma rotação de 90° para a esquerda e medir o ângulo final.
+            \item Comandar uma rotação de 90° para a direita e medir o ângulo final.
+            \item Comandar uma rotação de 180° (meia-volta).
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O robô deve realizar as rotações solicitadas com erro angular mínimo, permitindo que ele continue a navegação alinhado ao novo corredor.
+    \end{itemize}
+
+    \subsubsection{CT04 - Inteligência e Navegação Autônoma}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT04 - Mapeamento e Busca do Centro (RF05, RF06, RF07, RF14, RNF01).
+        \item \textbf{Objetivo do caso de teste:} Validar o funcionamento autônomo na identificação de caminhos, geração do mapa e alcance do objetivo central.
+        \item \textbf{Pré-condições:} Labirinto desconhecido pelo robô; algoritmo de navegação (ex: Flood Fill) carregado.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Iniciar o robô na célula inicial (0,0) em modo autônomo.
+            \item Observar se o robô identifica caminhos livres e mapeia as paredes encontradas.
+            \item Verificar se o sistema detecta a chegada ao objetivo central do labirinto.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} O micromouse deve encontrar o caminho até o centro de forma autônoma e o mapa gerado internamente deve corresponder à realidade física do labirinto.
+    \end{itemize}
+
+    \subsubsection{CT05 - Telemetria e Comunicação sem Fio}
+    \begin{itemize}
+        \item \textbf{Nome do caso de teste:} CT05 - Validação de Telemetria em Tempo Real (RF16, RF17, RNF04).
+        \item \textbf{Objetivo:} Verificar se os dados de navegação são enviados e exibidos na interface web com a latência exigida.
+        \item \textbf{Pré-condições:} Micromouse conectado à rede sem fio; sistema web de telemetria ativo e aguardando conexão.
+        \item \textbf{Descrição dos procedimentos:}
+        \begin{enumerate}
+            \item Iniciar a movimentação do robô no labirinto.
+            \item Observar a atualização dos campos de velocidade e posição na interface web.
+            \item Cronometrar o tempo entre um evento físico (ex: detecção de parede) e sua exibição na tela.
+        \end{enumerate}
+        \item \textbf{Resultado esperado:} Os dados devem ser atualizados a cada 500 ms (RNF05) com latência inferior a 1 segundo (RNF04). A interface deve exibir corretamente a posição X e Y enviada pelo robô.
+    \end{itemize}
+
+    
 % \textcolor{red}{Com relação ao \textit{software}, será necessário apresentar os seguintes itens: % pacotes de componentes de \textit{software}, suas funções e características, e explicar as decisões de projeto:
 % \begin{enumerate}
 %     \item Um diagrama do processo de negócio do problema que a máquina se propõe a resolver (BPNM) – não é UML, mas é fundamental para entender como o sistema se comporta como um todo, incluindo o usuário;
