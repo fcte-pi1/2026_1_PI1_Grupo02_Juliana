@@ -198,3 +198,14 @@ O módulo MPU-6050 funcionou corretamente para a aplicação de orientação do 
 ---
 
 ## 7. Anexos
+
+<img width="400" height="550" alt="funcionamento_mpu6050" src="https://github.com/user-attachments/assets/86cf9d21-e94a-4154-9d7b-6503b590bee4" />
+
+---
+
+<img width="366" height="406" alt="Captura de tela 2026-06-03 122545" src="https://github.com/user-attachments/assets/6d01da53-a697-402d-afd0-28802eac247e" />
+
+---
+
+<img width="366" height="406" alt="Captura de tela 2026-06-03 122608" src="https://github.com/user-attachments/assets/c6fccec7-4b90-480e-bb2c-5c6bbe1281a9" />
+
