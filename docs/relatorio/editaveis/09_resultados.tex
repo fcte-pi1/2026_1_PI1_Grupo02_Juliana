@@ -68,6 +68,32 @@ Para a validação das medidas obtidas, foi seguido um protocolo para coleta de 
     \end{itemize}
 \end{enumerate}
 
+\subsection{Teste Sensor Giroscópio MPU-6050}
+
+\textcolor{black}{O funcionamento correto do giroscópio é fundamental para a orientação do robô durante a execução do algoritmo de busca dentro do labirinto. Para a realização do teste, assim como nos outros sensores e componentes eletrônicos, foi preciso fazer uso de elementos e ferramento do laboratório, por essa razão os laboratórios NEI 1 e NEI 2 da faculdade FCTE foram utilizados como espaço de trabalho nos horários disponíveis. As ferramentas e elementos necessários para o teste são listados a seguir:}
+
+\begin{itemize}
+        \item \textcolor{black}{Protoboard}
+        \item \textcolor{black}{Microcontrolador Raspberry Pi Pico W}
+        \item \textcolor{black}{Sensor MPU6050}
+        \item \textcolor{black}{Cabo usb A para micro usb}
+        \item \textcolor{black}{jumpers}
+        \item \textcolor{black}{Computador}
+\end{itemize}
+
+\textcolor{black}{Para realizar a montagem o primeiro passo a ser realizado foi colocar o microcontrolador raspberry pi pico w e o sensor mpu6050 na protoboard, logo começamos com as conexões com ajuda de jumpers fornecidos no laboratório. O sinal SDA do sensor foi conectado ao pino físico 6 da raspberry, o sinal SCL do sensor foi conectado ao pino físico 7, o VCC do sensor foi conectado com o pino físico 36 (3v3 out) do microcontrolador, o GND do sensor foi conectado com o pino físico 38 (GND) da raspberry e o sinal AD0 também foi conectado com o GND do microcontrolador. Uma vez que a montagem foi realizada, a equipe procedeu com a seguinte fase de teste que é a programação da raspberry com um código funcional para testar o sensor, para cumprir com essa atividade foi preciso um cabo micro usb para conectar o microcontrolador com um notebook.}
+
+\textcolor{black}{Para a criação do arquivo .uf2 que vai ser lido pela raspberry, foi necessário criar três arquivos independentes na linguagem c++, o primeiro arquivo mpu6050.h, o qual definia os registradores e structs a ser utilizados, o segundo arquivo mmpu6050.cpp, encarregado de implementar as funções de init, leitura, calibração e orientação. O terceiro arquivo main.cpp executava as funções implementadas criando o mapeamento cardinal (north, east, south, west) e fazendo uso do led do microcontrolador para feedback de funcionamento. Dentro da convenção dos eixos, o eixo Z (yaw) é perpendicular ao chão, ou seja é o eixo principal utilizado para o giro do robô, o eixo X (roll) é a inclinação lateral enquanto o eixo Y (pitch) é a inclinação frontal e traseira.}
+
+\textcolor{black}{Uma vez que a raspberry foi programada com o arquivo de teste, o led do microcontrolador acende continuamente enquanto o sensor faz a calibração, ao piscar duas vezes a calibração concluiu com sucesso, logo depois procedemos abrindo o serial monitor no vscode na porta COM5, onde se encontra a conexão com a raspberry para visualizar a saída do texto. Após a calibração, a protoboard junto com o sensor foi levantada e rotacionada manualmente principalmente no eixo z e passando pelas quatro direções cardinais, enquanto isso, os dados das direções cardinais podiam ser visualizados no monitor serial conforme o sensor era rotacionado.}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\linewidth]{figuras/teste_mpu6050.png}
+    \caption{Monitor serial com visualização de dados fornecidos pelo sensor mpu6050.}
+    \label{fig:teste Sensor mpu6050}
+\end{figure}
+
 \section{Testes de consumo energético}
 
 \textcolor{red}{Apresentar com detalhes os testes feitos para conferir se as demandas energéticas do projeto foram atendidas.}
