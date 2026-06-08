@@ -1,0 +1,186 @@
+# Relatório de Testes - VL53L0X (Infravermelho)
+
+*Responsável:*: Equipe Eletrônica - João Gabriel Rolim Veiga
+
+*Firmware:* main.c, vl53l0x.c, vl53l0x.h
+
+*Hardware:* Raspberry Pi Pico W, VL53L0X
+
+---
+
+## 1. Objetivo:
+
+Validar o funcionamento dos dois sensores infravermelhos em relação à distância calculada em milímetros.
+
+---
+
+## 2. Configuração do Hardware:
+
+O teste foi realizado com o sensor VL53L0X em uma Raspberry Pi Pico W com o auxílio de uma placa de prototipagem (protoboard).
+
+Itens utilizados no teste:
+
+- Placa de Prototipagem (protoboard);
+- Duas unidades do sensor infravermelho VL53L0X;
+- Alimentação: Via micro-USB 
+- Comunicação: I²C 400kHz
+
+### Mapeamento do primeiro sensor (esquerdo): 
+| Sinal VL53L0X  | GPIO Pico W | Pino físico |
+|----------------|-------------|-------------|
+| SDA            | GP4         | 6           |
+| SCL            | GP5         | 7           |
+| VIN            | 3V3 (OUT)   | 36          |
+| GND            | GND         | 38          |
+| GPIO1          | -           | -           |
+| XSHUT          | -           | -           |
+
+### Mapeamento do segundo sensor (direito):
+| Sinal VL53L0X  | GPIO Pico W | Pino físico |
+|----------------|-------------|-------------|
+| SDA            | GP14        | 19          |
+| SCL            | GP15        | 20          |
+| VIN            | 3V3 (OUT)   | 36          |
+| GND            | GND         | 38          |
+| GPIO1          | -           | -           |
+| XSHUT          | -           | -           |
+
+### Parâmetros de Configuração do VL53L0X:
+| Parâmetro                 | Valor          		 |
+|---------------------------|----------------------------|
+| Endereço I²C              | 0x29                       |
+| Tensão                    | 2.8V                       |
+| Velocidade do barramento  | 400kHz                     |
+| Timing Budget padrão      | 33 ms (~30 Hz)             |
+| Timing Budget mínimo      | 20 ms (~50 Hz)             |
+| Timeout de I/O            | 500 ms                     |
+| Loop principal            | 50 ms (~20 Hz)             |
+| Limite de taxa de sinal   | 0.25 MCPS                  |
+| Retorno em timeout        | 65535 mm	                 |
+| Sensores instanciados     | 2 (i2c0 - esq, i2c1 - dir) |
+
+---
+
+## 3. Procedimento do Teste
+
+1. Firmware gravado na Pico W (arquivo `.uf2`), conectada por USB.
+2. Monitor serial aberto na porta `COM5` em modo texto a 115200 baud.
+3. Ao ligar, o firmware aguarda 1,5 s para enumeração da USB e executa:
+   - Inicialização dos dois barramentos I2C (i2c0 e i2c1) a 400 kHz.
+   - Tentativa de inicialização dos dois sensores VL53L0X com sequência completa (SPAD, tuning, calibração VHV e de fase).
+   - Impressão do status de cada sensor (`OK` ou `FALHOU`).
+4. Com os sensores inicializados, o firmware entra em loop contínuo coletando uma leitura single-shot de cada sensor a cada 50 ms (~20 Hz).
+5. As distâncias dos dois sensores (esquerdo e direito) foram testadas aproximando e afastando objetos manualmente na frente de cada sensor, verificando a resposta em milímetros em tempo real.
+6. Os dados impressos pelo `printf` foram capturados no Serial Monitor (VS Code). 
+
+---
+
+## 4. Resultados:
+
+###Trecho 1 - Apontando para o vazio:
+
+=========================================
+ VISAO ESTEREO - DRIVER VL53L0X COMPLETO 
+=========================================
+A inicializar os sensores...
+Sensor ESQ (i2c0): OK
+Sensor DIR (i2c1): OK
+Leituras iniciadas! Pode aproximar as maos.
+
+Esq:  8191 mm  |  Dir:  8191 mm
+Esq:  8191 mm  |  Dir:  8191 mm
+Esq:  8190 mm  |  Dir:  8191 mm
+Esq:  8191 mm  |  Dir:  8191 mm
+Esq:  8190 mm  |  Dir:  8191 mm
+Esq:  8190 mm  |  Dir:  8190 mm
+Esq:  8191 mm  |  Dir:  8191 mm
+Esq:  8191 mm  |  Dir:  8191 mm
+Esq:  8191 mm  |  Dir:  8190 mm
+Esq:  8191 mm  |  Dir:  8191 mm
+
+Quando o sensor atinge sua distância máxima de leitura, ele tende a retornar uma distância de ~8191mm.
+
+###Trecho 2 - Detecção à esquerda:
+
+Esq:  61 mm  |  Dir:  8191 mm
+Esq:  38 mm  |  Dir:  8191 mm
+Esq:  31 mm  |  Dir:  8191 mm
+Esq:  29 mm  |  Dir:  8191 mm
+Esq:  34 mm  |  Dir:  8191 mm
+Esq:  32 mm  |  Dir:  8190 mm
+Esq:  35 mm  |  Dir:  8191 mm
+Esq:  33 mm  |  Dir:  8191 mm
+Esq:  32 mm  |  Dir:  8190 mm
+Esq:  31 mm  |  Dir:  8191 mm
+
+###Trecho 3 - Detecção à direita:
+
+Esq:  8191 mm  |  Dir:  61 mm
+Esq:  8191 mm  |  Dir:  63 mm
+Esq:  8190 mm  |  Dir:  66 mm
+Esq:  8191 mm  |  Dir:  65 mm
+Esq:  8190 mm  |  Dir:  67 mm
+Esq:  8190 mm  |  Dir:  64 mm
+Esq:  8191 mm  |  Dir:  66 mm
+Esq:  8191 mm  |  Dir:  63 mm
+Esq:  8191 mm  |  Dir:  65 mm
+Esq:  8191 mm  |  Dir:  60 mm
+
+###Trecho 4 - Detecção bilateral:
+
+Esq:  63 mm  |  Dir:  68 mm
+Esq:  91 mm  |  Dir:  63 mm
+Esq:  54 mm  |  Dir:  60 mm
+Esq:  48 mm  |  Dir:  63 mm
+Esq:  43 mm  |  Dir:  59 mm
+Esq:  32 mm  |  Dir:  61 mm
+Esq:  34 mm  |  Dir:  61 mm
+Esq:  32 mm  |  Dir:  63 mm
+Esq:  36 mm  |  Dir:  61 mm
+Esq:  33 mm  |  Dir:  60 mm
+
+---
+
+# 5. Análise dos Resultados
+
+## 5.1 Detecção e inicialização
+
+Os dois sensores responderam corretamente nos seus respectivos barramentos I²C — `i2c0` (endereço `0x29`, sensor esquerdo) e `i2c1` (endereço `0x29`, sensor direito) — confirmando detecção sem erros de hardware em ambos os canais.
+
+## 5.2 Comportamento no limite de alcance
+
+Quando apontados para o vazio (sem superfície detectável dentro do alcance útil de ~1200 mm), ambos os sensores retornaram consistentemente valores entre 8190 mm e 8191 mm. Esse é o comportamento esperado do VL53L0X: ao não detectar retorno de sinal suficiente, o sensor satura a leitura em 0x1FFF (8191 em decimal). Os valores alternando entre 8190 e 8191 são variação normal de quantização, não instabilidade.
+
+## 5.3 Detecção unilateral e bilateral
+
+A tabela a seguir resume os trechos de detecção observados:
+
+| Trecho | Sensor ESQ | Sensor DIR | Situação |
+|---|---|---|---|
+| 1 — Vazio | ~8191 mm | ~8191 mm | Sem alvo em ambos |
+| 2 — Detecção esquerda | 29–61 mm | ~8191 mm | Objeto apenas à esquerda |
+| 3 — Detecção direita | ~8191 mm | 60–67 mm | Objeto apenas à direita |
+| 4 — Detecção bilateral | 32–91 mm | 59–68 mm | Objeto em ambos os lados |
+
+Os dois sensores demonstraram isolamento correto entre barramentos: a detecção em um não interferiu nas leituras do outro, confirmando que a separação física em `i2c0` / `i2c1` funciona conforme esperado.
+
+## 5.4 Estabilidade das leituras
+
+Durante a detecção próxima (objetos a ~30–70 mm), as leituras apresentaram variação de ±5 mm a ±10 mm entre amostras consecutivas. Isso é esperado no modo single-shot com timing budget padrão de 33 ms: o sensor faz uma única medição por ciclo sem acumulação estatística. A variação pode ser reduzida aumentando o timing budget para 50 ms ou superior, com custo de menor taxa de atualização.
+
+---
+
+## 6. Conclusões
+
+| Critério de validação | Resultado |
+|---|---|
+| Sensores detectados via I²C (endereço 0x29) | Aprovado |
+| Inicialização completa em ambos os barramentos | Aprovado |
+| Saturação correta em 8191 mm sem alvo | Aprovado |
+| Detecção unilateral esquerda sem interferência direita | Aprovado |
+| Detecção unilateral direita sem interferência esquerda | Aprovado |
+| Detecção bilateral simultânea | Aprovado |
+| Isolamento entre i2c0 e i2c1 confirmado | Aprovado |
+| Saída serial formatada corretamente | Aprovado |
+
+Os dois módulos VL53L0X funcionaram corretamente para a aplicação de detecção de obstáculos do Micromouse. A leitura por tempo de voo (ToF) é adequada para detecção de paredes em curta distância, com resposta rápida e isolamento correto entre os dois canais I²C. A variação de ±5–10 mm observada no modo single-shot é esperada e pode ser mitigada em versões futuras com aumento do timing budget ou filtragem por média móvel.
