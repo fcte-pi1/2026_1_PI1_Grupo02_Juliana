@@ -85,6 +85,23 @@ Para a validação das medidas obtidas, foi seguido um protocolo para coleta de 
     \label{fig:teste Sensor mpu6050}
 \end{figure}
 
+\subsection{Teste Sensor Ultrassônico HC-SR04}
+
+\textcolor{black}{O funcionamento correto do sensor ultrassônico é fundamental para a detecção das paredes do labirinto e a medição das distâncias durante a execução do algoritmo de busca do robô. Para a realização do teste, foi preciso fazer uso de elementos e ferramento do laboratório, por essa razão os laboratórios NEI 1 e NEI 2 da faculdade FCTE foram utilizados como espaço de trabalho nos horários disponíveis.}
+
+\textcolor{black}{Para realizar a montagem o primeiro passo foi colocar o microcontrolador raspberry pi pico w e o sensor hc-sr04 na protoboard, logo começamos com as conexões com ajuda de jumpers fornecidos no laboratório. O pino Trig do sensor foi conectado ao pino 20 da raspberry responsável pelo disparo do pulso ultrassônico, o pino Echo do sensor foi conectado ao pino 19 encarregado de receber o sinal de retorno, o VCC do sensor foi conectado com o pino físico 36 (3.3V) do microcontrolador e o GND do sensor foi conectado com o pino físico 38 (GND) da raspberry. Uma vez que a montagem foi realizada, a equipe procedeu com a seguinte fase de teste que é a programação da raspberry com um código funcional para testar o sensor, para cumprir com essa atividade foi preciso um cabo micro usb para conectar o microcontrolador com um notebook.}
+
+\textcolor{black}{Para a criação do arquivo .uf2 que vai ser lido pela raspberry, foi necessário criar três arquivos independentes na linguagem c++, o primeiro arquivo hcsr04.h, o qual definia os pinos e structs a ser utilizados, o segundo arquivo hcsr04.cpp, encarregado de implementar as funções de init, disparo do pulso e leitura da distância. O terceiro arquivo main.cpp executava as funções implementadas, calculando a distância a partir do tempo de retorno do eco e da velocidade do som, e fazendo uso do led do microcontrolador para feedback de funcionamento. O princípio de medição consiste em emitir um pulso ultrassônico pelo pino Trig e medir o tempo decorrido até o retorno do eco pelo pino Echo, sendo a distância obtida pela relação entre esse tempo e a velocidade de propagação do som no ar.}
+
+\textcolor{black}{Uma vez que a raspberry foi programada com o arquivo de teste, procedemos abrindo o monitor serial no vscode na porta COM5, onde se encontra a conexão com a raspberry para visualizar a saída do texto. Em seguida, um objeto plano foi posicionado em frente ao sensor a diferentes distâncias conhecidas, medidas previamente com uma régua, enquanto isso, os valores de distância podiam ser visualizados no monitor serial conforme o objeto era aproximado e afastado, permitindo verificar a consistência e a precisão das leituras fornecidas pelo sensor.}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\linewidth]{figuras/teste_hcsr04.png}
+    \caption{Monitor serial com visualização de dados fornecidos pelo sensor hc-sr04.}
+    \label{fig:teste Sensor hcsr04}
+\end{figure}
+
 \subsection{Teste Sensor Infravermelho VL53L0X}
 
 \textcolor{black}{Para realizar a montagem, o primeiro passo foi colocar o microcontrolador Raspberry Pi Pico W e os dois sensores VL53L0X na protoboard, logo em seguida foram realizadas as conexões com auxílio de jumpers fornecidos no laboratório. Para o sensor esquerdo, o sinal SDA foi conectado ao pino físico 6 da Raspberry, o sinal SCL ao pino físico 7, o VIN ao pino físico 36 (3V3 OUT) e o GND ao pino físico 38. Para o sensor direito, o sinal SDA foi conectado ao pino físico 19, o SCL ao pino físico 20, o VIN novamente ao pino físico 36 (3V3 OUT) e o GND ao pino físico 38. Uma vez que a montagem foi realizada, a equipe procedeu com a fase de programação da Raspberry com um código funcional para testar os sensores, para isso foi utilizado um cabo micro USB para conectar o microcontrolador a um notebook.}
