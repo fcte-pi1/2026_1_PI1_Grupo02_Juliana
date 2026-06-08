@@ -1,8 +1,9 @@
 #ifndef MAZE_MAPPER_H
 #define MAZE_MAPPER_H
 
-#include <Arduino.h>
-#include <ArduinoJson.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // config do labrinto
 const int MAZE_SIZE = 16;
@@ -24,6 +25,6 @@ extern int celulas_exploradas;
 // funções 
 void atualizar_mapa(int x, int y, bool sensor_n, bool sensor_s, bool sensor_e, bool sensor_w);
 float calcular_porcentagem_explorada();
-String gerar_payload_telemetria(int x, int y, const char* run_id);
+void gerar_payload_telemetria(char* buffer, size_t buffer_size, int x, int y, const char* run_id);
 
 #endif

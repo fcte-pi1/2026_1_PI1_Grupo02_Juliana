@@ -1,22 +1,26 @@
 #include "WatchdogMotor.h"
 
-WatchdogMotor::WatchdogMotor(Motor* esq, Motor* dir, unsigned long timeoutMs)
-    : motorEsq(esq), motorDir(dir), tempoLimite(timeoutMs), sistemaAtivo(true) {
-    ultimoSinal = millis();
+WatchdogMotor::WatchdogMotor(Motor* esq, Motor* dir, uint32_t timeoutMs)
+    : motorEsq(esq), motorDir(dir), sistemaAtivo(true) {
+    ultimoSinal = get_absolute_time();
+    tempoLimiteUs = (uint64_t)timeoutMs * 1000; // Converte ms para microsegundos
 }
 
 void WatchdogMotor::alimentar() {
-    ultimoSinal = millis();
+    ultimoSinal = get_absolute_time();
     sistemaAtivo = true;
 }
 
 void WatchdogMotor::verificar() {
-    if (sistemaAtivo && (millis() - ultimoSinal > tempoLimite)) {
+    absolute_time_t agora = get_absolute_time();
+    uint64_t tempo_decorrido = absolute_time_diff_us(ultimoSinal, agora);
+    
+    if (sistemaAtivo && (tempo_decorrido > tempoLimiteUs)) {
         // Timeout! Corta os motores imediatamente.
         motorEsq->parar();
         motorDir->parar();
         sistemaAtivo = false;
-        Serial.println("[CRITICO] Watchdog desarmou os motores!");
+        printf("[CRITICO] Watchdog desarmou os motores!\r\n");
     }
 }
 
