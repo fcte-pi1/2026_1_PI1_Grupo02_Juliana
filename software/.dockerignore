@@ -1,0 +1,59 @@
+# VCS
+.git
+.gitignore
+.github
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.venv
+.venv/
+**/.venv
+**/.venv/
+backend/.venv
+backend/.venv/
+venv
+venv/
+**/venv
+**/venv/
+.pytest_cache
+.ruff_cache
+.mypy_cache
+*.egg-info
+.coverage
+htmlcov
+
+# Node / frontend
+node_modules
+node_modules/
+**/node_modules
+**/node_modules/
+dist
+build
+.next
+.turbo
+.vite
+
+# Editor / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Env / secrets — nunca entram na imagem
+.env
+.env.*
+!.env.example
+
+# Docs / misc
+docs
+*.md
+!README.md
+
+# Logs
+*.log
+logs/
+
+# Claude / agente

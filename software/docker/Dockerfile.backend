@@ -1,0 +1,31 @@
+FROM python:3.14-slim AS base
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    UV_LINK_MODE=copy
+
+# OS deps: psycopg + build essentials + curl pra healthcheck/diagnóstico
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        libpq-dev \
+        curl \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# uv (gerenciador de deps Python) — copiado da imagem oficial
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
+WORKDIR /app
+
+# Cache de deps: copia só o manifesto primeiro
+COPY backend/pyproject.toml backend/uv.lock* ./
+
+RUN uv sync --frozen --no-install-project || uv sync --no-install-project
+
+# Código aplicativo
+COPY backend/ .
+
+EXPOSE 8000
+
+CMD ["uv", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
