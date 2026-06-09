@@ -122,41 +122,56 @@ Para a validação das medidas obtidas, foi seguido um protocolo para coleta de 
 
 \section{Testes de \textit{software}}
 
-\textcolor{red}{Apresentar com detalhes os testes feitos para conferir se os objetivos do \textit{software} foram atendidos.
-Considerando a implementação de $50\%$ do \textit{backlog} do produto (funcional):}
+Como o \textit{hardware} do micromouse ainda está em fase de montagem e integração, os testes de \textit{software} foram realizados com um simulador de \textit{firmware} desenvolvido pela própria equipe. Esse simulador reproduz fielmente o comportamento esperado do robô real: ele percorre o labirinto em ziguezague, calcula as paredes de cada célula visitada e publica pacotes MQTT com o mesmo formato e protocolo que o \textit{firmware} definitivo utilizará. A ideia foi garantir que todo o pipeline de dados — do envio até a exibição no \textit{dashboard} — pudesse ser exercitado e validado antes mesmo de o robô estar pronto.
 
-\begin{itemize}
-    \item \textcolor{red}{Listar as histórias de usuários implementadas.}
-    \item \textcolor{red}{Listar a associação entre as histórias de usuários e os protótipos, deixando claro qual é a funcionalidade que será acessada pelo usuário/professor(a) por meio da interface gráfica.}
-    \item \textcolor{red}{Listar os suítes de testes automatizados em nível:}
-    \begin{itemize}
-        \item \textcolor{red}{Unitário e integração, com cobertura de código-fonte de pelo menos $70\%$;}
-        \item \textcolor{red}{Sistema, do tipo funcional (end-to-end E2E).}
-    \end{itemize}
-\end{itemize}
+\subsection{Envio de telemetria}
 
-\textcolor{red}{\textbf{Observações:}}
-\begin{enumerate}
-    \item \textcolor{red}{Em relação ao \textit{backlog} do produto, será considerado como referência aquele descrito no primeiro ponto de controle, contemplando as correções e \textit{feedbacks} da-os professora(e)s. O ideal seria a real atualização entre o planejado X realizado.}
-    \item \textcolor{red}{Os testes mencionados nesta subseção dizem respeito aos testes de \textit{software}. O Roteiro de testes funcionais, entregue no primeiro ponto de controle deve ser corrigido a partir do apontamento da-os professora(e)s. Além disso, ele deve guiar a execução dos testes E2E automatizados. O conjunto de casos de testes funcionais documentados devem estar coerentes com a automação via interface gráfica de entrada de dados.}
-\end{enumerate}
+O envio de telemetria funciona via protocolo MQTT. Na integração real, quem publica as mensagens será o Raspberry Pi Pico W embarcado no robô; nos testes realizados, esse papel foi assumido pelo simulador, que se comporta exatamente como o \textit{firmware} faria.
 
-\textcolor{red}{Exemplos de ferramentas de teste funcionais E2E:}
-\begin{itemize}
-    \item \textcolor{red}{Selenium} 
-    \item \textcolor{red}{Cypress}
-    \item \textcolor{red}{Playwright}
-\end{itemize}
+A cada passo simulado, o sistema publica um pacote JSON no tópico \texttt{micromouse/<id>/telemetria} com QoS~1, garantindo entrega confiável ao \textit{broker} Mosquitto. O pacote contém a posição atual do robô (coordenadas $x$, $y$ e orientação cardinal), as paredes da célula recém-visitada, a velocidade instantânea, o nível de bateria e a tensão medida. O simulador também decrementa gradualmente a bateria (0,4\% por passo) e varia a velocidade entre 0,25 e 0,35~m/s para aproximar o comportamento de uma corrida real.
 
-\textcolor{red}{Exemplos de ferramentas de testes em nível unitário e integração:}
-\begin{itemize}
-    \item \textcolor{red}{Jest}
-    \item \textcolor{red}{unittest}
-    \item \textcolor{red}{pytest}
-    \item \textcolor{red}{tox}
-    \item \textcolor{red}{gTest}
-    \item \textcolor{red}{Catch2}
-\end{itemize}
+Do lado do \textit{backend}, um processo dedicado (\texttt{mqtt\_subscribe}) fica escutando esses tópicos e, ao receber cada mensagem, enfileira uma tarefa assíncrona no Celery para salvar os dados no banco sem travar o loop de recepção.
+
+\subsection{Exibição de telemetria}
+
+Para que as informações apareçam no \textit{dashboard} sem atraso perceptível, o \textit{backend} usa \textit{Server-Sent Events} (SSE) em vez de \textit{polling}. Após processar cada pacote, o servidor publica um \textit{snapshot} atualizado em um canal do Redis; o \textit{frontend} mantém a conexão aberta e recebe essas atualizações assim que chegam.
+
+As Figuras~\ref{fig:dashboard_inicio} e~\ref{fig:dashboard_progresso} mostram o \textit{dashboard} principal em dois momentos distintos da corrida simulada. Na tela, é possível acompanhar em tempo real a velocidade média, o tempo decorrido, o percentual de bateria com estimativa de autonomia, a tensão da bateria, a quantidade de células já exploradas no labirinto 16$\times$16 e os três sensores de distância (esquerda, frente e direita) com indicação de parede ou caminho livre. Um gráfico de velocidade dos últimos 60 segundos complementa a visualização.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figuras/dashboard_telemetria_inicio.png}
+    \caption{\textit{Dashboard} no início da corrida simulada: 29 células exploradas (11,3\% do labirinto), velocidade média de 0,38~m/s, bateria em 78\% e tensão de 7,40~V.}
+    \label{fig:dashboard_inicio}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figuras/dashboard_telemetria_processo.png}
+    \caption{\textit{Dashboard} após aproximadamente 25 minutos de corrida simulada: 150 células exploradas (58,6\%), bateria consumida para 67\% e tensão reduzida para 6,40~V, refletindo o consumo acumulado.}
+    \label{fig:dashboard_progresso}
+\end{figure}
+
+Além do \textit{dashboard} principal, o sistema conta com uma tela dedicada de sensores (Figura~\ref{fig:sensors_telemetria}), que aprofunda a visualização dos dados de distância e orientação. Nela, cada um dos três sensores — esquerda, frente e direita — é exibido com seu valor atual e um gráfico histórico dos últimos 60 segundos, facilitando a identificação de padrões e variações bruscas. Um histograma combina as leituras dos três sensores para dar uma visão geral da distribuição de distâncias medidas. O painel de IMU exibe os ângulos de \textit{roll}, \textit{pitch} e \textit{yaw} em graus, além do \textit{bias} de calibração, o que será útil para diagnosticar desvios de trajetória quando a integração com o hardware estiver completa. Por fim, um \textit{stream} de eventos ao vivo lista os pacotes de telemetria recebidos com seus respectivos \textit{timestamps} e velocidades, permitindo verificar a regularidade e a taxa de chegada dos dados.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figuras/sensors_telemetria.png}
+    \caption{Tela de sensores durante a corrida simulada: sensor esquerdo detectando parede a 1,5~cm, frente livre a 23,1~cm, direita livre a 11,6~cm, orientação IMU com \textit{roll}/\textit{yaw} de 1,7° e \textit{stream} de eventos em tempo real.}
+    \label{fig:sensors_telemetria}
+\end{figure}
+
+\subsection{Mapeamento do labirinto}
+
+O mapa é construído de forma incremental: a cada pacote recebido, o sistema incorpora apenas as células novas ao estado já acumulado, sem precisar retransmitir o labirinto inteiro a cada atualização. No banco de dados, o mapa fica armazenado como um JSON esparso no modelo da tentativa — somente as células que o robô (ou o simulador) já visitou aparecem na estrutura.
+
+No \textit{frontend}, a grade 16$\times$16 vai sendo preenchida à medida que o robô avança, deixando visível quais regiões já foram exploradas e onde o robô está em cada momento. As Figuras~\ref{fig:dashboard_inicio} e~\ref{fig:dashboard_progresso} ilustram bem essa progressão: entre os dois registros, o número de células exploradas saltou de 29 para 150, o que representa uma cobertura de mais da metade do labirinto.
+
+\subsection{Salvamento do caminho percorrido}
+
+Cada passo do robô é salvo individualmente no banco de dados, com coordenadas, \textit{timestamp}, orientação, velocidade e nível de bateria no momento da passagem. A ordem dos passos é mantida por um contador sequencial, o que permite reconstruir a trajetória completa depois que a corrida termina.
+
+Além dos passos individuais, a tentativa em si guarda um resumo da corrida: horário de início e fim, velocidade média, consumo de bateria, status (em curso, finalizada ou abortada) e se o objetivo foi alcançado. Isso facilita tanto a consulta histórica no \textit{frontend} quanto eventuais análises de desempenho entre diferentes corridas.
 
 \section{Testes de integração}
 
