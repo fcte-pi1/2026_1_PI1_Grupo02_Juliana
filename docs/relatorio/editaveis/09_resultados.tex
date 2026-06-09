@@ -344,9 +344,22 @@ Cada passo do robô é salvo individualmente no banco de dados, com coordenadas,
 
 Além dos passos individuais, a tentativa em si guarda um resumo da corrida: horário de início e fim, velocidade média, consumo de bateria, status (em curso, finalizada ou abortada) e se o objetivo foi alcançado. Isso facilita tanto a consulta histórica no \textit{frontend} quanto eventuais análises de desempenho entre diferentes corridas.
 
+\subsection{Testes Unitários}
+
+Os testes automatizados do backend foram desenvolvidos e executados utilizando o Pytest. Conforme apresentado na imagem abaixo mostrando o relatório de cobertura, os testes alcançaram 90,66\% de cobertura do código. Esse resultado demonstra que a maior parte das funcionalidades implementadas foi validada por meio de testes automatizados, contribuindo para a confiabilidade e estabilidade da aplicação. Para rodar os testes criados usamos o 'make test'.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figuras/testes_soft.png}
+    \caption{Coverage de Testes Unitários}
+    \label{fig:figuras/testes_soft.png}
+\end{figure}
+
 \section{Testes de integração}
 
-\textcolor{red}{Apresentar com detalhes os testes feitos para conferir se os objetivos do projeto como um todo foram atendidos.}
+A equipe não conseguiu realizar os testes de integração dentro do prazo do Ponto de Controle 2 devido ao atraso na entrega das peças e aos problemas que ocasionaram atrasos na impressão do chassi.
+
+%\textcolor{red}{Apresentar com detalhes os testes feitos para conferir se os objetivos do projeto como um todo foram atendidos.}
 
 %\textcolor{red}{Com relação ao \textit{software}, será necessário apresentar pacotes de componentes de \textit{software}, suas funções e características, e explicar as decisões de projeto.}
 
