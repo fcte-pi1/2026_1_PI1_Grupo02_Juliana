@@ -12,6 +12,16 @@
 \end{itemize}
 }
 
+\subsection{Materiais e métodos}
+
+Para a produção do chassi do projeto, optou-se pela utilização de impressão 3D em conjunto do filamento PETG (Polietileno Tereftalato Glicol) como material principal de impressão. A escolha do filamento sobre outros, como por exemplo o PLA (Poliácido Láctico), se deu pelo filamento possuir alta resistência a impactos e desgaste, e ainda apresentar leveza, baixo custo e facilidade de fabricação.
+
+No que diz respeito ao processo de fabricação, a impressão 3D possibilitou uma simplificação significativa na produção do chassi, não havendo a necessidade de usinagem e desperdício de material, além de permitir a entrega de um produto altamente personalizado e adequado às dimensões e necessidades do projeto.
+
+\subsection{Precisão e acurácia das medidas obtidas}
+
+Para a validação das medidas obtidas, foi seguido um protocolo para coleta de dados, assegurando a acurácia das medidas. As medições dos componentes foram feitas utilizando um paquímetro analógico com incerteza calibrada de $\pm 0,02 mm$, a escolha do instrumento permitiu o monitoramento das dimensões dos encaixes estruturais em relação ao modelo CAD de forma confiável. Para uma maior consistência dos dados obtidos, o protocolo determinou que as medidas do chassi fossem feitas de forma independente por um mesmo operador, após 5 repetições por dimensão foi verificado o desvio padrão amostral, valores de desvio próximo a zero confirmaram uma alta precisão em suas medidas.
+
 \section{Testes da estrutura}
 
 \textcolor{red}{Apresentar com detalhes os testes feitos para conferir se os objetivos da estrutura foram atendidos, incluindo:}
@@ -57,6 +67,54 @@
         \item \textcolor{red}{Transmissão de dados de sensores dentro da taxa de amostragem.}
     \end{itemize}
 \end{enumerate}
+
+\subsection{Teste Sensor Giroscópio MPU-6050}
+
+\textcolor{black}{O funcionamento correto do giroscópio é fundamental para a orientação do robô durante a execução do algoritmo de busca dentro do labirinto. Para a realização do teste, foi preciso fazer uso de elementos e ferramento do laboratório, por essa razão os laboratórios NEI 1 e NEI 2 da faculdade FCTE foram utilizados como espaço de trabalho nos horários disponíveis.}
+
+\textcolor{black}{Para realizar a montagem o primeiro passo foi colocar o microcontrolador raspberry pi pico w e o sensor mpu6050 na protoboard, logo começamos com as conexões com ajuda de jumpers fornecidos no laboratório. O sinal SDA do sensor foi conectado ao pino físico 6 da raspberry, o sinal SCL do sensor foi conectado ao pino físico 7, o VCC do sensor foi conectado com o pino físico 36 (3v3 out) do microcontrolador, o GND do sensor foi conectado com o pino físico 38 (GND) da raspberry e o sinal AD0 também foi conectado com o GND do microcontrolador. Uma vez que a montagem foi realizada, a equipe procedeu com a seguinte fase de teste que é a programação da raspberry com um código funcional para testar o sensor, para cumprir com essa atividade foi preciso um cabo micro usb para conectar o microcontrolador com um notebook.}
+
+\textcolor{black}{Para a criação do arquivo .uf2 que vai ser lido pela raspberry, foi necessário criar três arquivos independentes na linguagem c++, o primeiro arquivo mpu6050.h, o qual definia os registradores e structs a ser utilizados, o segundo arquivo mmpu6050.cpp, encarregado de implementar as funções de init, leitura, calibração e orientação. O terceiro arquivo main.cpp executava as funções implementadas criando o mapeamento cardinal (north, east, south, west) e fazendo uso do led do microcontrolador para feedback de funcionamento. Dentro da convenção dos eixos, o eixo Z (yaw) é perpendicular ao chão, ou seja é o eixo principal utilizado para o giro do robô, o eixo X (roll) é a inclinação lateral enquanto o eixo Y (pitch) é a inclinação frontal e traseira.}
+
+\textcolor{black}{Uma vez que a raspberry foi programada com o arquivo de teste, o led do microcontrolador acende continuamente enquanto o sensor faz a calibração, ao piscar duas vezes a calibração concluiu com sucesso, logo depois procedemos abrindo o monitor serial no vscode na porta COM3, onde se encontra a conexão com a raspberry para visualizar a saída do texto. Após a calibração, a protoboard junto com o sensor foi levantada e rotacionada manualmente principalmente no eixo z e passando pelas quatro direções cardinais, enquanto isso, os dados das direções cardinais podiam ser visualizados no monitor serial conforme o sensor era rotacionado.}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\linewidth]{figuras/teste_mpu6050.png}
+    \caption{Monitor serial com visualização de dados fornecidos pelo sensor mpu6050.}
+    \label{fig:teste Sensor mpu6050}
+\end{figure}
+
+\subsection{Teste Sensor Ultrassônico HC-SR04}
+
+\textcolor{black}{O funcionamento correto do sensor ultrassônico é fundamental para a detecção das paredes do labirinto e a medição das distâncias durante a execução do algoritmo de busca do robô. Para a realização do teste, foi preciso fazer uso de elementos e ferramento do laboratório, por essa razão os laboratórios NEI 1 e NEI 2 da faculdade FCTE foram utilizados como espaço de trabalho nos horários disponíveis.}
+
+\textcolor{black}{Para realizar a montagem o primeiro passo foi colocar o microcontrolador raspberry pi pico w e o sensor hc-sr04 na protoboard, logo começamos com as conexões com ajuda de jumpers fornecidos no laboratório. O pino Trig do sensor foi conectado ao pino 20 da raspberry responsável pelo disparo do pulso ultrassônico, o pino Echo do sensor foi conectado ao pino 19 encarregado de receber o sinal de retorno, o VCC do sensor foi conectado com o pino físico 36 (3.3V) do microcontrolador e o GND do sensor foi conectado com o pino físico 38 (GND) da raspberry. Uma vez que a montagem foi realizada, a equipe procedeu com a seguinte fase de teste que é a programação da raspberry com um código funcional para testar o sensor, para cumprir com essa atividade foi preciso um cabo micro usb para conectar o microcontrolador com um notebook.}
+
+\textcolor{black}{Para a criação do arquivo .uf2 que vai ser lido pela raspberry, foi necessário criar três arquivos independentes na linguagem c++, o primeiro arquivo hcsr04.h, o qual definia os pinos e structs a ser utilizados, o segundo arquivo hcsr04.cpp, encarregado de implementar as funções de init, disparo do pulso e leitura da distância. O terceiro arquivo main.cpp executava as funções implementadas, calculando a distância a partir do tempo de retorno do eco e da velocidade do som, e fazendo uso do led do microcontrolador para feedback de funcionamento. O princípio de medição consiste em emitir um pulso ultrassônico pelo pino Trig e medir o tempo decorrido até o retorno do eco pelo pino Echo, sendo a distância obtida pela relação entre esse tempo e a velocidade de propagação do som no ar.}
+
+\textcolor{black}{Uma vez que a raspberry foi programada com o arquivo de teste, procedemos abrindo o monitor serial no vscode na porta COM5, onde se encontra a conexão com a raspberry para visualizar a saída do texto. Em seguida, um objeto plano foi posicionado em frente ao sensor a diferentes distâncias conhecidas, medidas previamente com uma régua, enquanto isso, os valores de distância podiam ser visualizados no monitor serial conforme o objeto era aproximado e afastado, permitindo verificar a consistência e a precisão das leituras fornecidas pelo sensor.}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\linewidth]{figuras/teste_hcsr04.png}
+    \caption{Monitor serial com visualização de dados fornecidos pelo sensor hc-sr04.}
+    \label{fig:teste Sensor hcsr04}
+\end{figure}
+
+\subsection{Teste Sensor Infravermelho VL53L0X}
+
+\textcolor{black}{Para realizar a montagem, o primeiro passo foi colocar o microcontrolador Raspberry Pi Pico W e os dois sensores VL53L0X na protoboard, logo em seguida foram realizadas as conexões com auxílio de jumpers fornecidos no laboratório. Para o sensor esquerdo, o sinal SDA foi conectado ao pino físico 6 da Raspberry, o sinal SCL ao pino físico 7, o VIN ao pino físico 36 (3V3 OUT) e o GND ao pino físico 38. Para o sensor direito, o sinal SDA foi conectado ao pino físico 19, o SCL ao pino físico 20, o VIN novamente ao pino físico 36 (3V3 OUT) e o GND ao pino físico 38. Uma vez que a montagem foi realizada, a equipe procedeu com a fase de programação da Raspberry com um código funcional para testar os sensores, para isso foi utilizado um cabo micro USB para conectar o microcontrolador a um notebook.}
+
+\textcolor{black}{Para a criação do arquivo .uf2 que seria gravado na Raspberry, foram criados três arquivos independentes na linguagem C: o primeiro, vl53l0x.h, definia os registradores, structs e a API pública do driver; o segundo, vl53l0x.c, implementava as funções de inicialização, leitura, calibração de SPADs, calibração VHV e de fase, além do controle de timing budget; o terceiro, main.c, executava as funções implementadas inicializando os dois barramentos I²C e realizando leituras contínuas de distância em milímetros de ambos os sensores simultaneamente.}
+
+\textcolor{black}{Uma vez que a Raspberry foi programada com o arquivo de teste, o firmware aguardou 1,5 s para a enumeração da USB e inicializou os dois sensores em sequência, imprimindo o status de cada um no monitor serial. Logo em seguida, abrimos o monitor serial no VS Code na porta COM5, onde se encontrava a conexão com a Raspberry, para visualizar a saída dos dados. Após a inicialização, objetos foram aproximados e afastados manualmente na frente de cada sensor individualmente e de ambos ao mesmo tempo, enquanto as distâncias medidas em milímetros podiam ser visualizadas em tempo real no monitor serial conforme os objetos eram movimentados.}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\linewidth]{figuras/teste_vl53l0x.png}
+    \caption{Monitor serial com visualização de dados fornecidos pelo sensor vl53l0x.}
+\end{figure}
 
 \section{Testes de consumo energético}
 
