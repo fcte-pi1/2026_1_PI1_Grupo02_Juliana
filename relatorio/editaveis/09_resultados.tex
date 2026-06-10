@@ -1,0 +1,365 @@
+\chapter{Testes de Verificação e Validação}
+
+\section{Características Gerais}
+
+%\textcolor{red}{Introduzir os principais pontos deste capítulo. Cada teste deve conter explicações completas que garantam sua repetibilidade:
+%\begin{itemize}
+%    \item Hipóteses levantadas
+%    \item Condições de contorno
+%    \item Resultados esperados
+%    \item Materiais e métodos
+%    \item Precisão e acurácia das medidas obtidas.
+%\end{itemize}
+%}
+
+\subsection{Materiais e métodos}
+
+Para a produção do chassi do projeto, optou-se pela utilização de impressão 3D em conjunto do filamento PETG (Polietileno Tereftalato Glicol) como material principal de impressão. A escolha do filamento sobre outros, como por exemplo o PLA (Poliácido Láctico), se deu pelo filamento possuir alta resistência a impactos e desgaste, e ainda apresentar leveza, baixo custo e facilidade de fabricação.
+
+No que diz respeito ao processo de fabricação, a impressão 3D possibilitou uma simplificação significativa na produção do chassi, não havendo a necessidade de usinagem e desperdício de material, além de permitir a entrega de um produto altamente personalizado e adequado às dimensões e necessidades do projeto.
+
+\subsection{Precisão e acurácia das medidas obtidas}
+
+Para a validação das medidas obtidas, foi seguido um protocolo para coleta de dados, assegurando a acurácia das medidas. As medições dos componentes foram feitas utilizando um paquímetro analógico com incerteza calibrada de $\pm 0,02 mm$, a escolha do instrumento permitiu o monitoramento das dimensões dos encaixes estruturais em relação ao modelo CAD de forma confiável. Para uma maior consistência dos dados obtidos, o protocolo determinou que as medidas do chassi fossem feitas de forma independente por um mesmo operador, após 5 repetições por dimensão foi verificado o desvio padrão amostral, valores de desvio próximo a zero confirmaram uma alta precisão em suas medidas.
+
+\section{Testes da estrutura}
+
+A montagem do chassi impresso em 3D com as abraçadeiras foi feita fielmente ao modelo CAD (já colorido e mostrando só as peças relevantes ao caso nas Figuras \ref{fig:rendcolorida} e \ref{fig:rendcolorida2}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figuras/fotocadfinal.jpg}
+    \caption{Renderização colorida das peças impressas.}
+    \label{fig:rendcolorida}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figuras/fotocadfinal2.jpg}
+    \caption{Outra vista da renderização colorida das peças impressas.}
+    \label{fig:rendcolorida2}
+\end{figure}
+
+A Figura \ref{fig:insertos} mostra os dois níveis do chassi e os insertos de latão ao lado.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figuras/fotomontagem1.jpeg}
+    \caption{Preparação para junção dos insertos de latão.}
+    \label{fig:insertos}
+\end{figure}
+
+A Figura \ref{fig:parafusacao} mostra os dois níveis do chassi e as abraçadeiras já com os insertos de latão, prontos para a parafusação e a inserção dos separadores de nível.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figuras/fotomontagem2.jpeg}
+    \caption{Componentes da parafusação.}
+    \label{fig:parafusacao}
+\end{figure}
+
+AS Figuras \ref{fig:montagem3} e \ref{fig:montagem4} mostram a carcaça do micromouse montada e parafusada, com os níveis separados pelos espaçadores de nylon e as abraçadeiras fixadas.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figuras/fotomontagem3.jpeg}
+    \caption{Carcaça do micromouse montada e parafusada.}
+    \label{fig:montagem3}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figuras/fotomontagem4.jpeg}
+    \caption{Outra vista da carcaça montada e parafusada.}
+    \label{fig:montagem4}
+\end{figure}
+
+\section{Testes de \textit{hardware}}
+
+%\textcolor{red}{Apresentar com detalhes os testes feitos para conferir se os objetivos do \textit{hardware} foram atendidos, incluindo:}
+%
+%\begin{enumerate}
+%    \item \textcolor{red}{Processamento (Arduino, ESP32 etc):}
+%    \begin{itemize}
+%        \item \textcolor{red}{Definir interface de desenvolvimento;}
+%        \item \textcolor{red}{Rodar exemplo mínimo.}
+%    \end{itemize}
+%    \item \textcolor{red}{Sensores (temperatura, pressão, posição, velocidade etc.):}
+%    \begin{itemize}
+%        \item \textcolor{red}{Realizar leitura básica de dados;}
+%        \item \textcolor{red}{Validar/calibrar leituras;}
+%        \item \textcolor{red}{Definir taxas de amostragem e quantidade de dados para transmissão e/ou armazenamento;}
+%        \item \textcolor{red}{Validar taxas definidas e quantidade de dados;}
+%        \item \textcolor{red}{Realizar processamento básico de dados (\textit{thresholding}, filtro média-móvel etc.).}
+%    \end{itemize}
+%    \item \textcolor{red}{Armazenamento (memória interna, cartão SD, pendrive etc.):}
+%    \begin{itemize}
+%        \item \textcolor{red}{Armazenar dados básicos;}
+%        \item \textcolor{red}{Armazenar e validar dados de sensores.}
+%    \end{itemize}
+%    \item \textcolor{red}{Atuadores (Motores DC, relés, LEDs etc.):}
+%    \begin{itemize}
+%        \item \textcolor{red}{Realizar acionamentos básicos;}
+%        \item \textcolor{red}{Realizar acionamentos com base em dados de sensores;}
+%        \item \textcolor{red}{Realizar processamento básico de dados (PWM etc.).}
+%    \end{itemize}
+%    \item \textcolor{red}{Comunicações (UART, I2C, SPI, USB, WiFi, Bluetooth etc.):}
+%    \begin{itemize}
+%        \item \textcolor{red}{Transmissão básica de dados;}
+%        \item \textcolor{red}{Transmissão de dados de sensores dentro da taxa de amostragem.}
+%    \end{itemize}
+%\end{enumerate}
+
+\subsection{Teste Sensor Giroscópio MPU-6050}
+
+\textcolor{black}{O funcionamento correto do giroscópio é fundamental para a orientação do robô durante a execução do algoritmo de busca dentro do labirinto. Para a realização do teste, foi preciso fazer uso de elementos e ferramento do laboratório, por essa razão os laboratórios NEI 1 e NEI 2 da faculdade FCTE foram utilizados como espaço de trabalho nos horários disponíveis.}
+
+\textcolor{black}{Para realizar a montagem o primeiro passo foi colocar o microcontrolador raspberry pi pico w e o sensor mpu6050 na protoboard, logo começamos com as conexões com ajuda de jumpers fornecidos no laboratório. O sinal SDA do sensor foi conectado ao pino físico 6 da raspberry, o sinal SCL do sensor foi conectado ao pino físico 7, o VCC do sensor foi conectado com o pino físico 36 (3v3 out) do microcontrolador, o GND do sensor foi conectado com o pino físico 38 (GND) da raspberry e o sinal AD0 também foi conectado com o GND do microcontrolador. Uma vez que a montagem foi realizada, a equipe procedeu com a seguinte fase de teste que é a programação da raspberry com um código funcional para testar o sensor, para cumprir com essa atividade foi preciso um cabo micro usb para conectar o microcontrolador com um notebook.}
+
+\textcolor{black}{Para a criação do arquivo .uf2 que vai ser lido pela raspberry, foi necessário criar três arquivos independentes na linguagem c++, o primeiro arquivo mpu6050.h, o qual definia os registradores e structs a ser utilizados, o segundo arquivo mmpu6050.cpp, encarregado de implementar as funções de init, leitura, calibração e orientação. O terceiro arquivo main.cpp executava as funções implementadas criando o mapeamento cardinal (north, east, south, west) e fazendo uso do led do microcontrolador para feedback de funcionamento. Dentro da convenção dos eixos, o eixo Z (yaw) é perpendicular ao chão, ou seja é o eixo principal utilizado para o giro do robô, o eixo X (roll) é a inclinação lateral enquanto o eixo Y (pitch) é a inclinação frontal e traseira.}
+
+\textcolor{black}{Uma vez que a raspberry foi programada com o arquivo de teste, o led do microcontrolador acende continuamente enquanto o sensor faz a calibração, ao piscar duas vezes a calibração concluiu com sucesso, logo depois procedemos abrindo o monitor serial no vscode na porta COM3, onde se encontra a conexão com a raspberry para visualizar a saída do texto. Após a calibração, a protoboard junto com o sensor foi levantada e rotacionada manualmente principalmente no eixo z e passando pelas quatro direções cardinais, enquanto isso, os dados das direções cardinais podiam ser visualizados no monitor serial conforme o sensor era rotacionado.}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\linewidth]{figuras/teste_mpu6050.png}
+    \caption{Monitor serial com visualização de dados fornecidos pelo sensor mpu6050.}
+    \label{fig:teste Sensor mpu6050}
+\end{figure}
+
+\subsection{Teste Sensor Ultrassônico HC-SR04}
+
+\textcolor{black}{O funcionamento correto do sensor ultrassônico é fundamental para a detecção das paredes do labirinto e a medição das distâncias durante a execução do algoritmo de busca do robô. Para a realização do teste, foi preciso fazer uso de elementos e ferramento do laboratório, por essa razão os laboratórios NEI 1 e NEI 2 da faculdade FCTE foram utilizados como espaço de trabalho nos horários disponíveis.}
+
+\textcolor{black}{Para realizar a montagem o primeiro passo foi colocar o microcontrolador raspberry pi pico w e o sensor hc-sr04 na protoboard, logo começamos com as conexões com ajuda de jumpers fornecidos no laboratório. O pino Trig do sensor foi conectado ao pino 20 da raspberry responsável pelo disparo do pulso ultrassônico, o pino Echo do sensor foi conectado ao pino 19 encarregado de receber o sinal de retorno, o VCC do sensor foi conectado com o pino físico 36 (3.3V) do microcontrolador e o GND do sensor foi conectado com o pino físico 38 (GND) da raspberry. Uma vez que a montagem foi realizada, a equipe procedeu com a seguinte fase de teste que é a programação da raspberry com um código funcional para testar o sensor, para cumprir com essa atividade foi preciso um cabo micro usb para conectar o microcontrolador com um notebook.}
+
+\textcolor{black}{Para a criação do arquivo .uf2 que vai ser lido pela raspberry, foi necessário criar três arquivos independentes na linguagem c++, o primeiro arquivo hcsr04.h, o qual definia os pinos e structs a ser utilizados, o segundo arquivo hcsr04.cpp, encarregado de implementar as funções de init, disparo do pulso e leitura da distância. O terceiro arquivo main.cpp executava as funções implementadas, calculando a distância a partir do tempo de retorno do eco e da velocidade do som, e fazendo uso do led do microcontrolador para feedback de funcionamento. O princípio de medição consiste em emitir um pulso ultrassônico pelo pino Trig e medir o tempo decorrido até o retorno do eco pelo pino Echo, sendo a distância obtida pela relação entre esse tempo e a velocidade de propagação do som no ar.}
+
+\textcolor{black}{Uma vez que a raspberry foi programada com o arquivo de teste, procedemos abrindo o monitor serial no vscode na porta COM5, onde se encontra a conexão com a raspberry para visualizar a saída do texto. Em seguida, um objeto plano foi posicionado em frente ao sensor a diferentes distâncias conhecidas, medidas previamente com uma régua, enquanto isso, os valores de distância podiam ser visualizados no monitor serial conforme o objeto era aproximado e afastado, permitindo verificar a consistência e a precisão das leituras fornecidas pelo sensor.}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\linewidth]{figuras/teste_hcsr04.png}
+    \caption{Monitor serial com visualização de dados fornecidos pelo sensor hc-sr04.}
+    \label{fig:teste Sensor hcsr04}
+\end{figure}
+
+\subsection{Teste Sensor Infravermelho VL53L0X}
+
+\textcolor{black}{Para realizar a montagem, o primeiro passo foi colocar o microcontrolador Raspberry Pi Pico W e os dois sensores VL53L0X na protoboard, logo em seguida foram realizadas as conexões com auxílio de jumpers fornecidos no laboratório. Para o sensor esquerdo, o sinal SDA foi conectado ao pino físico 6 da Raspberry, o sinal SCL ao pino físico 7, o VIN ao pino físico 36 (3V3 OUT) e o GND ao pino físico 38. Para o sensor direito, o sinal SDA foi conectado ao pino físico 19, o SCL ao pino físico 20, o VIN novamente ao pino físico 36 (3V3 OUT) e o GND ao pino físico 38. Uma vez que a montagem foi realizada, a equipe procedeu com a fase de programação da Raspberry com um código funcional para testar os sensores, para isso foi utilizado um cabo micro USB para conectar o microcontrolador a um notebook.}
+
+\textcolor{black}{Para a criação do arquivo .uf2 que seria gravado na Raspberry, foram criados três arquivos independentes na linguagem C: o primeiro, vl53l0x.h, definia os registradores, structs e a API pública do driver; o segundo, vl53l0x.c, implementava as funções de inicialização, leitura, calibração de SPADs, calibração VHV e de fase, além do controle de timing budget; o terceiro, main.c, executava as funções implementadas inicializando os dois barramentos I²C e realizando leituras contínuas de distância em milímetros de ambos os sensores simultaneamente.}
+
+\textcolor{black}{Uma vez que a Raspberry foi programada com o arquivo de teste, o firmware aguardou 1,5 s para a enumeração da USB e inicializou os dois sensores em sequência, imprimindo o status de cada um no monitor serial. Logo em seguida, abrimos o monitor serial no VS Code na porta COM5, onde se encontrava a conexão com a Raspberry, para visualizar a saída dos dados. Após a inicialização, objetos foram aproximados e afastados manualmente na frente de cada sensor individualmente e de ambos ao mesmo tempo, enquanto as distâncias medidas em milímetros podiam ser visualizadas em tempo real no monitor serial conforme os objetos eram movimentados.}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\linewidth]{figuras/teste_vl53l0x.png}
+    \caption{Monitor serial com visualização de dados fornecidos pelo sensor vl53l0x.}
+\end{figure}
+
+
+%\textcolor{red}{Apresentar com detalhes os testes feitos para conferir se as demandas energéticas do projeto foram atendidas.}
+
+\section{Testes de Consumo Energético}
+
+\subsection{Caracterização da Fonte de Alimentação}
+
+O sistema de alimentação do micromouse é composto por duas baterias de íon-lítio de 3,7 V e 4400 mAh conectadas em série, resultando em tensão nominal de 7,4 V e capacidade de 4400 mAh.
+
+A energia total armazenada no conjunto é dada por:
+
+\begin{equation}
+E = V \times C
+\end{equation}
+
+\begin{equation}
+E = 7,4 \times 4,4 = 32,56 { Wh}
+\end{equation}
+
+Considerando uma eficiência prática de 85\%, referente às perdas no regulador step-down necessário para alimentação da Raspberry Pi Pico W e demais componentes de 3,3 V e 5 V, a energia efetivamente disponível ao sistema é:
+
+\begin{equation}
+E_{disp} = 32,56 \times 0,85 = 27,68 { Wh}
+\end{equation}
+
+equivalente a uma carga útil aproximada de 3740 mAh referenciada a 7,4 V.
+
+\subsection{Levantamento do Consumo por Componente}
+
+A Tabela \ref{tab:consumo_componentes} apresenta o consumo estimado de cada componente do micromouse, com base nos datasheets dos fabricantes e em referências técnicas para componentes similares. Os valores de corrente são referenciados à tensão de operação de cada dispositivo após regulação.
+
+\begin{table}[H]
+\centering
+\caption{Consumo estimado dos componentes do micromouse}
+\label{tab:consumo_componentes}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{|l|c|c|c|p{5cm}|}
+\hline
+\textbf{Componente} & \textbf{Qtd.} & \textbf{Corrente Unitária (mA)} & \textbf{Corrente Total (mA)} & \textbf{Observações} \\
+\hline
+Raspberry Pi Pico W & 1 & 43 & 43 & Operação ativa, Wi-Fi desabilitado \\
+\hline
+Raspberry Pi Pico W (Wi-Fi ativo) & 1 & $\sim$100 & $\sim$100 & Durante transmissão Wi-Fi \\
+\hline
+Motor GA12-N20 & 2 & 150--200 & 350 & Operação nominal a aproximadamente 60\% da tensão via PWM \\
+\hline
+Driver TB6612FNG & 1 & 2--5 & 4 & Consumo estático do CI \\
+\hline
+Sensor VL53L0X (ToF) & 2 & 19--20 & 38 & Modo de medição contínua \\
+\hline
+Sensor HC-SR04 & 1 & 20 & 20 & Alimentado via VBUS (5 V) \\
+\hline
+Sensor MPU-6050 & 1 & 3,5--5 & 4 & Giroscópio e acelerômetro ativos \\
+\hline
+Módulo sensor de corrente (5 A) & 1 & $\sim$12 & 12 & Baseado em módulos ACS712 similares \\
+\hline
+Módulo sensor de tensão (0--25 V) & 1 & $\sim$1,5 & 1,5 & Divisor resistivo com buffer \\
+\hline
+LED vermelho & 1 & 2 & 2 & Com resistor limitador de 1 k$\Omega$ a 3,3 V \\
+\hline
+Resistores (1 k$\Omega$ e 2,2 k$\Omega$) & -- & $<$0,5 & 0,5 & Perdas desprezíveis \\
+\hline
+\textbf{Total (Wi-Fi off)} & & & \textbf{$\sim$475} & Regime normal de operação \\
+\hline
+\textbf{Total (Wi-Fi ativo)} & & & \textbf{$\sim$532} & Com transmissão contínua \\
+\hline
+\end{tabular}
+}
+\end{table}
+
+\textbf{Nota:} Os valores dos motores GA12-N20 referem-se à condição de cruzeiro com ciclo PWM reduzido. Em partida ou travamento, o pico de corrente pode atingir entre 500 mA e 1000 mA por motor, condição transitória que deve ser considerada no dimensionamento das proteções do driver.
+
+\subsection{Distribuição do Consumo Energético}
+
+A análise percentual do consumo em regime normal ($\sim$475 mA) revela a distribuição apresentada na Tabela \ref{tab:distribuicao_consumo}.
+
+\begin{table}[H]
+\centering
+\caption{Distribuição percentual do consumo energético}
+\label{tab:distribuicao_consumo}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Grupo de Componentes} & \textbf{Corrente (mA)} & \textbf{Participação (\%)} \\
+\hline
+Motores GA12-N20 (2x) & 350 & 73,7 \\
+\hline
+Raspberry Pi Pico W & 43 & 9,1 \\
+\hline
+Sensores (VL53L0X, HC-SR04 e MPU-6050) & 62 & 13,1 \\
+\hline
+Driver e módulos auxiliares & 17,5 & 3,7 \\
+\hline
+LED e resistores & 2,5 & 0,5 \\
+\hline
+\end{tabular}
+\end{table}
+
+Os motores representam isoladamente a maior parcela do consumo total, resultado esperado em plataformas de robótica móvel, onde os atuadores dominam o orçamento energético. Essa característica reforça a importância do controle eficiente de velocidade via PWM, que reduz a corrente média consumida pelos motores ao longo do percurso no labirinto.
+
+\subsection{Análise da Autonomia do Sistema}
+
+Com base nos valores levantados, calculou-se a autonomia do sistema em três cenários de operação:
+
+\begin{itemize}
+    \item \textbf{Cenário 1:} Operação em labirinto (Wi-Fi desabilitado e motores em regime).
+    \item \textbf{Cenário 2:} Operação com monitoramento via Wi-Fi (transmissão contínua).
+    \item \textbf{Cenário 3:} Pico de demanda (partida simultânea dos dois motores).
+\end{itemize}
+
+A corrente de pico estimada é de aproximadamente:
+
+\begin{equation}
+I_{pico} \approx 1600 { mA}
+\end{equation}
+
+correspondente a:
+
+\begin{equation}
+I_{pico} \approx (2 \times 500) + 600
+\end{equation}
+
+onde os motores contribuem com aproximadamente 1000 mA e os demais componentes com cerca de 600 mA.
+
+Este terceiro cenário representa uma condição transitória e não o regime contínuo de operação do robô, sendo apresentado apenas para fins de dimensionamento das proteções elétricas.
+
+\subsection{Considerações sobre a Viabilidade Energética}
+
+Os resultados indicam que o sistema possui autonomia energética suficiente para aplicações de micromouse, com tempo de operação estimado entre 7 e 8 horas.
+
+Como o pack de baterias opera em 7,4 V, é necessário utilizar um regulador step-down para alimentar a Raspberry Pi Pico W com segurança, enquanto os motores devem ser controlados por PWM para operar dentro de sua faixa nominal.
+
+Além disso, recomenda-se o monitoramento contínuo da tensão das baterias por meio do sensor integrado, com implementação de proteção por subtensão abaixo de 6,0 V, evitando descargas profundas e aumentando a vida útil das células.
+
+\section{Testes de \textit{software}}
+
+Como o \textit{hardware} do micromouse ainda está em fase de montagem e integração, os testes de \textit{software} foram realizados com um simulador de \textit{firmware} desenvolvido pela própria equipe. Esse simulador reproduz fielmente o comportamento esperado do robô real: ele percorre o labirinto em ziguezague, calcula as paredes de cada célula visitada e publica pacotes MQTT com o mesmo formato e protocolo que o \textit{firmware} definitivo utilizará. A ideia foi garantir que todo o pipeline de dados — do envio até a exibição no \textit{dashboard} — pudesse ser exercitado e validado antes mesmo de o robô estar pronto.
+
+\subsection{Envio de telemetria}
+
+O envio de telemetria funciona via protocolo MQTT. Na integração real, quem publica as mensagens será o Raspberry Pi Pico W embarcado no robô; nos testes realizados, esse papel foi assumido pelo simulador, que se comporta exatamente como o \textit{firmware} faria.
+
+A cada passo simulado, o sistema publica um pacote JSON no tópico \texttt{micromouse/<id>/telemetria} com QoS~1, garantindo entrega confiável ao \textit{broker} Mosquitto. O pacote contém a posição atual do robô (coordenadas $x$, $y$ e orientação cardinal), as paredes da célula recém-visitada, a velocidade instantânea, o nível de bateria e a tensão medida. O simulador também decrementa gradualmente a bateria (0,4\% por passo) e varia a velocidade entre 0,25 e 0,35~m/s para aproximar o comportamento de uma corrida real.
+
+Do lado do \textit{backend}, um processo dedicado (\texttt{mqtt\_subscribe}) fica escutando esses tópicos e, ao receber cada mensagem, enfileira uma tarefa assíncrona no Celery para salvar os dados no banco sem travar o loop de recepção.
+
+\subsection{Exibição de telemetria}
+
+Para que as informações apareçam no \textit{dashboard} sem atraso perceptível, o \textit{backend} usa \textit{Server-Sent Events} (SSE) em vez de \textit{polling}. Após processar cada pacote, o servidor publica um \textit{snapshot} atualizado em um canal do Redis; o \textit{frontend} mantém a conexão aberta e recebe essas atualizações assim que chegam.
+
+As Figuras~\ref{fig:dashboard_inicio} e~\ref{fig:dashboard_progresso} mostram o \textit{dashboard} principal em dois momentos distintos da corrida simulada. Na tela, é possível acompanhar em tempo real a velocidade média, o tempo decorrido, o percentual de bateria com estimativa de autonomia, a tensão da bateria, a quantidade de células já exploradas no labirinto 16$\times$16 e os três sensores de distância (esquerda, frente e direita) com indicação de parede ou caminho livre. Um gráfico de velocidade dos últimos 60 segundos complementa a visualização.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figuras/dashboard_telemetria_inicio.png}
+    \caption{\textit{Dashboard} no início da corrida simulada: 29 células exploradas (11,3\% do labirinto), velocidade média de 0,38~m/s, bateria em 78\% e tensão de 7,40~V.}
+    \label{fig:dashboard_inicio}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figuras/dashboard_telemetria_processo.png}
+    \caption{\textit{Dashboard} após aproximadamente 25 minutos de corrida simulada: 150 células exploradas (58,6\%), bateria consumida para 67\% e tensão reduzida para 6,40~V, refletindo o consumo acumulado.}
+    \label{fig:dashboard_progresso}
+\end{figure}
+
+Além do \textit{dashboard} principal, o sistema conta com uma tela dedicada de sensores (Figura~\ref{fig:sensors_telemetria}), que aprofunda a visualização dos dados de distância e orientação. Nela, cada um dos três sensores — esquerda, frente e direita — é exibido com seu valor atual e um gráfico histórico dos últimos 60 segundos, facilitando a identificação de padrões e variações bruscas. Um histograma combina as leituras dos três sensores para dar uma visão geral da distribuição de distâncias medidas. O painel de IMU exibe os ângulos de \textit{roll}, \textit{pitch} e \textit{yaw} em graus, além do \textit{bias} de calibração, o que será útil para diagnosticar desvios de trajetória quando a integração com o hardware estiver completa. Por fim, um \textit{stream} de eventos ao vivo lista os pacotes de telemetria recebidos com seus respectivos \textit{timestamps} e velocidades, permitindo verificar a regularidade e a taxa de chegada dos dados.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figuras/sensors_telemetria.png}
+    \caption{Tela de sensores durante a corrida simulada: sensor esquerdo detectando parede a 1,5~cm, frente livre a 23,1~cm, direita livre a 11,6~cm, orientação IMU com \textit{roll}/\textit{yaw} de 1,7° e \textit{stream} de eventos em tempo real.}
+    \label{fig:sensors_telemetria}
+\end{figure}
+
+\subsection{Mapeamento do labirinto}
+
+O mapa é construído de forma incremental: a cada pacote recebido, o sistema incorpora apenas as células novas ao estado já acumulado, sem precisar retransmitir o labirinto inteiro a cada atualização. No banco de dados, o mapa fica armazenado como um JSON esparso no modelo da tentativa — somente as células que o robô (ou o simulador) já visitou aparecem na estrutura.
+
+No \textit{frontend}, a grade 16$\times$16 vai sendo preenchida à medida que o robô avança, deixando visível quais regiões já foram exploradas e onde o robô está em cada momento. As Figuras~\ref{fig:dashboard_inicio} e~\ref{fig:dashboard_progresso} ilustram bem essa progressão: entre os dois registros, o número de células exploradas saltou de 29 para 150, o que representa uma cobertura de mais da metade do labirinto.
+
+\subsection{Salvamento do caminho percorrido}
+
+Cada passo do robô é salvo individualmente no banco de dados, com coordenadas, \textit{timestamp}, orientação, velocidade e nível de bateria no momento da passagem. A ordem dos passos é mantida por um contador sequencial, o que permite reconstruir a trajetória completa depois que a corrida termina.
+
+Além dos passos individuais, a tentativa em si guarda um resumo da corrida: horário de início e fim, velocidade média, consumo de bateria, status (em curso, finalizada ou abortada) e se o objetivo foi alcançado. Isso facilita tanto a consulta histórica no \textit{frontend} quanto eventuais análises de desempenho entre diferentes corridas.
+
+\subsection{Testes Unitários}
+
+Os testes automatizados do backend foram desenvolvidos e executados utilizando o Pytest. Conforme apresentado na imagem abaixo mostrando o relatório de cobertura, os testes alcançaram 90,66\% de cobertura do código. Esse resultado demonstra que a maior parte das funcionalidades implementadas foi validada por meio de testes automatizados, contribuindo para a confiabilidade e estabilidade da aplicação. Para rodar os testes criados usamos o 'make test'.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figuras/testes_soft.png}
+    \caption{Coverage de Testes Unitários}
+    \label{fig:figuras/testes_soft.png}
+\end{figure}
+
+\section{Testes de integração}
+
+A equipe não conseguiu realizar os testes de integração dentro do prazo do Ponto de Controle 2 devido ao atraso na entrega das peças e aos problemas que ocasionaram atrasos na impressão do chassi.
+
+%\textcolor{red}{Apresentar com detalhes os testes feitos para conferir se os objetivos do projeto como um todo foram atendidos.}
+
+%\textcolor{red}{Com relação ao \textit{software}, será necessário apresentar pacotes de componentes de \textit{software}, suas funções e características, e explicar as decisões de projeto.}
+

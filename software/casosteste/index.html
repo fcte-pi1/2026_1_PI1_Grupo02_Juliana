@@ -1,0 +1,1288 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Projeto Integrador I - Grupo 02 com Professora Juliana">
+      
+      
+        <meta name="author" content="Grupo 02">
+      
+      
+        <link rel="canonical" href="https://fcte-pi1.github.io/2026_1_PI1_Grupo02_Juliana/software/casosteste/">
+      
+      
+        <link rel="prev" href="../../guides/quick-reference/">
+      
+      
+        <link rel="next" href="../eap-software/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
+    
+    
+      
+        <title>Casos de Teste - 2026.1 PI1 - Grupo 02 - Juliana</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#detalhamento-dos-casos-de-teste" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../.." title="2026.1 PI1 - Grupo 02 - Juliana" class="md-header__button md-logo" aria-label="2026.1 PI1 - Grupo 02 - Juliana" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            2026.1 PI1 - Grupo 02 - Juliana
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Casos de Teste
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/fcte-pi1/2026_1_PI1_Grupo02_Juliana" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub Repository
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="2026.1 PI1 - Grupo 02 - Juliana" class="md-nav__button md-logo" aria-label="2026.1 PI1 - Grupo 02 - Juliana" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    2026.1 PI1 - Grupo 02 - Juliana
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/fcte-pi1/2026_1_PI1_Grupo02_Juliana" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub Repository
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Guias
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guias
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Como Começar
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/latextutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Como usar LaTeX
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/mkdocstutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Como usar MkDocs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Como Contribuir
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/githubdesktoptutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Como Usar o GitHub Desktop
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/quick-reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Referência Rápida
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Software
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Software
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Casos de Teste
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Casos de Teste
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ct01-validacao-do-sistema-sensorial-e-precisao" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT01 - Validação do Sistema Sensorial e Precisão
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct02-controle-de-trajetoria-e-estabilidade-eletrica" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT02 - Controle de Trajetória e Estabilidade Elétrica
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct03-precisao-de-manobra-e-alteracao-de-direcao" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT03 - Precisão de Manobra e Alteração de Direção
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct04-inteligencia-e-navegacao-autonoma" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT04 - Inteligência e Navegação Autônoma
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct05-telemetria-e-comunicacao-sem-fio" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT05 - Telemetria e Comunicação sem Fio
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct06-mapeamento-e-persistencia-no-banco-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT06 - Mapeamento e Persistência no Banco de Dados
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct07-monitoramento-energetico-e-estabilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT07 - Monitoramento Energético e Estabilidade
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct08-conformidade-fisica-e-operacao-autonoma" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT08 - Conformidade Física e Operação Autônoma
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct09-salvamento-e-recuperacao-do-caminho-percorrido" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT09 - Salvamento e Recuperação do Caminho Percorrido
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct10-integracao-de-multiplos-sensores" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT10 - Integração de Múltiplos Sensores
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct11-robustez-sob-variacoes-de-iluminacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT11 - Robustez sob Variações de Iluminação
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct12-autonomia-energetica-completa" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT12 - Autonomia Energética Completa
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct13-resistencia-estrutural-a-impactos" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT13 - Resistência Estrutural a Impactos
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct14-comunicacao-sem-fio-em-longo-alcance" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT14 - Comunicação Sem Fio em Longo Alcance
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct15-tempo-de-carregamento-da-interface-de-telemetria" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT15 - Tempo de Carregamento da Interface de Telemetria
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct16-frequencia-de-atualizacao-de-telemetria" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT16 - Frequência de Atualização de Telemetria
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct17-controle-remoto-de-execucao-via-interface-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT17 - Controle Remoto de Execução via Interface Web
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct18-recuperacao-apos-falha-de-sensor" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT18 - Recuperação Após Falha de Sensor
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct19-variacao-de-temperatura-operacional" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT19 - Variação de Temperatura Operacional
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct20-validacao-completa-do-sistema-integrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT20 - Validação Completa do Sistema Integrado
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eap-software/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EAP Software
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ct01-validacao-do-sistema-sensorial-e-precisao" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT01 - Validação do Sistema Sensorial e Precisão
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct02-controle-de-trajetoria-e-estabilidade-eletrica" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT02 - Controle de Trajetória e Estabilidade Elétrica
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct03-precisao-de-manobra-e-alteracao-de-direcao" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT03 - Precisão de Manobra e Alteração de Direção
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct04-inteligencia-e-navegacao-autonoma" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT04 - Inteligência e Navegação Autônoma
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct05-telemetria-e-comunicacao-sem-fio" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT05 - Telemetria e Comunicação sem Fio
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct06-mapeamento-e-persistencia-no-banco-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT06 - Mapeamento e Persistência no Banco de Dados
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct07-monitoramento-energetico-e-estabilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT07 - Monitoramento Energético e Estabilidade
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct08-conformidade-fisica-e-operacao-autonoma" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT08 - Conformidade Física e Operação Autônoma
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct09-salvamento-e-recuperacao-do-caminho-percorrido" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT09 - Salvamento e Recuperação do Caminho Percorrido
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct10-integracao-de-multiplos-sensores" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT10 - Integração de Múltiplos Sensores
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct11-robustez-sob-variacoes-de-iluminacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT11 - Robustez sob Variações de Iluminação
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct12-autonomia-energetica-completa" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT12 - Autonomia Energética Completa
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct13-resistencia-estrutural-a-impactos" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT13 - Resistência Estrutural a Impactos
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct14-comunicacao-sem-fio-em-longo-alcance" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT14 - Comunicação Sem Fio em Longo Alcance
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct15-tempo-de-carregamento-da-interface-de-telemetria" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT15 - Tempo de Carregamento da Interface de Telemetria
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct16-frequencia-de-atualizacao-de-telemetria" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT16 - Frequência de Atualização de Telemetria
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct17-controle-remoto-de-execucao-via-interface-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT17 - Controle Remoto de Execução via Interface Web
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct18-recuperacao-apos-falha-de-sensor" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT18 - Recuperação Após Falha de Sensor
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct19-variacao-de-temperatura-operacional" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT19 - Variação de Temperatura Operacional
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ct20-validacao-completa-do-sistema-integrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      CT20 - Validação Completa do Sistema Integrado
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="detalhamento-dos-casos-de-teste">Detalhamento dos Casos de Teste<a class="headerlink" href="#detalhamento-dos-casos-de-teste" title="Permanent link">&para;</a></h1>
+<h3 id="ct01-validacao-do-sistema-sensorial-e-precisao">CT01 - Validação do Sistema Sensorial e Precisão<a class="headerlink" href="#ct01-validacao-do-sistema-sensorial-e-precisao" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT01 - Leitura e Calibração dos Sensores de Distância (RF03, RF04, RF10, RNF07).</li>
+<li><strong>Objetivo do caso de teste:</strong> Validar se o sistema reconhece as paredes, adquire os dados corretamente e mede a distância com a precisão mínima exigida.</li>
+<li><strong>Pré-condições:</strong> Micromouse montado e posicionado em uma célula de teste; monitor serial ou telemetria ativos.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Posicionar o robô a distâncias 6cm, 12cm, 18cm (que corresponde ao tamanho de uma célula) de uma parede.</li>
+<li>Registrar o valor reportado pelo sistema para cada sensor.</li>
+<li>Verificar se o software identifica a presença de parede quando a distância for inferior ao limite da célula.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O erro de medição deve ser inferior a 1 cm, conforme o requisito RNF07. O sistema deve sinalizar corretamente a existência de obstruções à frente e nas laterais.</li>
+</ul>
+<h3 id="ct02-controle-de-trajetoria-e-estabilidade-eletrica">CT02 - Controle de Trajetória e Estabilidade Elétrica<a class="headerlink" href="#ct02-controle-de-trajetoria-e-estabilidade-eletrica" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT02 - Deslocamento Retilíneo e Controle de Motores (RF01, RF08, RF09, RNF10).</li>
+<li><strong>Objetivo do caso de teste:</strong> Validar a capacidade de mover-se para frente controlando os motores para evitar colisões sem reinicializações elétricas.</li>
+<li><strong>Pré-condições:</strong> Bateria carregada; corredor reto livre de obstáculos imprevistos.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Acionar o comando de avanço para percorrer três células consecutivas.</li>
+<li>Observar se o robô mantém a trajetória centralizada usando o controle dos motores.</li>
+<li>Monitorar se ocorrem quedas de tensão que causem o reset do microcontrolador.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O robô deve completar o percurso sem tocar nas paredes laterais e o sistema deve permanecer estável, sem oscilações de tensão que interrompam a execução.</li>
+</ul>
+<h3 id="ct03-precisao-de-manobra-e-alteracao-de-direcao">CT03 - Precisão de Manobra e Alteração de Direção<a class="headerlink" href="#ct03-precisao-de-manobra-e-alteracao-de-direcao" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT03 - Rotação e Mudança de Orientação (RF02, RF09).</li>
+<li><strong>Objetivo do caso de teste:</strong> Garantir que o micromouse realize rotações de até 180° através do controle preciso dos motores.</li>
+<li><strong>Pré-condições:</strong> Robô parado no centro de uma célula.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Comandar uma rotação de 90° para a esquerda e medir o ângulo final.</li>
+<li>Comandar uma rotação de 90° para a direita e medir o ângulo final.</li>
+<li>Comandar uma rotação de 180° (meia-volta).</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O robô deve realizar as rotações solicitadas com erro angular mínimo, permitindo que ele continue a navegação alinhado ao novo corredor.</li>
+</ul>
+<h3 id="ct04-inteligencia-e-navegacao-autonoma">CT04 - Inteligência e Navegação Autônoma<a class="headerlink" href="#ct04-inteligencia-e-navegacao-autonoma" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT04 - Mapeamento e Busca do Centro (RF05, RF06, RF07, RF14, RNF01).</li>
+<li><strong>Objetivo do caso de teste:</strong> Validar o funcionamento autônomo na identificação de caminhos, geração do mapa e alcance do objetivo central.</li>
+<li><strong>Pré-condições:</strong> Labirinto desconhecido pelo robô; algoritmo de navegação (ex: Flood Fill) carregado.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Iniciar o robô na célula inicial (0,0) em modo autônomo.</li>
+<li>Observar se o robô identifica caminhos livres e mapeia as paredes encontradas.</li>
+<li>Verificar se o sistema detecta a chegada ao objetivo central do labirinto.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O micromouse deve encontrar o caminho até o centro de forma autônoma e o mapa gerado internamente deve corresponder à realidade física do labirinto.</li>
+</ul>
+<h3 id="ct05-telemetria-e-comunicacao-sem-fio">CT05 - Telemetria e Comunicação sem Fio<a class="headerlink" href="#ct05-telemetria-e-comunicacao-sem-fio" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT05 - Validação de Telemetria em Tempo Real (RF16, RF17, RNF04).</li>
+<li><strong>Objetivo:</strong> Verificar se os dados de navegação são enviados e exibidos na interface web com a latência exigida.</li>
+<li><strong>Pré-condições:</strong> Micromouse conectado à rede sem fio; sistema web de telemetria ativo e aguardando conexão.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Iniciar a movimentação do robô no labirinto.</li>
+<li>Observar a atualização dos campos de velocidade e posição na interface web.</li>
+<li>Cronometrar o tempo entre um evento físico (ex: detecção de parede) e sua exibição na tela.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> Os dados devem ser atualizados a cada 500 ms (RNF05) com latência inferior a 1 segundo (RNF04). A interface deve exibir corretamente a posição X e Y enviada pelo robô.</li>
+</ul>
+<h3 id="ct06-mapeamento-e-persistencia-no-banco-de-dados">CT06 - Mapeamento e Persistência no Banco de Dados<a class="headerlink" href="#ct06-mapeamento-e-persistencia-no-banco-de-dados" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT06 - Armazenamento de Tentativas e Mapas (RF13, RF15).</li>
+<li><strong>Objetivo:</strong> Garantir que os dados da "Tentativa" e as "Posições" percorridas sejam salvos corretamente no banco de dados seguindo o MER.</li>
+<li><strong>Pré-condições:</strong> Banco de dados operacional; robô ter finalizado uma execução completa.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Executar uma tentativa de travessia do labirinto até o centro.</li>
+<li>Acessar o banco de dados e realizar uma consulta na tabela "Tentativa" e "Posicao".</li>
+<li>Verificar se os IDs (PK/FK) estão relacionados corretamente entre Micromouse e Tentativa.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O banco de dados deve conter o registro da tentativa com tempo de início/fim e todas as coordenadas (X, Y) percorridas vinculadas ao ID da tentativa realizada.</li>
+</ul>
+<h3 id="ct07-monitoramento-energetico-e-estabilidade">CT07 - Monitoramento Energético e Estabilidade<a class="headerlink" href="#ct07-monitoramento-energetico-e-estabilidade" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT07 - Monitoramento de Tensão e Consumo (RF12, RF18, RF21).</li>
+<li><strong>Objetivo:</strong> Validar se o sistema monitora a bateria e se mantém estável sob carga (RNF10).</li>
+<li><strong>Pré-condições:</strong> Robô com bateria em carga parcial (aprox. 50%).</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Iniciar o robô e monitorar o log de tensão da bateria via telemetria.</li>
+<li>Simular um esforço maior (aceleração máxima) para observar quedas de tensão (voltage sag).</li>
+<li>Verificar se o software registra o consumo estimado em Joules conforme a fórmula E = V * I * t definida no projeto.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O sistema não deve reiniciar durante picos de corrente (RNF10). O nível da bateria deve ser reportado com precisão e o cálculo de consumo energético deve ser salvo ao final da tentativa.</li>
+</ul>
+<h3 id="ct08-conformidade-fisica-e-operacao-autonoma">CT08 - Conformidade Física e Operação Autônoma<a class="headerlink" href="#ct08-conformidade-fisica-e-operacao-autonoma" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT08 - Verificação de Dimensões e Autonomia de Início (RNF09, RNF01).</li>
+<li><strong>Objetivo:</strong> Garantir que o robô respeite os limites físicos do labirinto e inicie sem intervenção humana física.</li>
+<li><strong>Pré-condições:</strong> Labirinto padrão de 18 cm de largura por célula.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Medir o robô com um paquímetro ou régua.</li>
+<li>Posicionar o robô na célula inicial.</li>
+<li>Acionar o comando "Iniciar" remotamente via sistema web (RF22).</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O robô deve medir menos de 18 cm x 18 cm (RNF09). Após o comando remoto, o robô deve iniciar a exploração de forma totalmente autônoma (RNF01) sem auxílio manual para partida.</li>
+</ul>
+<h3 id="ct09-salvamento-e-recuperacao-do-caminho-percorrido">CT09 - Salvamento e Recuperação do Caminho Percorrido<a class="headerlink" href="#ct09-salvamento-e-recuperacao-do-caminho-percorrido" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT09 - Persistência de Trajetória em Memória (RF11, RF13).</li>
+<li><strong>Objetivo:</strong> Validar que o caminho completo percorrido pelo robô é salvo corretamente em memória e recuperável após desligamento.</li>
+<li><strong>Pré-condições:</strong> Robô com memória flash disponível; sistema de arquivos operacional no microcontrolador.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Iniciar uma execução do robô no labirinto e deixá-lo navegar por um tempo determinado.</li>
+<li>Desligar o robô durante a navegação.</li>
+<li>Religar o robô e verificar se consegue acessar o histórico de posições armazenadas.</li>
+<li>Comparar o caminho salvo com o caminho esperado baseado nas movimentações registradas.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O sistema deve recuperar o histórico completo de posições e orientações antes do desligamento, permitindo análise posterior da trajetória percorrida.</li>
+</ul>
+<h3 id="ct10-integracao-de-multiplos-sensores">CT10 - Integração de Múltiplos Sensores<a class="headerlink" href="#ct10-integracao-de-multiplos-sensores" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT10 - Validação de Fusão de Dados Sensoriais (RF20, RF04, RF03).</li>
+<li><strong>Objetivo:</strong> Garantir que todos os sensores de distância funcionam simultaneamente e fornecem dados consistentes durante a navegação.</li>
+<li><strong>Pré-condições:</strong> Todos os sensores calibrados; célula de teste com configuração conhecida.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Posicionar o robô com diferentes distâncias em relação às paredes (frente, laterais).</li>
+<li>Registrar as leituras de todos os sensores simultaneamente.</li>
+<li>Verificar a coerência entre os dados (ex: lateral esquerda e direita em corredor simétrico devem ser aproximadamente iguais).</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> Todos os sensores devem funcionar sem travamentos e fornecer valores consistentes sem discrepâncias anormais entre eles.</li>
+</ul>
+<h3 id="ct11-robustez-sob-variacoes-de-iluminacao">CT11 - Robustez sob Variações de Iluminação<a class="headerlink" href="#ct11-robustez-sob-variacoes-de-iluminacao" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT11 - Operação em Diferentes Condições de Luz (RNF06).</li>
+<li><strong>Objetivo:</strong> Validar que o sistema sensorial do robô funciona corretamente sob variações de iluminação do ambiente.</li>
+<li><strong>Pré-condições:</strong> Robô em ambiente controlável com possibilidade de ajuste de iluminação; labirinto montado.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Executar uma travessia do labirinto com iluminação ambiente normal.</li>
+<li>Repetir a mesma travessia com luz reduzida (50% de iluminação).</li>
+<li>Repetir com luz mínima (aceso apenas com iluminação do robô).</li>
+<li>Comparar os resultados das três execuções.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O robô deve completar a trajetória com sucesso em todas as condições de iluminação testadas sem perda de orientação ou detecção incorreta de paredes.</li>
+</ul>
+<h3 id="ct12-autonomia-energetica-completa">CT12 - Autonomia Energética Completa<a class="headerlink" href="#ct12-autonomia-energetica-completa" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT12 - Teste de Duração Máxima (RF10, RNF08).</li>
+<li><strong>Objetivo:</strong> Validar que a bateria fornece autonomia suficiente para completar o desafio do labirinto em menos de 30 minutos conforme RNF08.</li>
+<li><strong>Pré-condições:</strong> Bateria carregada completamente; labirinto de tamanho competitivo (16x16 células).</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Registrar a tensão inicial da bateria.</li>
+<li>Iniciar o robô em modo autônomo para explorar o labirinto completamente.</li>
+<li>Cronometrar o tempo total até a conclusão.</li>
+<li>Registrar a tensão final da bateria e o consumo energético total calculado.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O robô deve completar a exploração e navegação até o centro em menos de 30 minutos, e a bateria deve manter nível superior a 10% de carga ao final.</li>
+</ul>
+<h3 id="ct13-resistencia-estrutural-a-impactos">CT13 - Resistência Estrutural a Impactos<a class="headerlink" href="#ct13-resistencia-estrutural-a-impactos" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT13 - Durabilidade Mecânica e Funcionabilidade (RNF11).</li>
+<li><strong>Objetivo:</strong> Garantir que o robô continua operacional após sofrer múltiplas colisões leves conforme RNF11.</li>
+<li><strong>Pré-condições:</strong> Robô montado e testado; parede de teste ou célula de colisão preparada.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Realizar 10 colisões leves consecutivas contra uma parede a velocidade reduzida.</li>
+<li>Inspecionar visualmente o robô para detectar danos óbvios.</li>
+<li>Executar um teste de navegação pós-colisão para validar funcionalidade.</li>
+<li>Verificar se sensores e motores ainda respondem corretamente.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O robô deve manter todas as funcionalidades após as colisões, sem danos estruturais relevantes ou perda de capacidade sensorial/motora.</li>
+</ul>
+<h3 id="ct14-comunicacao-sem-fio-em-longo-alcance">CT14 - Comunicação Sem Fio em Longo Alcance<a class="headerlink" href="#ct14-comunicacao-sem-fio-em-longo-alcance" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT14 - Conectividade Wireless em Diferentes Distâncias (RNF02, RNF04).</li>
+<li><strong>Objetivo:</strong> Validar que a comunicação sem fio permanece estável e com latência aceitável em diferentes distâncias entre o robô e o ponto de acesso.</li>
+<li><strong>Pré-condições:</strong> Sistema de telemetria web ativo; medidor de sinal wireless disponível; labirinto em área com WiFi.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Iniciar transmissão de telemetria com o robô a 1 metro do ponto de acesso.</li>
+<li>Afastar progressivamente o robô (3m, 5m, 10m) e monitorar a qualidade do sinal.</li>
+<li>Registrar a latência e perdas de pacotes em cada distância.</li>
+<li>Testar com obstáculos entre o robô e o ponto de acesso (paredes, móveis).</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> Latência deve permanecer inferior a 1 segundo em até 10 metros de distância com sinal mínimo de -70 dBm. Com obstáculos, deve manter comunicação funcional até 5 metros.</li>
+</ul>
+<h3 id="ct15-tempo-de-carregamento-da-interface-de-telemetria">CT15 - Tempo de Carregamento da Interface de Telemetria<a class="headerlink" href="#ct15-tempo-de-carregamento-da-interface-de-telemetria" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT15 - Performance da Página Web (RNF03).</li>
+<li><strong>Objetivo:</strong> Verificar que a página de telemetria carrega em até 5 segundos conforme RNF03.</li>
+<li><strong>Pré-condições:</strong> Servidor web em execução; conexão WiFi estável; navegador web atualizado.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Acessar a página de telemetria via URL no navegador.</li>
+<li>Medir o tempo desde o carregamento até a exibição completa (primeiros dados visíveis).</li>
+<li>Repetir o teste 5 vezes e calcular a média.</li>
+<li>Verificar também o carregamento com cache limpo.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> Tempo de carregamento completo deve ser inferior a 5 segundos, incluindo renderização de todos os elementos gráficos principais.</li>
+</ul>
+<h3 id="ct16-frequencia-de-atualizacao-de-telemetria">CT16 - Frequência de Atualização de Telemetria<a class="headerlink" href="#ct16-frequencia-de-atualizacao-de-telemetria" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT16 - Taxa de Refresh dos Dados (RNF05).</li>
+<li><strong>Objetivo:</strong> Validar que os dados de telemetria são atualizados a cada 500 ms conforme RNF05.</li>
+<li><strong>Pré-condições:</strong> Robô em movimento no labirinto; página de telemetria aberta; ferramenta de monitoramento de rede disponível.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Iniciar captura de pacotes de rede durante execução do robô.</li>
+<li>Medir o intervalo entre atualizações consecutivas de dados de posição.</li>
+<li>Registrar a variação no intervalo (jitter).</li>
+<li>Verificar se todas as atualizações contêm dados válidos e íntegros.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> Intervalo entre atualizações deve ser 500 ms ± 50 ms. Não deve haver perdas de pacotes que causem lacunas maiores que 1 segundo.</li>
+</ul>
+<h3 id="ct17-controle-remoto-de-execucao-via-interface-web">CT17 - Controle Remoto de Execução via Interface Web<a class="headerlink" href="#ct17-controle-remoto-de-execucao-via-interface-web" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT17 - Controle de Início e Parada Remota (RF22).</li>
+<li><strong>Objetivo:</strong> Garantir que o robô pode ser iniciado e parado remotamente pela interface web sem atrasos significativos.</li>
+<li><strong>Pré-condições:</strong> Robô posicionado na célula inicial; interface web de controle acessível; WiFi conectado.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Clicar no botão "Iniciar" na interface web e cronometrar a resposta do robô.</li>
+<li>Deixar o robô navegar por 30 segundos.</li>
+<li>Clicar no botão "Parar" e verificar se o robô para em tempo aceitável.</li>
+<li>Repetir o ciclo de início e parada 5 vezes.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> Tempo de resposta entre clique no botão e ação do robô deve ser inferior a 1 segundo. Parada deve ocorrer em menos de 100 ms após comando.</li>
+</ul>
+<h3 id="ct18-recuperacao-apos-falha-de-sensor">CT18 - Recuperação Após Falha de Sensor<a class="headerlink" href="#ct18-recuperacao-apos-falha-de-sensor" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT18 - Tratamento de Erro de Sensor (RF20, RF04, RF05).</li>
+<li><strong>Objetivo:</strong> Validar o comportamento do sistema quando um sensor falha ou fornece dados inconsistentes durante a navegação.</li>
+<li><strong>Pré-condições:</strong> Robô em movimento; possibilidade de bloquear manualmente um sensor; sistema com validação de dados.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Iniciar navegação do robô no labirinto.</li>
+<li>Durante a navegação, obstruir físico um dos sensores de distância.</li>
+<li>Observar como o sistema reage ao valor anômalo.</li>
+<li>Verificar se o robô continua funcionando ou ativa protocolo de segurança.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O sistema deve detectar a leitura anômala, descartar ou suavizar o valor, e continuar navegando de forma segura ou registrar um aviso sem parar completamente.</li>
+</ul>
+<h3 id="ct19-variacao-de-temperatura-operacional">CT19 - Variação de Temperatura Operacional<a class="headerlink" href="#ct19-variacao-de-temperatura-operacional" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT19 - Estabilidade em Diferentes Temperaturas (RNF10).</li>
+<li><strong>Objetivo:</strong> Validar que o sistema permanece estável e funcional sob variações de temperatura que possam afetar componentes eletrônicos.</li>
+<li><strong>Pré-condições:</strong> Câmara climática disponível ou ambiente com controle de temperatura; robô totalmente montado.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Executar teste de navegação em temperatura ambiente (20-25°C).</li>
+<li>Repetir em ambiente aquecido (30-35°C) simulando competição com iluminação.</li>
+<li>Repetir em ambiente mais frio (10-15°C).</li>
+<li>Registrar consumo de energia e tensão da bateria em cada condição.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O robô deve funcionar sem erros em todas as condições testadas. Consumo de energia pode variar, mas o sistema não deve sofrer reset ou perda de comunicação devido à temperatura.</li>
+</ul>
+<h3 id="ct20-validacao-completa-do-sistema-integrado">CT20 - Validação Completa do Sistema Integrado<a class="headerlink" href="#ct20-validacao-completa-do-sistema-integrado" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Nome do caso de teste:</strong> CT20 - Teste de Aceitação Final (Todos os RF/RNF).</li>
+<li><strong>Objetivo:</strong> Realizar um teste final integrado que valida o sistema completo funcionando de forma holística, cobrindo todos os requisitos funcionais e não-funcionais.</li>
+<li><strong>Pré-condições:</strong> Sistema totalmente montado e testado; labirinto padrão de competição; interface web operacional; todas as dependências resolvidas.</li>
+<li><strong>Descrição dos procedimentos:</strong><ol>
+<li>Carregar bateria completamente.</li>
+<li>Posicionar robô na célula inicial (0,0).</li>
+<li>Iniciar via comando remoto na interface web.</li>
+<li>Monitorar telemetria em tempo real durante toda a execução.</li>
+<li>Registrar o tempo de conclusão, consumo energético e qualidade dos dados.</li>
+<li>Validar que o mapa foi armazenado corretamente no banco de dados.</li>
+</ol>
+</li>
+<li><strong>Resultado esperado:</strong> O robô deve completar uma execução bem-sucedida do labirinto com todos os requisitos atendidos: navegação autônoma, coleta de dados correta, comunicação sem perdas significativas, e conclusão em menos de 30 minutos.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 Grupo 02 - PI1
+<br>
+Última atualização: {% now 'utc', '%d de %B de %Y' %}
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/fcte-pi1" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "content.code.copy", "content.code.focus", "content.code.highlight"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      
+    
+  </body>
+</html>
