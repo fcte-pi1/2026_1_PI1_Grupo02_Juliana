@@ -1,4 +1,5 @@
 #include "Motor.h"
+#include <cstdlib>
 
 Motor::Motor(uint pwm, uint dir1, uint dir2) 
     : pinPWM(pwm), pinDir1(dir1), pinDir2(dir2) {
