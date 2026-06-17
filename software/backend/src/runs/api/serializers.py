@@ -19,6 +19,9 @@ class LabirintoSerializer(serializers.ModelSerializer):
 
 class TentativaSerializer(serializers.ModelSerializer):
     dimensao = serializers.IntegerField(source="labirinto.dimensao", read_only=True)
+    micromouse_nome = serializers.CharField(source="micromouse.nome", read_only=True)
+    algoritmo = serializers.CharField(source="micromouse.algoritmo", read_only=True)
+    labirinto_nome = serializers.CharField(source="labirinto.nome", read_only=True)
     explored = serializers.SerializerMethodField()
 
     class Meta:

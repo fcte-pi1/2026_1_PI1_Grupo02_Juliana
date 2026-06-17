@@ -1,19 +1,24 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useLogout } from '@/domains/auth';
 import {
   enviarComando,
+  iniciarCorrida,
   useRunSnapshot,
   useTelemetryStream,
   useTentativas,
   type MazeState,
   type Pose,
   type RunSnapshot,
+  type Tentativa,
 } from '@/domains/runs';
+import { TENTATIVAS_QUERY_KEY } from '@/domains/runs/hooks/useTentativas';
 import './DashboardPage.css';
 
 type TelemetryView = 'dashboard' | 'maze' | 'sensors' | 'runs' | 'run';
 type Heading = 'Norte' | 'Leste' | 'Sul' | 'Oeste';
+type RunStatus = 'Em curso' | 'Finalizada' | 'Abortada';
 
 // Mapeia o heading do backend (N/S/E/W) para o rótulo em PT exibido na UI.
 const HEADING_PT: Record<string, Heading> = { N: 'Norte', S: 'Sul', E: 'Leste', W: 'Oeste' };
@@ -22,7 +27,11 @@ const STATUS_PT: Record<string, string> = {
   finalizada: 'Finalizada',
   abortada: 'Abortada',
 };
-type RunStatus = 'Em curso' | 'Finalizada' | 'Abortada';
+const STATUS_RUN_PT: Record<string, RunStatus> = {
+  em_curso: 'Em curso',
+  finalizada: 'Finalizada',
+  abortada: 'Abortada',
+};
 
 interface SensorReading {
   label: 'Esquerda' | 'Frente' | 'Direita';
@@ -32,6 +41,7 @@ interface SensorReading {
 
 interface RunRow {
   id: string;
+  uuid: string;
   mouse: string;
   algorithm: string;
   start: string;
@@ -66,125 +76,43 @@ interface TelemetrySnapshot {
     name: string;
     detail: string;
   }>;
-  // ── Campos reais (vêm da telemetria MQTT): o labirinto e a pose ──
   maze: MazeState;
   dimensao: number;
   mazePose: Pose | null;
 }
 
-const totalCells = 256;
-
-const exploredPath = [
-  [0, 15],
-  [0, 14],
-  [0, 13],
-  [1, 13],
-  [2, 13],
-  [2, 12],
-  [3, 12],
-  [4, 12],
-  [4, 11],
-  [5, 11],
-  [6, 11],
-  [7, 11],
-  [7, 10],
-  [7, 9],
-  [8, 9],
-  [9, 9],
-  [9, 8],
-] as const;
-
-const runs: RunRow[] = [
-  {
-    id: '#023',
-    mouse: 'Mouse-01',
-    algorithm: 'Flood Fill',
-    start: '11/05 10:42',
-    duration: '00:12:40',
-    averageSpeed: 0.34,
-    cells: 28,
-    status: 'Em curso',
-  },
-  {
-    id: '#022',
-    mouse: 'Mouse-01',
-    algorithm: 'Flood Fill',
-    start: '11/05 10:24',
-    duration: '00:18:22',
-    averageSpeed: 0.28,
-    cells: 256,
-    status: 'Finalizada',
-  },
-  {
-    id: '#021',
-    mouse: 'Mouse-01',
-    algorithm: 'Wall Follow',
-    start: '11/05 09:58',
-    duration: '00:09:14',
-    averageSpeed: 0.31,
-    cells: 142,
-    status: 'Abortada',
-  },
-  {
-    id: '#020',
-    mouse: 'Mouse-02',
-    algorithm: 'A*',
-    start: '11/05 09:30',
-    duration: '00:21:03',
-    averageSpeed: 0.26,
-    cells: 256,
-    status: 'Finalizada',
-  },
-  {
-    id: '#019',
-    mouse: 'Mouse-02',
-    algorithm: 'A*',
-    start: '11/05 08:55',
-    duration: '00:19:48',
-    averageSpeed: 0.27,
-    cells: 256,
-    status: 'Finalizada',
-  },
-  {
-    id: '#018',
-    mouse: 'Mouse-01',
-    algorithm: 'DFS',
-    start: '10/05 22:14',
-    duration: '00:14:55',
-    averageSpeed: 0.3,
-    cells: 244,
-    status: 'Abortada',
-  },
+const EMPTY_SENSORS: SensorReading[] = [
+  { label: 'Esquerda', value: 0, status: 'Livre' },
+  { label: 'Frente', value: 0, status: 'Livre' },
+  { label: 'Direita', value: 0, status: 'Livre' },
 ];
 
-const initialTelemetry: TelemetrySnapshot = {
-  speed: 0.34,
-  peakSpeed: 0.48,
-  battery: 78,
-  voltage: 7.42,
-  elapsedSeconds: 760,
-  exploredCells: 28,
-  position: [8, 10],
-  heading: 'Norte',
-  walls: 142,
-  sensors: [
-    { label: 'Esquerda', value: 4.2, status: 'Parede' },
-    { label: 'Frente', value: 18.6, status: 'Livre' },
-    { label: 'Direita', value: 2.1, status: 'Parede' },
-  ],
-  imu: { roll: 1.2, pitch: -0.4, yaw: 0, bias: 0.02 },
-  history: [0.19, 0.24, 0.27, 0.31, 0.34, 0.32, 0.36, 0.42, 0.38, 0.35, 0.39, 0.44],
-  frontHistory: [13, 14, 15, 16, 17, 18, 17, 18, 19, 18, 17, 18],
-  events: [
-    { time: '10:42:40.012', type: 'EVT', name: 'cell.entered', detail: '[8,10]' },
-    { time: '10:42:38.480', type: 'CMD', name: 'motor.forward', detail: '18 cm' },
-    { time: '10:42:36.220', type: 'EVT', name: 'rotation.complete', detail: '-90 graus' },
-    { time: '10:42:34.105', type: 'WRN', name: 'wall.detected', detail: 'front - 2.1 cm' },
-  ],
-  maze: {},
-  dimensao: 16,
-  mazePose: null,
-};
+function tentativaToRow(t: Tentativa): RunRow {
+  const durationSec =
+    t.tempo_inicio && t.tempo_fim
+      ? Math.floor(
+          (new Date(t.tempo_fim).getTime() - new Date(t.tempo_inicio).getTime()) / 1000,
+        )
+      : null;
+  return {
+    id: `#${t.id.slice(0, 6).toUpperCase()}`,
+    uuid: t.id,
+    mouse: t.micromouse_nome || 'Mouse',
+    algorithm: t.algoritmo || 'Flood Fill',
+    start: t.tempo_inicio
+      ? new Date(t.tempo_inicio).toLocaleString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : '-',
+    duration: durationSec !== null ? formatDuration(durationSec) : t.tempo_inicio ? '...' : '-',
+    averageSpeed: t.velocidade_media ?? 0,
+    cells: t.explored,
+    status: STATUS_RUN_PT[t.status] ?? 'Em curso',
+  };
+}
 
 function formatDuration(seconds: number) {
   const hours = Math.floor(seconds / 3600);
@@ -206,125 +134,120 @@ function buildSparkline(values: number[], width = 320, height = 84) {
     .join(' ');
 }
 
-function updateTelemetry(previous: TelemetrySnapshot): TelemetrySnapshot {
-  const nextSpeed = Math.max(0.18, Math.min(0.52, previous.speed + (Math.random() - 0.42) * 0.045));
-  const nextFront = Math.max(2, Math.min(24, previous.sensors[1].value + (Math.random() - 0.45) * 1.8));
-  const nextLeft = Math.max(1.5, Math.min(12, previous.sensors[0].value + (Math.random() - 0.55) * 0.9));
-  const nextRight = Math.max(1.5, Math.min(12, previous.sensors[2].value + (Math.random() - 0.48) * 0.8));
-  const shouldMove = previous.elapsedSeconds % 6 === 0;
-  const pathIndex = Math.min(
-    exploredPath.length - 1,
-    Math.floor((previous.exploredCells - 12) / 2),
-  );
-  const nextPosition = exploredPath[pathIndex] ?? previous.position;
-  const eventTime = new Date().toLocaleTimeString('pt-BR', {
-    hour12: false,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-
-  return {
-    ...previous,
-    speed: nextSpeed,
-    peakSpeed: Math.max(previous.peakSpeed, nextSpeed),
-    battery: Math.max(0, previous.battery - 0.015),
-    voltage: Math.max(6.4, previous.voltage - 0.002),
-    elapsedSeconds: previous.elapsedSeconds + 1,
-    exploredCells: shouldMove ? Math.min(totalCells, previous.exploredCells + 1) : previous.exploredCells,
-    position: [nextPosition[0], nextPosition[1]],
-    sensors: [
-      { label: 'Esquerda', value: nextLeft, status: nextLeft < 6 ? 'Parede' : 'Livre' },
-      { label: 'Frente', value: nextFront, status: nextFront < 7 ? 'Parede' : 'Livre' },
-      { label: 'Direita', value: nextRight, status: nextRight < 6 ? 'Parede' : 'Livre' },
-    ],
-    imu: {
-      roll: previous.imu.roll + (Math.random() - 0.5) * 0.12,
-      pitch: previous.imu.pitch + (Math.random() - 0.5) * 0.1,
-      yaw: previous.imu.yaw + (Math.random() - 0.5) * 0.2,
-      bias: previous.imu.bias,
-    },
-    history: [...previous.history.slice(1), nextSpeed],
-    frontHistory: [...previous.frontHistory.slice(1), nextFront],
-    events: [
-      {
-        time: `${eventTime}.${String(Math.floor(Math.random() * 900)).padStart(3, '0')}`,
-        type: nextFront < 7 ? 'WRN' : 'EVT',
-        name: nextFront < 7 ? 'wall.detected' : 'telemetry.tick',
-        detail: nextFront < 7 ? `front - ${nextFront.toFixed(1)} cm` : `${nextSpeed.toFixed(2)} m/s`,
-      },
-      ...previous.events.slice(0, 5),
-    ],
-  };
-}
 
 export function DashboardPage() {
   const [activeView, setActiveView] = useState<TelemetryView>('dashboard');
-  const [streaming, setStreaming] = useState(true);
   const [now, setNow] = useState(0);
   const [lastPacketAt, setLastPacketAt] = useState(0);
-  const [sim, setSim] = useState<TelemetrySnapshot>(initialTelemetry);
+  const [speedHistory, setSpeedHistory] = useState<number[]>(Array(12).fill(0));
+  const [peakSpeed, setPeakSpeed] = useState(0);
+  const [initiating, setInitiating] = useState(false);
   const logout = useLogout();
+  const queryClient = useQueryClient();
 
-  // Run real: ?run=<id> na URL, ou a tentativa mais recente.
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const tentativasQuery = useTentativas();
   const runId = params.get('run') ?? tentativasQuery.data?.[0]?.id ?? null;
   const snapshotQuery = useRunSnapshot(runId);
   const { snapshot: live, connected } = useTelemetryStream(runId);
   const real: RunSnapshot | null = live ?? snapshotQuery.data ?? null;
 
+  // Relógio para atualizar o indicador "atualizado há Xs" e o cronômetro.
   useEffect(() => {
     const clock = window.setInterval(() => setNow(Date.now()), 250);
     return () => window.clearInterval(clock);
   }, []);
 
-  // Simulação cosmética: sensores/IMU/sparklines/eventos seguem simulados até o
-  // firmware enviá-los. O labirinto, a pose e as métricas principais são REAIS
-  // (sobrepostos abaixo a partir de `real`).
+  // Atualiza o histórico de velocidade e o pico sempre que chega um novo pacote SSE.
+  const prevLiveRef = useRef<RunSnapshot | null>(null);
   useEffect(() => {
-    if (!streaming) {
-      return undefined;
+    if (!live || live === prevLiveRef.current) return;
+    prevLiveRef.current = live;
+    setLastPacketAt(Date.now());
+    if (live.speed != null) {
+      setSpeedHistory((h) => [...h.slice(-11), live.speed!]);
+      setPeakSpeed((p) => Math.max(p, live.speed!));
     }
+  }, [live]);
 
-    const interval = window.setInterval(() => {
-      setSim((current) => updateTelemetry(current));
-      setLastPacketAt(Date.now());
-    }, 500);
+  // Reseta histórico e pico quando muda de tentativa.
+  useEffect(() => {
+    setSpeedHistory(Array(12).fill(0));
+    setPeakSpeed(0);
+    prevLiveRef.current = null;
+  }, [runId]);
 
-    return () => window.clearInterval(interval);
-  }, [streaming]);
+  const elapsedSeconds = useMemo(() => {
+    if (!real?.tempo_inicio) return 0;
+    if (real.status === 'finalizada' && real.tempo_fim) {
+      return Math.max(
+        0,
+        Math.floor(
+          (new Date(real.tempo_fim).getTime() - new Date(real.tempo_inicio).getTime()) / 1000,
+        ),
+      );
+    }
+    return Math.max(0, Math.floor((now - new Date(real.tempo_inicio).getTime()) / 1000));
+  }, [real, now]);
 
   const telemetry: TelemetrySnapshot = useMemo(() => {
-    if (!real) return sim;
-    const pose = real.pose;
-    const walls = Object.values(real.maze ?? {}).reduce(
+    const pose = real?.pose ?? null;
+    const walls = Object.values(real?.maze ?? {}).reduce(
       (acc, w) => acc + Number(w.n) + Number(w.s) + Number(w.e) + Number(w.w),
       0,
     );
     return {
-      ...sim,
-      speed: real.speed ?? real.velocidade_media ?? sim.speed,
-      battery: real.battery ?? sim.battery,
-      voltage: real.voltage ?? sim.voltage,
-      exploredCells: real.explored ?? sim.exploredCells,
-      position: pose ? [pose.x, pose.y] : sim.position,
-      heading: pose ? HEADING_PT[pose.heading] : sim.heading,
+      speed: real?.speed ?? 0,
+      peakSpeed,
+      battery: real?.battery ?? 0,
+      voltage: real?.voltage ?? 0,
+      elapsedSeconds,
+      exploredCells: real?.explored ?? 0,
+      position: pose ? ([pose.x, pose.y] as [number, number]) : ([0, 0] as [number, number]),
+      heading: pose ? (HEADING_PT[pose.heading] ?? 'Norte') : 'Norte',
       walls,
-      maze: real.maze ?? {},
-      dimensao: real.dimensao ?? sim.dimensao,
+      sensors: EMPTY_SENSORS,
+      imu: { roll: 0, pitch: 0, yaw: 0, bias: 0 },
+      history: speedHistory,
+      frontHistory: Array(12).fill(0),
+      events: [],
+      maze: real?.maze ?? {},
+      dimensao: real?.dimensao ?? 16,
       mazePose: pose,
     };
-  }, [real, sim]);
+  }, [real, peakSpeed, elapsedSeconds, speedHistory]);
 
+  const isRunning = real?.status === 'em_curso';
   const disconnected = !connected;
-  const statusLabel = real ? STATUS_PT[real.status] ?? real.status : streaming ? 'Run em andamento' : 'Aguardando sinal';
+  const statusLabel = real ? (STATUS_PT[real.status] ?? real.status) : 'Aguardando sinal';
   const total = telemetry.dimensao * telemetry.dimensao;
   const exploredPercent = ((telemetry.exploredCells / total) * 100).toFixed(1);
-  const recentRuns = useMemo(() => runs.slice(0, 4), []);
 
-  const comando = (acao: 'start' | 'stop') => {
-    if (runId) enviarComando(runId, acao).catch(() => undefined);
+  const recentRuns = useMemo(
+    () => (tentativasQuery.data ?? []).slice(0, 4).map(tentativaToRow),
+    [tentativasQuery.data],
+  );
+  const allRuns = useMemo(
+    () => (tentativasQuery.data ?? []).map(tentativaToRow),
+    [tentativasQuery.data],
+  );
+  const totalRuns = tentativasQuery.data?.length ?? 0;
+  const runsEmCurso = tentativasQuery.data?.filter((t) => t.status === 'em_curso').length ?? 0;
+
+  const handleIniciarRun = async () => {
+    if (initiating) return;
+    setInitiating(true);
+    try {
+      const tentativa = await iniciarCorrida();
+      setParams({ run: tentativa.id });
+      queryClient.invalidateQueries({ queryKey: TENTATIVAS_QUERY_KEY });
+    } finally {
+      setInitiating(false);
+    }
+  };
+
+  const handlePararRun = () => {
+    if (runId) enviarComando(runId, 'stop').catch(() => undefined);
   };
 
   return (
@@ -356,11 +279,13 @@ export function DashboardPage() {
             <span>⌁</span> Sensors
           </button>
           <button className={activeView === 'runs' ? 'active' : ''} onClick={() => setActiveView('runs')}>
-            <span>◷</span> Runs <small>24</small>
+            <span>◷</span> Runs {totalRuns > 0 && <small>{totalRuns}</small>}
           </button>
-          <button className={activeView === 'run' ? 'active indented' : 'indented'} onClick={() => setActiveView('run')}>
-            Run - #023
-          </button>
+          {runId && (
+            <button className={activeView === 'run' ? 'active indented' : 'indented'} onClick={() => setActiveView('run')}>
+              Run - #{runId.slice(0, 6).toUpperCase()}
+            </button>
+          )}
         </nav>
 
         <div className={disconnected ? 'connection-card offline' : 'connection-card'}>
@@ -379,9 +304,11 @@ export function DashboardPage() {
       <section className="telemetry-main">
         <header className="topbar">
           <div>
-            <p className="breadcrumb">Mouse-01 &gt; {viewTitle(activeView)}</p>
+            <p className="breadcrumb">
+              {real ? (tentativasQuery.data?.find((t) => t.id === runId)?.micromouse_nome ?? 'Mouse') : 'Micromouse'} &gt; {viewTitle(activeView)}
+            </p>
             <div className="title-row">
-              <h1>{viewHeading(activeView)}</h1>
+              <h1>{viewHeading(activeView, telemetry.dimensao)}</h1>
               <span className={disconnected ? 'status-pill danger' : 'status-pill'}>
                 <i /> {statusLabel}
               </span>
@@ -395,24 +322,17 @@ export function DashboardPage() {
           <div className="actions">
             <button
               className="ghost-button"
-              disabled={!runId}
-              onClick={() => {
-                setStreaming(false);
-                comando('stop');
-              }}
+              disabled={!isRunning}
+              onClick={handlePararRun}
             >
               ■ Parar run
             </button>
             <button
               className="primary-button"
-              disabled={!runId}
-              onClick={() => {
-                setStreaming(true);
-                setLastPacketAt(Date.now());
-                comando('start');
-              }}
+              disabled={isRunning || initiating}
+              onClick={handleIniciarRun}
             >
-              ▶ Iniciar run
+              {initiating ? '...' : '▶ Iniciar run'}
             </button>
           </div>
         </header>
@@ -422,13 +342,14 @@ export function DashboardPage() {
             telemetry={telemetry}
             exploredPercent={exploredPercent}
             recentRuns={recentRuns}
+            totalRuns={totalRuns}
             onOpenMaze={() => setActiveView('maze')}
             onOpenRuns={() => setActiveView('runs')}
           />
         )}
         {activeView === 'maze' && <MazeView telemetry={telemetry} exploredPercent={exploredPercent} />}
         {activeView === 'sensors' && <SensorsView telemetry={telemetry} />}
-        {activeView === 'runs' && <RunsView rows={runs} onOpenRun={() => setActiveView('run')} />}
+        {activeView === 'runs' && <RunsView rows={allRuns} runsEmCurso={runsEmCurso} onOpenRun={() => setActiveView('run')} />}
         {activeView === 'run' && <RunDetailView telemetry={telemetry} exploredPercent={exploredPercent} />}
       </section>
     </main>
@@ -436,35 +357,41 @@ export function DashboardPage() {
 }
 
 function viewTitle(view: TelemetryView) {
-  return {
-    dashboard: 'Dashboard',
-    maze: 'Labirinto',
-    sensors: 'Sensores',
-    runs: 'Runs',
-    run: 'Runs > Run #023',
-  }[view];
+  return (
+    {
+      dashboard: 'Dashboard',
+      maze: 'Labirinto',
+      sensors: 'Sensores',
+      runs: 'Runs',
+      run: 'Runs > Run atual',
+    } as Record<TelemetryView, string>
+  )[view];
 }
 
-function viewHeading(view: TelemetryView) {
-  return {
-    dashboard: 'Dashboard',
-    maze: 'Labirinto - 16x16',
-    sensors: 'Sensores',
-    runs: 'Histórico de runs',
-    run: 'Run #023',
-  }[view];
+function viewHeading(view: TelemetryView, dimensao = 16) {
+  return (
+    {
+      dashboard: 'Dashboard',
+      maze: `Labirinto - ${dimensao}x${dimensao}`,
+      sensors: 'Sensores',
+      runs: 'Histórico de runs',
+      run: 'Run atual',
+    } as Record<TelemetryView, string>
+  )[view];
 }
 
 function DashboardView({
   telemetry,
   exploredPercent,
   recentRuns,
+  totalRuns,
   onOpenMaze,
   onOpenRuns,
 }: {
   telemetry: TelemetrySnapshot;
   exploredPercent: string;
   recentRuns: RunRow[];
+  totalRuns: number;
   onOpenMaze: () => void;
   onOpenRuns: () => void;
 }) {
@@ -487,7 +414,7 @@ function DashboardView({
       </div>
       <Panel
         title="Runs recentes"
-        action={<button onClick={onOpenRuns}>→ Ver todas (24)</button>}
+        action={<button onClick={onOpenRuns}>→ Ver todas ({totalRuns})</button>}
       >
         <RunsTable rows={recentRuns} compact />
       </Panel>
@@ -516,7 +443,7 @@ function MazeView({ telemetry, exploredPercent }: { telemetry: TelemetrySnapshot
         <div className="state-grid">
           <Stat label="Posição" value={`[${telemetry.position.join(',')}]`} />
           <Stat label="Heading" value={telemetry.heading} />
-          <Stat label="Células" value={`${telemetry.exploredCells}/${totalCells}`} helper={`${exploredPercent}%`} />
+          <Stat label="Células" value={`${telemetry.exploredCells}/${telemetry.dimensao * telemetry.dimensao}`} helper={`${exploredPercent}%`} />
           <Stat label="Paredes" value={String(telemetry.walls)} />
           <Stat label="Tempo" value={formatDuration(telemetry.elapsedSeconds)} />
           <Stat label="Velocidade" value={`${telemetry.speed.toFixed(2)} m/s`} />
@@ -572,15 +499,25 @@ function SensorsView({ telemetry }: { telemetry: TelemetrySnapshot }) {
   );
 }
 
-function RunsView({ rows, onOpenRun }: { rows: RunRow[]; onOpenRun: () => void }) {
+function RunsView({
+  rows,
+  runsEmCurso,
+  onOpenRun,
+}: {
+  rows: RunRow[];
+  runsEmCurso: number;
+  onOpenRun: () => void;
+}) {
+  const finalizadas = rows.filter((r) => r.status === 'Finalizada').length;
+  const abortadas = rows.filter((r) => r.status === 'Abortada').length;
   return (
     <div className="view-stack">
       <div className="runs-toolbar">
         <div className="tabs">
-          <button className="active">Todos <span>24</span></button>
-          <button>Em curso <span>1</span></button>
-          <button>Finalizadas <span>18</span></button>
-          <button>Abortadas <span>5</span></button>
+          <button className="active">Todos <span>{rows.length}</span></button>
+          <button>Em curso <span>{runsEmCurso}</span></button>
+          <button>Finalizadas <span>{finalizadas}</span></button>
+          <button>Abortadas <span>{abortadas}</span></button>
         </div>
         <label className="table-search">
           ⌕ <input placeholder="Buscar por ID, mouse..." />
@@ -589,13 +526,11 @@ function RunsView({ rows, onOpenRun }: { rows: RunRow[]; onOpenRun: () => void }
       <Panel>
         <RunsTable rows={rows} onOpenRun={onOpenRun} />
       </Panel>
-      <div className="pagination-row">
-        <span>Mostrando 1-6 de 24</span>
-        <div>
-          <button>Anterior</button>
-          <button>Próximo</button>
+      {rows.length > 0 && (
+        <div className="pagination-row">
+          <span>Mostrando 1-{rows.length} de {rows.length}</span>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -641,8 +576,8 @@ function MetricGrid({
     { label: compact ? 'Duração' : 'Velocidade média', value: compact ? formatDuration(telemetry.elapsedSeconds) : telemetry.speed.toFixed(2), unit: compact ? 'rodando' : 'm/s', icon: '~' },
     { label: compact ? 'Vel. média' : 'Tempo decorrido', value: compact ? telemetry.speed.toFixed(2) : formatDuration(telemetry.elapsedSeconds), unit: compact ? 'm/s' : '', icon: '◷' },
     { label: compact ? 'Pico' : 'Bateria', value: compact ? telemetry.peakSpeed.toFixed(2) : Math.round(telemetry.battery).toString(), unit: compact ? 'm/s' : '%', icon: compact ? '~' : '▰' },
-    { label: compact ? 'Células' : 'Tensão', value: compact ? String(telemetry.exploredCells) : telemetry.voltage.toFixed(2), unit: compact ? `/${totalCells}` : 'V', icon: compact ? '▦' : 'V' },
-    { label: compact ? 'Bateria usada' : 'Células exploradas', value: compact ? String(Math.round(100 - telemetry.battery)) : String(telemetry.exploredCells), unit: compact ? '%' : `/${totalCells}`, icon: compact ? '▰' : '▦' },
+    { label: compact ? 'Células' : 'Tensão', value: compact ? String(telemetry.exploredCells) : telemetry.voltage.toFixed(2), unit: compact ? `/${telemetry.dimensao * telemetry.dimensao}` : 'V', icon: compact ? '▦' : 'V' },
+    { label: compact ? 'Bateria usada' : 'Células exploradas', value: compact ? String(Math.round(100 - telemetry.battery)) : String(telemetry.exploredCells), unit: compact ? '%' : `/${telemetry.dimensao * telemetry.dimensao}`, icon: compact ? '▰' : '▦' },
   ];
 
   return (
@@ -882,7 +817,7 @@ function RunsTable({
               <td>{run.start}</td>
               <td><code>{run.duration}</code></td>
               <td><code>{run.averageSpeed.toFixed(2)} m/s</code></td>
-              <td>{run.cells}/{totalCells}</td>
+              <td>{run.cells}</td>
               <td><span className={`status-tag ${statusClass(run.status)}`}>{run.status}</span></td>
               <td><button onClick={onOpenRun}>Abrir →</button></td>
             </tr>
