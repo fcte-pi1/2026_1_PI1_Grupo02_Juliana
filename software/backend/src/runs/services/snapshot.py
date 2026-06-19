@@ -20,6 +20,7 @@ def build_snapshot(
         "tentativa_id": str(tentativa.id),
         "dimensao": tentativa.labirinto.dimensao,
         "status": tentativa.status,
+        "sucesso": tentativa.sucesso,
         "pose": tentativa.pose or None,
         "maze": tentativa.maze,
         "explored": len(tentativa.maze),

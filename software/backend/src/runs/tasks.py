@@ -12,6 +12,7 @@ from django.conf import settings
 
 from runs.models import Tentativa
 from runs.services.simulator import run_simulation
+from runs.services.snapshot import build_snapshot
 from runs.use_cases.persistir_telemetria import PersistirTelemetria
 from runs import realtime
 from asgiref.sync import async_to_sync
@@ -51,6 +52,7 @@ def simular_corrida(tentativa_id: str, hz: float = 2.0, steps: int = 48) -> bool
         tentativa.refresh_from_db()
         tentativa.status = Tentativa.Status.ABORTADA
         tentativa.save(update_fields=["status", "updated_at"])
+        realtime.publish_snapshot(str(tentativa.id), build_snapshot(tentativa))
     return completed
 
 
@@ -94,12 +96,14 @@ def processar_telemetria(self, payload: dict) -> dict:
             pass
 
         if channel_layer is not None:
-            async_to_sync(channel_layer.group_send)("telemetry", event)
+            try:
+                async_to_sync(channel_layer.group_send)("telemetry", event)
+            except Exception as ch_exc:
+                from loguru import logger
+                logger.warning("Channels group_send falhou (não crítico): {}", ch_exc)
 
         return {"success": True, "snapshot": snapshot}
     except Exception as exc:  # pragma: no cover - runtime errors handled in worker
-        # Log and re-raise so Celery records the failure
         from loguru import logger
-
         logger.exception("Error processing telemetry: {}", exc)
         raise

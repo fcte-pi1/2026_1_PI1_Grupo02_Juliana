@@ -21,6 +21,7 @@ export interface RunSnapshot {
   tentativa_id: string;
   dimensao: number;
   status: string;
+  sucesso: boolean | null;
   pose: Pose | null;
   maze: MazeState;
   explored: number;
