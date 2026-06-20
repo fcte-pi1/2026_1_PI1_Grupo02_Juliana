@@ -28,6 +28,7 @@ add_executable(micromouse
     motores/Motor.cpp
     motores/PID.cpp
     motores/WatchdogMotor.cpp
+    motores/MovimentacaoFrontal.cpp
     telemetria/MazeMapper.cpp
 )
 

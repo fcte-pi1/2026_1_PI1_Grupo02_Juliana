@@ -27,6 +27,7 @@ add_executable(motores
     Motor.cpp
     PID.cpp
     WatchdogMotor.cpp
+    MovimentacaoFrontal.cpp
 )
 
 target_include_directories(motores PRIVATE ${CMAKE_CURRENT_LIST_DIR})

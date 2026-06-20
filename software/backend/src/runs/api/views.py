@@ -12,6 +12,7 @@ from runs.api.serializers import TentativaSerializer
 from runs.selectors import get_tentativa_by_id, list_tentativas
 from runs.services.snapshot import build_snapshot
 from runs.tasks import parar_corrida, simular_corrida
+from runs.use_cases.mover_frente import MoverFrente
 from runs.api.serializers import PosicaoSerializer
 from runs.models import Micromouse, Labirinto, Posicao, Tentativa
 from rest_framework import mixins
@@ -73,6 +74,9 @@ class TentativaViewSet(ReadOnlyModelViewSet):
             simular_corrida.delay(str(tentativa.id))
         elif acao == "stop":
             parar_corrida(str(tentativa.id))
+        elif acao == "mover_frente":
+            velocidade = request.data.get("velocidade", MoverFrente.VELOCIDADE_PADRAO)
+            MoverFrente().execute(tentativa_id=str(tentativa.id), velocidade=velocidade)
         return Response({"acao": acao}, status=status.HTTP_202_ACCEPTED)
 
     @action(detail=True, methods=["get"])

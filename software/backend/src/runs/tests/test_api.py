@@ -4,6 +4,18 @@ import pytest
 from runs.tests.factories import TentativaFactory
 
 
+def _fake_mqtt_client(chamadas: dict):
+    class _Client:
+        def publish(self, topic, payload, qos=0):
+            chamadas["topic"] = topic
+            chamadas["payload"] = payload
+
+        def disconnect(self):
+            pass
+
+    return _Client()
+
+
 @pytest.mark.django_db
 def test_list_tentativas_unauthenticated_returns_401(api_client):
     response = api_client.get("/api/v1/runs/tentativas/")
@@ -59,3 +71,43 @@ def test_comando_stop_sinaliza_parada(auth_client, monkeypatch):
     )
     assert response.status_code == 202
     assert called["stop"] == str(tentativa.id)
+
+
+@pytest.mark.django_db
+def test_comando_mover_frente_retorna_202_e_publica_mqtt(auth_client, monkeypatch):
+    tentativa = TentativaFactory()
+    chamadas: dict = {}
+    monkeypatch.setattr(
+        "runs.use_cases.mover_frente.build_client",
+        lambda **kw: _fake_mqtt_client(chamadas),
+    )
+
+    response = auth_client.post(
+        f"/api/v1/runs/tentativas/{tentativa.id}/comando/",
+        {"acao": "mover_frente", "velocidade": 180},
+        format="json",
+    )
+
+    assert response.status_code == 202
+    assert chamadas["payload"] == "FRENTE 180"
+    assert str(tentativa.id) in chamadas["topic"]
+
+
+@pytest.mark.django_db
+def test_comando_mover_frente_usa_velocidade_padrao(auth_client, monkeypatch):
+    from runs.use_cases.mover_frente import MoverFrente
+
+    tentativa = TentativaFactory()
+    chamadas: dict = {}
+    monkeypatch.setattr(
+        "runs.use_cases.mover_frente.build_client",
+        lambda **kw: _fake_mqtt_client(chamadas),
+    )
+
+    auth_client.post(
+        f"/api/v1/runs/tentativas/{tentativa.id}/comando/",
+        {"acao": "mover_frente"},
+        format="json",
+    )
+
+    assert chamadas["payload"] == f"FRENTE {MoverFrente.VELOCIDADE_PADRAO}"
