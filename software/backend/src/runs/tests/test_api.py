@@ -111,3 +111,84 @@ def test_comando_mover_frente_usa_velocidade_padrao(auth_client, monkeypatch):
     )
 
     assert chamadas["payload"] == f"FRENTE {MoverFrente.VELOCIDADE_PADRAO}"
+
+
+# ---------------------------------------------------------------------------
+# RF02 — girar
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_comando_girar_90_retorna_202_e_publica_mqtt(auth_client, monkeypatch):
+    tentativa = TentativaFactory()
+    chamadas: dict = {}
+    monkeypatch.setattr(
+        "runs.use_cases.girar.build_client",
+        lambda **kw: _fake_mqtt_client(chamadas),
+    )
+
+    response = auth_client.post(
+        f"/api/v1/runs/tentativas/{tentativa.id}/comando/",
+        {"acao": "girar", "angulo": 90},
+        format="json",
+    )
+
+    assert response.status_code == 202
+    assert chamadas["payload"] == "GIRAR 90"
+    assert str(tentativa.id) in chamadas["topic"]
+
+
+@pytest.mark.django_db
+def test_comando_girar_menos_90_publica_mqtt(auth_client, monkeypatch):
+    tentativa = TentativaFactory()
+    chamadas: dict = {}
+    monkeypatch.setattr(
+        "runs.use_cases.girar.build_client",
+        lambda **kw: _fake_mqtt_client(chamadas),
+    )
+
+    response = auth_client.post(
+        f"/api/v1/runs/tentativas/{tentativa.id}/comando/",
+        {"acao": "girar", "angulo": -90},
+        format="json",
+    )
+
+    assert response.status_code == 202
+    assert chamadas["payload"] == "GIRAR -90"
+
+
+@pytest.mark.django_db
+def test_comando_girar_180_publica_mqtt(auth_client, monkeypatch):
+    tentativa = TentativaFactory()
+    chamadas: dict = {}
+    monkeypatch.setattr(
+        "runs.use_cases.girar.build_client",
+        lambda **kw: _fake_mqtt_client(chamadas),
+    )
+
+    response = auth_client.post(
+        f"/api/v1/runs/tentativas/{tentativa.id}/comando/",
+        {"acao": "girar", "angulo": 180},
+        format="json",
+    )
+
+    assert response.status_code == 202
+    assert chamadas["payload"] == "GIRAR 180"
+
+
+@pytest.mark.django_db
+def test_comando_girar_angulo_invalido_retorna_400(auth_client, monkeypatch):
+    tentativa = TentativaFactory()
+    monkeypatch.setattr(
+        "runs.use_cases.girar.build_client",
+        lambda **kw: _fake_mqtt_client({}),
+    )
+
+    response = auth_client.post(
+        f"/api/v1/runs/tentativas/{tentativa.id}/comando/",
+        {"acao": "girar", "angulo": 45},
+        format="json",
+    )
+
+    assert response.status_code == 400
+    assert "45" in response.text  # mensagem de erro contém o ângulo inválido
