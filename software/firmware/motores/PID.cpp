@@ -1,4 +1,5 @@
 #include "PID.h"
+#include <cmath>
 
 PID::PID(float kp, float ki, float kd, float limite) 
     : kp(kp), ki(ki), kd(kd), limiteSaida(limite), erroAnterior(0), somaErro(0) {}

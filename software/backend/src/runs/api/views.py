@@ -12,11 +12,11 @@ from runs.api.serializers import TentativaSerializer
 from runs.selectors import get_tentativa_by_id, list_tentativas
 from runs.services.snapshot import build_snapshot
 from runs.tasks import parar_corrida, simular_corrida
+from runs.use_cases.mover_frente import MoverFrente
+from runs.use_cases.girar import Girar
 from runs.api.serializers import PosicaoSerializer
-from runs.models import Micromouse, Labirinto, Posicao
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from runs.models import Micromouse, Labirinto, Posicao, Tentativa
 from rest_framework import mixins
-from rest_framework import serializers
 
 
 class MicromouseViewSet(ReadOnlyModelViewSet):
@@ -41,6 +41,26 @@ class TentativaViewSet(ReadOnlyModelViewSet):
         tentativa = get_tentativa_by_id(tentativa_id=str(pk))
         return Response(build_snapshot(tentativa), status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=["post"])
+    def iniciar(self, request):
+        """Cria uma nova Tentativa com o mouse/labirinto padrão e inicia a simulação.
+
+        Equivale ao fluxo real: operador pressiona iniciar → backend cria a
+        corrida, publica start+run_id → robô (ou simulador) começa a enviar
+        telemetria.
+        """
+        mm, _ = Micromouse.objects.get_or_create(
+            nome="Mouse-Sim", defaults={"algoritmo": "Flood Fill"}
+        )
+        lab, _ = Labirinto.objects.get_or_create(
+            nome="Labirinto-Sim", defaults={"dimensao": 16}
+        )
+        tentativa = Tentativa.objects.create(micromouse=mm, labirinto=lab)
+        simular_corrida.delay(str(tentativa.id))
+        return Response(
+            TentativaSerializer(tentativa).data, status=status.HTTP_201_CREATED
+        )
+
     @action(detail=True, methods=["post"])
     def comando(self, request, pk=None):
         """Controle remoto (RF22): iniciar/parar a corrida.
@@ -55,6 +75,15 @@ class TentativaViewSet(ReadOnlyModelViewSet):
             simular_corrida.delay(str(tentativa.id))
         elif acao == "stop":
             parar_corrida(str(tentativa.id))
+        elif acao == "mover_frente":
+            velocidade = request.data.get("velocidade", MoverFrente.VELOCIDADE_PADRAO)
+            MoverFrente().execute(tentativa_id=str(tentativa.id), velocidade=velocidade)
+        elif acao == "girar":
+            try:
+                angulo = int(request.data.get("angulo", 0))
+                Girar().execute(tentativa_id=str(tentativa.id), angulo=angulo)
+            except ValueError as exc:
+                return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"acao": acao}, status=status.HTTP_202_ACCEPTED)
 
     @action(detail=True, methods=["get"])

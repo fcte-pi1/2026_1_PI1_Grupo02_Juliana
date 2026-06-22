@@ -25,3 +25,9 @@ export async function enviarComando(
 ): Promise<void> {
   await apiClient.post(`/v1/runs/tentativas/${runId}/comando/`, { acao });
 }
+
+/** Cria uma nova Tentativa com o mouse/labirinto padrão e inicia a simulação. */
+export async function iniciarCorrida(): Promise<Tentativa> {
+  const { data } = await apiClient.post<Tentativa>('/v1/runs/tentativas/iniciar/');
+  return data;
+}

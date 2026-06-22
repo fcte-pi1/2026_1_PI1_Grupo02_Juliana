@@ -1,6 +1,9 @@
 #pragma once
 
-//ajusta a potencia dos motores - HU19
+#include <stdio.h>
+#include <stdlib.h>
+
+//ajusta a potencia dos motores 
 class PID {
 private:
     float kp, ki, kd;

@@ -30,13 +30,18 @@ export interface RunSnapshot {
   battery: number | null;
   voltage: number | null;
   ts: string | null;
+  tempo_inicio: string | null;
+  tempo_fim: string | null;
 }
 
 /** Item da listagem de tentativas (GET /v1/runs/tentativas/). */
 export interface Tentativa {
   id: string;
   micromouse: string;
+  micromouse_nome: string;
+  algoritmo: string;
   labirinto: string;
+  labirinto_nome: string;
   dimensao: number;
   status: string;
   sucesso: boolean | null;
