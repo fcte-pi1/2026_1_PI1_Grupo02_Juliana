@@ -20,6 +20,8 @@
 #include "Motor.h"
 #include "PID.h"
 #include "WatchdogMotor.h"
+#include "MovimentacaoFrontal.h"
+#include "Rotacao.h"
 #include "MazeMapper.h"
 
 // --- Configurações de pinos para Pico W (hardware.md) ---
@@ -28,6 +30,8 @@
 Motor motorEsq(15, 14, 13);
 Motor motorDir(12, 11, 10);
 WatchdogMotor watchdog(&motorEsq, &motorDir, 1000);
+MovimentacaoFrontal movFrente(&motorEsq, &motorDir);
+Rotacao rotacao(&motorEsq, &motorDir);
 
 // Desired speeds controladas remotamente (protegidas por mutex)
 volatile int desiredLeft = 0;
@@ -204,6 +208,24 @@ static void mqtt_process_incoming_and_handle_commands() {
                 mutex_enter_blocking(&motor_mutex);
                 desiredLeft = 0; desiredRight = 0;
                 mutex_exit(&motor_mutex);
+                movFrente.parar();
+            } else if (strncmp(payload, "FRENTE", 6) == 0) {
+                int vel = (payload[6] == ' ') ? atoi(payload + 7) : MovimentacaoFrontal::VELOCIDADE_PADRAO;
+                if (vel < 1 || vel > MovimentacaoFrontal::VELOCIDADE_MAX) vel = MovimentacaoFrontal::VELOCIDADE_PADRAO;
+                mutex_enter_blocking(&motor_mutex);
+                desiredLeft = vel; desiredRight = vel;
+                mutex_exit(&motor_mutex);
+                movFrente.moverFrente(vel);
+                printf("[RF01] Movendo para frente: vel=%d\r\n", vel);
+            } else if (strncmp(payload, "GIRAR", 5) == 0) {
+                int ang = (payload[5] == ' ') ? atoi(payload + 6) : 0;
+                if (ang == 90 || ang == -90 || ang == 180) {
+                    movFrente.parar(); // interrompe movimento frontal se ativo
+                    rotacao.girar(ang);
+                    printf("Girando %d graus (orient. atual: %c)\r\n", ang, rotacao.orientacaoChar());
+                } else {
+                    printf("Angulo invalido: %d. Use 90, -90 ou 180.\r\n", ang);
+                }
             } else if (strncmp(payload, "SET M1", 6) == 0) {
                 int v = atoi(payload + 6);
                 if (v > 255) v = 255; if (v < -255) v = -255;
@@ -286,6 +308,7 @@ int main() {
 
     // Variável global para controlar o tempo da telemetria
     uint32_t ultimaTelemetria = millis_pico();
+    uint32_t ultimaAtualizacaoFrente = 0;
     
     printf("[INIT] Sistema iniciado. Aguardando comandos...\r\n");
     
@@ -295,16 +318,29 @@ int main() {
         watchdog.alimentar();
         watchdog.verificar();
 
-        // 2. Execução física: aplica velocidades desejadas vindas do servidor TCP
+        // 2. Execução física — prioridade: RF02 (rotação) > RF01 (frente) > manual
         if (watchdog.isAtivo()) {
-            // lê as velocidades desejadas protegidas por mutex
-            mutex_enter_blocking(&motor_mutex);
-            int l = desiredLeft;
-            int r = desiredRight;
-            mutex_exit(&motor_mutex);
+            uint32_t agoraMotores = millis_pico();
 
-            motorEsq.setVelocidade(l);
-            motorDir.setVelocidade(r);
+            if (rotacao.emRotacao()) {
+                rotacao.atualizar(agoraMotores);
+                ultimaAtualizacaoFrente = 0; // reseta dt para próximo ciclo de movFrente
+            } else if (movFrente.ativo()) {
+                float dt = (ultimaAtualizacaoFrente > 0)
+                    ? (agoraMotores - ultimaAtualizacaoFrente) / 1000.0f
+                    : 0.01f;
+                ultimaAtualizacaoFrente = agoraMotores;
+                // Correção PID de heading (erroHeading=0 até MPU6050 integrado)
+                movFrente.atualizar(0.0f, dt);
+            } else {
+                ultimaAtualizacaoFrente = 0;
+                mutex_enter_blocking(&motor_mutex);
+                int l = desiredLeft;
+                int r = desiredRight;
+                mutex_exit(&motor_mutex);
+                motorEsq.setVelocidade(l);
+                motorDir.setVelocidade(r);
+            }
         }
 
         // 3. Telemetria (HU12) - Dispara a cada 100ms
