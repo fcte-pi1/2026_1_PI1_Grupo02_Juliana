@@ -6,8 +6,8 @@ int main(void) {
     stdio_init_all();
 
     current_sensor_t i_sensor;
-    // GPIO27 (ADC1), jumper do modulo em 5A -> 185 mV/A, zero em VCC/2 (~1650 mV p/ 3.3V)
-    current_sensor_init(&i_sensor, 27, CURRENT_SENSOR_SENS_5A, 1650);
+    // GPIO27 (ADC1), jumper do modulo em 5A -> 185 mV/A, zero em VCC/2 (~2500 mV p/ 5V)
+    current_sensor_init(&i_sensor, 27, CURRENT_SENSOR_SENS_5A, 2500);
 
     while (true) {
         int32_t corrente_ma = current_sensor_read_ma(&i_sensor);
