@@ -20,6 +20,8 @@
 #include "Motor.h"
 #include "PID.h"
 #include "WatchdogMotor.h"
+#include "MovimentacaoFrontal.h"
+#include "Rotacao.h"
 #include "MazeMapper.h"
 
 // ─── Configurações de usuário ─────────────────────────────────────────────────
@@ -41,6 +43,8 @@ static const char *MOUSE_ID = "rato-01";
 Motor motorEsq(15, 14, 13);
 Motor motorDir(12, 11, 10);
 WatchdogMotor watchdog(&motorEsq, &motorDir, 1000);
+MovimentacaoFrontal movFrente(&motorEsq, &motorDir);
+Rotacao rotacao(&motorEsq, &motorDir);
 
 volatile int desiredLeft  = 0;
 volatile int desiredRight = 0;
@@ -413,12 +417,15 @@ int main(void) {
     // ─── Loop principal ───────────────────────────────────────────────────────
     uint32_t ultimaTelemetria = millis_pico();
     uint32_t ultimoPing       = millis_pico();
+    uint32_t ultimaAtualizacaoFrente = 0;
     // Dados de pose/sensores — substituir com valores reais do MazeMapper
     int   pose_x   = 0, pose_y = 0;
     const char *heading = "N";
     float speed    = 0.0f;
     int   battery  = 100;
     float voltage  = 7.4f;
+
+    printf("[INIT] Sistema iniciado. Aguardando comandos...\r\n");
 
     while (true) {
         uint32_t agora = millis_pico();
@@ -427,17 +434,31 @@ int main(void) {
         watchdog.alimentar();
         watchdog.verificar();
 
-        // Aplica velocidades nos motores
+        // 2. Execução física — prioridade: RF02 (rotação) > RF01 (frente) > manual
         if (watchdog.isAtivo()) {
-            mutex_enter_blocking(&motor_mutex);
-            int l = desiredLeft;
-            int r = desiredRight;
-            mutex_exit(&motor_mutex);
-            motorEsq.setVelocidade(l);
-            motorDir.setVelocidade(r);
+            uint32_t agoraMotores = millis_pico();
 
-            // Estima velocidade (placeholder até sensor real)
-            speed = (abs(l) + abs(r)) / 2.0f / 255.0f * 0.5f;
+            if (rotacao.emRotacao()) {
+                rotacao.atualizar(agoraMotores);
+                ultimaAtualizacaoFrente = 0;
+            } else if (movFrente.ativo()) {
+                float dt = (ultimaAtualizacaoFrente > 0)
+                    ? (agoraMotores - ultimaAtualizacaoFrente) / 1000.0f
+                    : 0.01f;
+                ultimaAtualizacaoFrente = agoraMotores;
+                // Correção PID de heading (erroHeading=0 até MPU6050 integrado)
+                movFrente.atualizar(0.0f, dt);
+            } else {
+                ultimaAtualizacaoFrente = 0;
+                mutex_enter_blocking(&motor_mutex);
+                int l = desiredLeft;
+                int r = desiredRight;
+                mutex_exit(&motor_mutex);
+                motorEsq.setVelocidade(l);
+                motorDir.setVelocidade(r);
+                // Estima velocidade (placeholder até sensor real)
+                speed = (abs(l) + abs(r)) / 2.0f / 255.0f * 0.5f;
+            }
         }
 
         // Processa mensagens MQTT recebidas (comandos)

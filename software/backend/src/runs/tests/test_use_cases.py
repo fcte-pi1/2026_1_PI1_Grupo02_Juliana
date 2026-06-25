@@ -1,12 +1,91 @@
-"""Testes dos use cases de telemetria."""
+"""Testes dos use cases de telemetria e movimentação."""
 from datetime import UTC, datetime
 
 import pytest
 
 from runs.models import Posicao, Tentativa
 from runs.tests.factories import TentativaFactory
+from runs.use_cases.girar import Girar
+from runs.use_cases.mover_frente import MoverFrente
 from runs.use_cases.persistir_telemetria import PersistirTelemetria
 from runs.use_cases.registrar_evento import RegistrarEvento
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _fake_mqtt_client(chamadas: dict):
+    class _Client:
+        def publish(self, topic, payload, qos=0):
+            chamadas["topic"] = topic
+            chamadas["payload"] = payload
+
+        def disconnect(self):
+            pass
+
+    return _Client()
+
+
+def _patch_mqtt(monkeypatch, chamadas: dict):
+    monkeypatch.setattr(
+        "runs.use_cases.mover_frente.build_client",
+        lambda **kw: _fake_mqtt_client(chamadas),
+    )
+
+
+# ---------------------------------------------------------------------------
+# MoverFrente (RF01)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_mover_frente_publica_comando_correto(monkeypatch):
+    tentativa = TentativaFactory()
+    chamadas: dict = {}
+    _patch_mqtt(monkeypatch, chamadas)
+
+    result = MoverFrente().execute(tentativa_id=str(tentativa.id), velocidade=180)
+
+    assert result["velocidade"] == 180
+    assert chamadas["payload"] == "FRENTE 180"
+    assert str(tentativa.id) in chamadas["topic"]
+
+
+@pytest.mark.django_db
+def test_mover_frente_usa_velocidade_padrao(monkeypatch):
+    tentativa = TentativaFactory()
+    chamadas: dict = {}
+    _patch_mqtt(monkeypatch, chamadas)
+
+    MoverFrente().execute(tentativa_id=str(tentativa.id))
+
+    assert chamadas["payload"] == f"FRENTE {MoverFrente.VELOCIDADE_PADRAO}"
+
+
+@pytest.mark.django_db
+def test_mover_frente_limita_velocidade_maxima(monkeypatch):
+    tentativa = TentativaFactory()
+    chamadas: dict = {}
+    _patch_mqtt(monkeypatch, chamadas)
+
+    result = MoverFrente().execute(tentativa_id=str(tentativa.id), velocidade=999)
+
+    assert result["velocidade"] == MoverFrente.VELOCIDADE_MAX
+    assert chamadas["payload"] == f"FRENTE {MoverFrente.VELOCIDADE_MAX}"
+
+
+@pytest.mark.django_db
+def test_mover_frente_limita_velocidade_minima(monkeypatch):
+    tentativa = TentativaFactory()
+    chamadas: dict = {}
+    _patch_mqtt(monkeypatch, chamadas)
+
+    result = MoverFrente().execute(tentativa_id=str(tentativa.id), velocidade=0)
+
+    assert result["velocidade"] == 1
+    assert chamadas["payload"] == "FRENTE 1"
 
 
 def _telemetria(run_id: str, x: int, y: int, walls: dict) -> dict:
@@ -19,6 +98,76 @@ def _telemetria(run_id: str, x: int, y: int, walls: dict) -> dict:
         "battery": 90.0,
         "voltage": 7.3,
     }
+
+
+# ---------------------------------------------------------------------------
+# Girar (RF02)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_girar_publica_comando_correto_90_graus(monkeypatch):
+    tentativa = TentativaFactory()
+    chamadas: dict = {}
+    _patch_mqtt_girar(monkeypatch, chamadas)
+
+    result = Girar().execute(tentativa_id=str(tentativa.id), angulo=90)
+
+    assert result["angulo"] == 90
+    assert chamadas["payload"] == "GIRAR 90"
+    assert str(tentativa.id) in chamadas["topic"]
+
+
+@pytest.mark.django_db
+def test_girar_publica_comando_correto_menos_90(monkeypatch):
+    tentativa = TentativaFactory()
+    chamadas: dict = {}
+    _patch_mqtt_girar(monkeypatch, chamadas)
+
+    result = Girar().execute(tentativa_id=str(tentativa.id), angulo=-90)
+
+    assert result["angulo"] == -90
+    assert chamadas["payload"] == "GIRAR -90"
+
+
+@pytest.mark.django_db
+def test_girar_publica_comando_correto_180(monkeypatch):
+    tentativa = TentativaFactory()
+    chamadas: dict = {}
+    _patch_mqtt_girar(monkeypatch, chamadas)
+
+    result = Girar().execute(tentativa_id=str(tentativa.id), angulo=180)
+
+    assert result["angulo"] == 180
+    assert chamadas["payload"] == "GIRAR 180"
+
+
+@pytest.mark.django_db
+def test_girar_angulo_invalido_levanta_excecao(monkeypatch):
+    tentativa = TentativaFactory()
+    _patch_mqtt_girar(monkeypatch, {})
+
+    with pytest.raises(ValueError, match="45"):
+        Girar().execute(tentativa_id=str(tentativa.id), angulo=45)
+
+
+def _patch_mqtt_girar(monkeypatch, chamadas: dict):
+    class _FakeClient:
+        def publish(self, topic, payload, qos=0):
+            chamadas["topic"] = topic
+            chamadas["payload"] = payload
+
+        def disconnect(self):
+            pass
+
+    monkeypatch.setattr(
+        "runs.use_cases.girar.build_client", lambda **kw: _FakeClient()
+    )
+
+
+# ---------------------------------------------------------------------------
+# Telemetria
+# ---------------------------------------------------------------------------
 
 
 @pytest.mark.django_db
