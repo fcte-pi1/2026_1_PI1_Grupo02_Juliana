@@ -12,13 +12,10 @@ typedef struct {
 // Inicializa o ADC e configura o pino do sensor
 void voltage_sensor_init(voltage_sensor_t *sensor, uint gpio, float divider_ratio);
 
-// Retorna a tensao de ENTRADA (apos o divisor) em milivolts
-uint32_t voltage_sensor_read_mv(voltage_sensor_t *sensor);
-
-// Retorna a tensao de ENTRADA em Volts (conveniencia, baseado em read_mv)
-float voltage_sensor_read_v(voltage_sensor_t *sensor);
-
 // Retorna a leitura crua do ADC (0-4095), sem nenhuma conversao
 uint16_t voltage_sensor_read_raw(voltage_sensor_t *sensor);
+
+// Retorna a tensao de entrada em Volts
+float voltage_sensor_read_v(voltage_sensor_t *sensor);
 
 #endif
