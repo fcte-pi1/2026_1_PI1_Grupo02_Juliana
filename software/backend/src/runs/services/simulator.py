@@ -221,6 +221,10 @@ def run_simulation(
     battery = battery_start
     completed = True
 
+    # Frações de célula publicadas entre cada passo (posição contínua no labirinto).
+    # O firmware real envia a posição física do encoder a ~10 Hz; aqui interpolamos.
+    _INTER_FRACS = (0.33, 0.67)
+
     for i, cell in enumerate(path):
         if should_stop and should_stop():
             completed = False
@@ -233,10 +237,11 @@ def run_simulation(
         battery = _compute_battery(battery, speed, base_speed, rng)
         voltage = _compute_voltage(battery, rng)
 
+        # Pacote principal: chegada à célula + descoberta de paredes (maze_delta)
         payload = {
             "ts": datetime.now(UTC).isoformat(),
             "run_id": run_id,
-            "pose": {"x": cell[0], "y": cell[1], "heading": heading},
+            "pose": {"x": float(cell[0]), "y": float(cell[1]), "heading": heading},
             "maze_delta": [{"x": cell[0], "y": cell[1], "walls": walls}],
             "speed": speed,
             "battery": round(battery, 1),
@@ -245,7 +250,31 @@ def run_simulation(
         client.publish(topic_telemetria(mm_id), json.dumps(payload), qos=1)
         if log:
             log(f"célula {cell} heading={heading} speed={speed} m/s bat={battery}%")
-        time.sleep(1.0 / hz)
+
+        if nxt is None:
+            time.sleep(1.0 / hz)
+            continue
+
+        # Pacotes intermediários: posição float entre célula atual e próxima.
+        # maze_delta vazio — sem novas paredes descobertas durante o trânsito.
+        interval = 1.0 / hz / (len(_INTER_FRACS) + 1)
+        for frac in _INTER_FRACS:
+            time.sleep(interval)
+            inter_payload = {
+                "ts": datetime.now(UTC).isoformat(),
+                "run_id": run_id,
+                "pose": {
+                    "x": round(cell[0] + frac * (nxt[0] - cell[0]), 3),
+                    "y": round(cell[1] + frac * (nxt[1] - cell[1]), 3),
+                    "heading": heading,
+                },
+                "maze_delta": [],
+                "speed": speed,
+                "battery": round(battery, 1),
+                "voltage": voltage,
+            }
+            client.publish(topic_telemetria(mm_id), json.dumps(inter_payload), qos=0)
+        time.sleep(interval)
 
     if completed:
         _publish_evento(client, mm_id, run_id, "desafio_cumprido")
