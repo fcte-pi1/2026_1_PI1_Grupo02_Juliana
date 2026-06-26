@@ -1,9 +1,12 @@
-#include "Navigation.h"
+#include "Navegacao.h"
 #include <stdio.h>
 
 Navigation::Navigation(FloodFill& ff, MazeMapper& mapper,
-                       SensorManager& sensors, MotorController& motors)
-    : ff_(ff), mapper_(mapper), sensors_(sensors), motors_(motors),
+                       SensorManager& sensors,
+                       MovimentacaoFrontal& movFrente,
+                       Rotacao& rotacao)
+    : ff_(ff), mapper_(mapper), sensors_(sensors),
+      movFrente_(movFrente), rotacao_(rotacao),
       state_(NAV_EXPLORE) {}
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -80,9 +83,9 @@ void Navigation::executeTurn(Direction desired) {
     int diff = ((int)desired - (int)pose_.heading + 4) % 4;
     switch (diff) {
         case 0: break;                                  // já na direção certa
-        case 1: motors_.turnRight(); break;             // 90° direita
-        case 2: motors_.turnAround(); break;            // 180°
-        case 3: motors_.turnLeft();  break;             // 90° esquerda
+        case 1: rotacao_.girar(90); break;              // 90° direita
+        case 2: rotacao_.girar(180); break;             // 180°
+        case 3: rotacao_.girar(-90); break;             // 90° esquerda
     }
     pose_.heading = desired;
 }
@@ -109,7 +112,7 @@ void Navigation::stepTowardTarget() {
     }
 
     executeTurn(best);
-    motors_.moveForward();
+    movFrente_.moverFrente();
     advancePosition();
 
     printf("[NAV] (%d,%d) heading=%s peso=%d\r\n",
@@ -143,7 +146,7 @@ void Navigation::update() {
             printf("[NAV] Origem atingida! Exploracao concluida. Celulas: %d/256\r\n",
                    ff_.visitedCount());
             state_ = NAV_DONE;
-            motors_.stop();
+            movFrente_.parar();
         }
     }
 }

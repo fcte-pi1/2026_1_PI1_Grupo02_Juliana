@@ -3,7 +3,8 @@
 #include "../FloodFill/FloodFill.h"
 #include "../telemetria/MazeMapper.h"
 #include "../SensorManager/SensorManager.h"
-#include "../MotorController/MotorController.h"
+#include "../motores/MovimentacaoFrontal.h"
+#include "../motores/Rotacao.h"
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Navigation — máquina de estados do Micromouse
@@ -39,10 +40,11 @@ struct RobotPose {
 
 class Navigation {
 public:
-    Navigation(FloodFill&       ff,
-               MazeMapper&      mapper,
-               SensorManager&   sensors,
-               MotorController& motors);
+    Navigation(FloodFill&           ff,
+               MazeMapper&          mapper,
+               SensorManager&       sensors,
+               MovimentacaoFrontal& movFrente,
+               Rotacao&             rotacao);
 
     // Inicializa posição, FloodFill e executa primeira rodada de FloodFill.
     void init();
@@ -56,10 +58,11 @@ public:
     bool             isDone() const;
 
 private:
-    FloodFill&       ff_;
-    MazeMapper&      mapper_;
-    SensorManager&   sensors_;
-    MotorController& motors_;
+    FloodFill&           ff_;
+    MazeMapper&          mapper_;
+    SensorManager&       sensors_;
+    MovimentacaoFrontal& movFrente_;
+    Rotacao&             rotacao_;
 
     RobotPose pose_;
     NavState  state_;
