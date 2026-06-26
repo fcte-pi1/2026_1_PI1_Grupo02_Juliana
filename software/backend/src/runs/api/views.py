@@ -3,20 +3,24 @@
 O streaming SSE NÃO está aqui: vive em `runs/api/sse.py` como view Django plain,
 para escapar do `EnvelopeRenderer` (que serializa tudo em JSON envelope).
 """
-from rest_framework import status
+import json
+
+from django.conf import settings
+from django.utils import timezone
+from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from runs.api.serializers import TentativaSerializer
+import paho.mqtt.publish as mqtt_publish
+
+from runs.api.serializers import PosicaoSerializer, TentativaSerializer
+from runs.models import Labirinto, Micromouse, Posicao, Tentativa
 from runs.selectors import get_tentativa_by_id, list_tentativas
 from runs.services.snapshot import build_snapshot
 from runs.tasks import parar_corrida, simular_corrida
-from runs.api.serializers import PosicaoSerializer
-from runs.models import Micromouse, Labirinto, Posicao
-from rest_framework.viewsets import ReadOnlyModelViewSet
-from rest_framework import mixins
-from rest_framework import serializers
+from runs.use_cases.mover_frente import MoverFrente
+from runs.use_cases.girar import Girar
 
 
 class MicromouseViewSet(ReadOnlyModelViewSet):
@@ -41,20 +45,97 @@ class TentativaViewSet(ReadOnlyModelViewSet):
         tentativa = get_tentativa_by_id(tentativa_id=str(pk))
         return Response(build_snapshot(tentativa), status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=["post"])
+    def iniciar(self, request):
+        """Cria uma nova Tentativa e inicia a corrida.
+
+        Modo hardware (MICROMOUSE_MQTT_ID preenchido no .env):
+          - Publica {"acao":"start","run_id":"<uuid>"} em micromouse/<id>/comando.
+          - O firmware recebe, inicia a navegação autônoma e começa a enviar telemetria.
+
+        Modo simulador (MICROMOUSE_MQTT_ID vazio):
+          - Dispara a task Celery `simular_corrida` que faz o papel do robô.
+        """
+        mqtt_id = getattr(settings, "MICROMOUSE_MQTT_ID", "")
+
+        if mqtt_id:
+            mm, _ = Micromouse.objects.get_or_create(
+                nome=f"Micromouse-{mqtt_id}", defaults={"algoritmo": "Flood Fill"}
+            )
+        else:
+            mm, _ = Micromouse.objects.get_or_create(
+                nome="Mouse-Sim", defaults={"algoritmo": "Flood Fill"}
+            )
+
+        dimensao = int(request.data.get("dimensao", 16))
+        if dimensao not in (4, 8, 16):
+            dimensao = 16
+        lab, _ = Labirinto.objects.get_or_create(
+            nome=f"Labirinto-{dimensao}x{dimensao}", defaults={"dimensao": dimensao}
+        )
+        tentativa = Tentativa.objects.create(micromouse=mm, labirinto=lab, tempo_inicio=timezone.now())
+
+        if mqtt_id:
+            topic = f"{settings.MQTT_BASE_TOPIC}/{mqtt_id}/comando"
+            payload = json.dumps({"acao": "start", "run_id": str(tentativa.id)})
+            auth = (
+                {"username": settings.MQTT_USERNAME, "password": settings.MQTT_PASSWORD}
+                if settings.MQTT_USERNAME
+                else None
+            )
+            mqtt_publish.single(
+                topic,
+                payload=payload,
+                qos=1,
+                hostname=settings.MQTT_HOST,
+                port=settings.MQTT_PORT,
+                auth=auth,
+            )
+        else:
+            simular_corrida.delay(str(tentativa.id))
+
+        return Response(
+            TentativaSerializer(tentativa).data, status=status.HTTP_201_CREATED
+        )
+
     @action(detail=True, methods=["post"])
     def comando(self, request, pk=None):
-        """Controle remoto (RF22): iniciar/parar a corrida.
+        """Controle remoto (RF22): parar uma corrida em andamento.
 
-        Enquanto não há firmware, START dispara o simulador (task Celery) que faz
-        o papel do robô; STOP sinaliza a parada. Quando o robô real existir, basta
-        trocar por publicar o comando em `topic_comando` (já temos o client MQTT).
+        Hardware real (MICROMOUSE_MQTT_ID): publica {"acao":"stop"} via MQTT.
+        Simulador: sinaliza a task Celery via flag Redis.
         """
         tentativa = get_tentativa_by_id(tentativa_id=str(pk))
         acao = request.data.get("acao")
-        if acao == "start":
-            simular_corrida.delay(str(tentativa.id))
-        elif acao == "stop":
-            parar_corrida(str(tentativa.id))
+        mqtt_id = getattr(settings, "MICROMOUSE_MQTT_ID", "")
+
+        if acao == "stop":
+            if mqtt_id:
+                topic = f"{settings.MQTT_BASE_TOPIC}/{mqtt_id}/comando"
+                auth = (
+                    {"username": settings.MQTT_USERNAME, "password": settings.MQTT_PASSWORD}
+                    if settings.MQTT_USERNAME
+                    else None
+                )
+                mqtt_publish.single(
+                    topic,
+                    payload=json.dumps({"acao": "stop", "run_id": str(tentativa.id)}),
+                    qos=1,
+                    hostname=settings.MQTT_HOST,
+                    port=settings.MQTT_PORT,
+                    auth=auth,
+                )
+            else:
+                parar_corrida(str(tentativa.id))
+        elif acao == "mover_frente":
+            velocidade = request.data.get("velocidade", MoverFrente.VELOCIDADE_PADRAO)
+            MoverFrente().execute(tentativa_id=str(tentativa.id), velocidade=velocidade)
+        elif acao == "girar":
+            try:
+                angulo = int(request.data.get("angulo", 0))
+                Girar().execute(tentativa_id=str(tentativa.id), angulo=angulo)
+            except ValueError as exc:
+                return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"acao": acao}, status=status.HTTP_202_ACCEPTED)
 
     @action(detail=True, methods=["get"])

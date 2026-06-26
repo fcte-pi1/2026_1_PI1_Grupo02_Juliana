@@ -20,6 +20,7 @@ def build_snapshot(
         "tentativa_id": str(tentativa.id),
         "dimensao": tentativa.labirinto.dimensao,
         "status": tentativa.status,
+        "sucesso": tentativa.sucesso,
         "pose": tentativa.pose or None,
         "maze": tentativa.maze,
         "explored": len(tentativa.maze),
@@ -29,4 +30,6 @@ def build_snapshot(
         "battery": battery if battery is not None else tentativa.consumo_bateria,
         "voltage": voltage,
         "ts": ts,
+        "tempo_inicio": tentativa.tempo_inicio.isoformat() if tentativa.tempo_inicio else None,
+        "tempo_fim": tentativa.tempo_fim.isoformat() if tentativa.tempo_fim else None,
     }

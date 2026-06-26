@@ -80,8 +80,8 @@ class Posicao(BaseModel):
     tentativa = models.ForeignKey(
         Tentativa, on_delete=models.CASCADE, related_name="posicoes"
     )
-    coordenada_x = models.IntegerField()
-    coordenada_y = models.IntegerField()
+    coordenada_x = models.FloatField()
+    coordenada_y = models.FloatField()
     timestamp = models.DateTimeField()
     passo = models.PositiveIntegerField(default=0)
     orientacao = models.CharField(max_length=4, blank=True, default="")
