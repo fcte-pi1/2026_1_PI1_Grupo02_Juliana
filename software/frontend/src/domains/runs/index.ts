@@ -2,7 +2,8 @@ export { MazeCanvas } from './components/MazeCanvas/MazeCanvas';
 export { useTentativas } from './hooks/useTentativas';
 export { useRunSnapshot } from './hooks/useRunSnapshot';
 export { useTelemetryStream } from './hooks/useTelemetryStream';
-export { enviarComando, fetchSnapshot, fetchTentativas, iniciarCorrida } from './api';
+export { enviarComando, fetchSnapshot, fetchTentativas, fetchTrajetoria, iniciarCorrida } from './api';
+export type { TrajetoriaPonto } from './api';
 export type {
   Heading,
   MazeState,

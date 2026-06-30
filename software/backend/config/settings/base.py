@@ -125,6 +125,10 @@ MQTT_BASE_TOPIC = config("MQTT_BASE_TOPIC", default="micromouse")
 MQTT_USERNAME = config("MQTT_USERNAME", default="")
 MQTT_PASSWORD = config("MQTT_PASSWORD", default="")
 
+# ID MQTT do micromouse físico — deve coincidir com `micromouse_id` gravado no firmware.
+# Vazio = modo simulador (Celery). Preenchido = publica start/stop via MQTT para o robô real.
+MICROMOUSE_MQTT_ID = config("MICROMOUSE_MQTT_ID", default="")
+
 # ─── Celery ──────────────────────────────────────────────────────────────────
 CELERY_BROKER_URL = config("CELERY_BROKER_URL", default="redis://localhost:6379/1")
 CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", default="redis://localhost:6379/2")

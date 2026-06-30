@@ -53,12 +53,14 @@ class PersistirTelemetria:
             
         if tentativa.status != Tentativa.Status.EM_CURSO:
             tentativa.status = Tentativa.Status.EM_CURSO
+        if tentativa.tempo_inicio is None:
+            tentativa.tempo_inicio = data.ts
 
         # IMPORTANTE: "tempo_inicio" adicionado aos update_fields
         tentativa.save(
             update_fields=[
                 "maze", "pose", "velocidade_media", "consumo_bateria",
-                "status", "updated_at", "tempo_inicio"
+                "status", "tempo_inicio", "updated_at",
             ]
         )
 
