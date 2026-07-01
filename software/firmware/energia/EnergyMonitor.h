@@ -7,6 +7,7 @@
 // Os drivers de sensor sao C puro: linkagem C ao incluir daqui (C++).
 extern "C" {
 #include "voltage_sensor.h"
+#include "current_sensor.h"
 }
 
 // Eventos de energia edge-triggered (disparam uma vez na transicao), pra o
@@ -17,25 +18,34 @@ enum EventoEnergia {
     EVT_TENSAO_OSCILACAO,   // HU21: variacao brusca de tensao
     EVT_BATERIA_BAIXA,      // HU16: bateria <= 20%
     EVT_BATERIA_CRITICA,    // HU16: bateria <= 5%
+    EVT_CONSUMO_ALTO,       // HU10: consumo acumulado >= 80% da capacidade
 };
 
 // Monitor de energia do micromouse.
 // HU21: monitora a tensao da fonte (volts, alerta de queda, log de oscilacao).
 // HU16: converte a tensao em nivel percentual de bateria e alerta em 20% e 5%.
-// HU10 (consumo) e adicionada na etapa seguinte sobre este mesmo modulo.
+// HU10: le a corrente, integra o consumo em Wh e alerta ao passar 80% da
+//       capacidade; o total da corrida fica disponivel pra consolidacao.
 class EnergyMonitor {
 public:
     EnergyMonitor();
 
-    // Inicializa o ADC e o sensor de tensao. Chamar uma vez no boot.
+    // Inicializa o ADC, o sensor de tensao e o de corrente (calibra o zero do
+    // Hall). Chamar uma vez no boot, com a carga de potencia desligada.
     void inicializar();
 
     // Le os sensores respeitando ENERGIA_AMOSTRAGEM_MS (nao bloqueia entre
-    // amostras). Deve ser chamada a cada iteracao do loop principal.
+    // amostras) e integra o consumo. Chamar a cada iteracao do loop principal.
     void atualizar(uint32_t agora_ms);
 
     float tensao_v()    const { return _tensao_v; }     // ultima tensao lida (V)
+    float corrente_a()  const { return _corrente_a; }   // ultima corrente lida (A)
     int   bateria_pct() const { return _bateria_pct; }  // nivel de bateria (0-100)
+    float consumo_wh()  const { return _consumo_wh; }   // energia acumulada na corrida (Wh)
+
+    // Zera o acumulador de consumo. Chamar no inicio de cada corrida (comando
+    // "start"). O total anterior deve ser lido antes, pra consolidacao.
+    void resetar_corrida();
 
     // Desenfileira o proximo evento pendente (edge-triggered). EVT_NENHUM quando
     // a fila esvazia. Apos um evento != EVT_NENHUM, ultimo_detalhe() traz o texto
@@ -49,13 +59,17 @@ public:
 
 private:
     voltage_sensor_t _vsensor;
+    current_sensor_t _isensor;
     uint32_t _ultima_amostra_ms;
     float    _tensao_v;
     float    _tensao_ant_v;        // amostra anterior (deteccao de oscilacao)
+    float    _corrente_a;
     int      _bateria_pct;
+    float    _consumo_wh;          // energia acumulada na corrida atual (Wh)
     bool     _tensao_baixa_ativa;  // estados com histerese (evitam alerta piscando)
     bool     _bat_baixa_ativa;
     bool     _bat_critica_ativa;
+    bool     _consumo_alto_ativa;
 
     // Fila circular de eventos: um ciclo pode gerar mais de um alerta
     // (ex. tensao baixa + bateria critica juntas).
@@ -69,6 +83,7 @@ private:
     void _enfileirar(EventoEnergia tipo, const char* detalhe);
     void _avaliar_tensao();
     void _avaliar_bateria();
+    void _avaliar_consumo();
 };
 
 #endif // ENERGY_MONITOR_H

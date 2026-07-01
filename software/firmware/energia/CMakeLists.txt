@@ -8,18 +8,21 @@ project(energia C CXX ASM)
 
 pico_sdk_init()
 
-# Driver de tensao vive no modulo SENSTEN; referenciamos direto pra nao duplicar.
-set(SENSTEN_DIR ${CMAKE_CURRENT_LIST_DIR}/../funcoes_basicas_sensor_tensao/SENSTEN)
+# Os drivers vivem nos modulos de sensor; referenciamos direto pra nao duplicar.
+set(SENSTEN_DIR   ${CMAKE_CURRENT_LIST_DIR}/../funcoes_basicas_sensor_tensao/SENSTEN)
+set(CORRENTE_DIR  ${CMAKE_CURRENT_LIST_DIR}/../funcoes_sensor_corrente)
 
 # --- Demo / validacao do monitor de energia ---
 add_executable(energia_demo
     main.cpp
     EnergyMonitor.cpp
     ${SENSTEN_DIR}/voltage_sensor.c
+    ${CORRENTE_DIR}/current_sensor.c
 )
 target_include_directories(energia_demo PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
     ${SENSTEN_DIR}
+    ${CORRENTE_DIR}
 )
 target_link_libraries(energia_demo
     pico_stdlib

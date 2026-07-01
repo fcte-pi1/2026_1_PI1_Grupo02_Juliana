@@ -10,7 +10,7 @@ Cobre as Histórias de Usuário:
 |----|-----------|--------|
 | **HU21** | RF21 — Monitoramento da alimentação elétrica | implementado |
 | **HU16** | RF16 — Monitoramento da bateria | implementado |
-| HU10 | RF10 — Cálculo de consumo energético | próxima etapa |
+| **HU10** | RF10 — Cálculo de consumo energético | implementado |
 
 ## Configuração — `config.h`
 
@@ -28,6 +28,10 @@ real da eletrônica.
 | `ENERGIA_BAT_TENSAO_VAZIA_V` | 6,0 V (0%) | HU16 |
 | `ENERGIA_BAT_ALERTA_PCT` | 20% | HU16 |
 | `ENERGIA_BAT_CRITICO_PCT` | 5% | HU16 |
+| `ENERGIA_CORRENTE_GPIO` | GP27 (ADC1) | HU10 |
+| `ENERGIA_CORRENTE_SENS_MV_A` | 185 mV/A (range 5A) | HU10 |
+| `ENERGIA_BAT_CAPACIDADE_MAH` | 1000 *(a confirmar)* | HU10 |
+| `ENERGIA_CONSUMO_ALERTA_PCT` | 80% | HU10 |
 | `ENERGIA_AMOSTRAGEM_MS` | 500 ms | todas |
 
 ## HU21 — Monitoramento da alimentação elétrica
@@ -59,6 +63,24 @@ critérios:
 Ambos os alertas têm histerese (`ENERGIA_HISTERESE_PCT`) pra não piscar em torno
 do limiar quando a leitura oscila.
 
+## HU10 — Cálculo de consumo energético
+
+`atualizar()` integra a energia consumida na corrida: a cada amostra calcula
+`P = tensão × |corrente|` e acumula `P × Δt` em Wh (usa o Δt real entre amostras,
+não o nominal). Cumpre os critérios:
+
+1. **Consumo acumulado em Wh a cada 500 ms** — `consumo_wh()` exposto pra
+   telemetria.
+2. **Alerta ao passar 80% da capacidade** — `EVT_CONSUMO_ALTO` dispara quando o
+   acumulado atinge `ENERGIA_CONSUMO_ALERTA_PCT` da capacidade
+   (`ENERGIA_BAT_CAPACIDADE_WH`, derivada de mAh × 7,4 V).
+3. **Consolidação no fim** — `resetar_corrida()` zera o acumulador no `start`;
+   o total anterior é lido (`consumo_wh()`) e publicado no evento de fim de
+   corrida antes do reset.
+
+O zero do sensor Hall é calibrado no boot (`current_sensor_calibrate_zero()`),
+com a carga de potência desligada.
+
 ### Eventos (edge-triggered, com fila)
 
 `consumir_evento()` devolve um evento **uma vez** por transição, evitando
@@ -73,8 +95,12 @@ log/MQTT.
 | Pico W | GPIO | Sensor | Observação |
 |:------:|:----:|:------:|------------|
 | Pin 31 | GP26 (ADC0) | Tensão (divisor) | entrada analógica após divisor resistivo |
+| Pin 32 | GP27 (ADC1) | Corrente (Hall HW-872) | saída OUT do sensor; zero calibrado no boot |
 
-> GP27 (ADC1) fica reservado ao sensor de corrente (HU10). GP28 (ADC2) livre.
+> GP28 (ADC2) livre. O sensor de corrente assume alimentação em 3,3 V (zero
+> ≈ 1650 mV) — **(a confirmar com eletrônica)**: se o módulo for alimentado em
+> 5 V, ajustar `ENERGIA_CORRENTE_ZERO_MV` em `config.h` (a calibração de zero no
+> boot absorve o desvio, mas o valor nominal deve bater).
 
 ## Build / validação
 

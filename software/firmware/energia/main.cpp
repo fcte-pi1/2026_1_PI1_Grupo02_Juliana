@@ -1,6 +1,7 @@
 // Demo / validacao do EnergyMonitor.
-// HU21 (tensao) + HU16 (bateria): roda no Pico W, le a fonte a cada 500 ms,
-// imprime tensao e nivel de bateria e dispara os alertas no terminal serial.
+// HU21 (tensao) + HU16 (bateria) + HU10 (consumo): roda no Pico W, le a fonte a
+// cada 500 ms, imprime tensao, bateria, corrente e consumo acumulado e dispara
+// os alertas no terminal serial.
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "EnergyMonitor.h"
@@ -11,6 +12,7 @@ static const char* nome_evento(EventoEnergia e) {
         case EVT_TENSAO_OSCILACAO: return "TENSAO_OSCILACAO";
         case EVT_BATERIA_BAIXA:    return "BATERIA_BAIXA";
         case EVT_BATERIA_CRITICA:  return "BATERIA_CRITICA";
+        case EVT_CONSUMO_ALTO:     return "CONSUMO_ALTO";
         default:                   return "NENHUM";
     }
 }
@@ -31,8 +33,9 @@ int main(void) {
         uint32_t agora = to_ms_since_boot(get_absolute_time());
         energia.atualizar(agora);
 
-        printf("Tensao: %.2f V | Bateria: %d%%\r\n",
-               energia.tensao_v(), energia.bateria_pct());
+        printf("Tensao: %.2f V | Bateria: %d%% | Corrente: %.2f A | Consumo: %.3f Wh\r\n",
+               energia.tensao_v(), energia.bateria_pct(),
+               energia.corrente_a(), energia.consumo_wh());
 
         // Drena todos os alertas gerados neste ciclo.
         EventoEnergia evt;
