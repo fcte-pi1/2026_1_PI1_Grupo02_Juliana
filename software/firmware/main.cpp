@@ -23,6 +23,7 @@
 #include "MovimentacaoFrontal.h"
 #include "Rotacao.h"
 #include "MazeMapper.h"
+#include "EnergyMonitor.h"
 
 // ─── Configurações de usuário ─────────────────────────────────────────────────
 // Alterar antes de gravar no robô:
@@ -45,6 +46,21 @@ Motor motorDir(12, 11, 10);
 WatchdogMotor watchdog(&motorEsq, &motorDir, 1000);
 MovimentacaoFrontal movFrente(&motorEsq, &motorDir);
 Rotacao rotacao(&motorEsq, &motorDir);
+
+// Monitor de energia (HU21 tensao / HU16 bateria / HU10 consumo).
+EnergyMonitor energia;
+
+// Mapeia um evento de energia pro campo "type" do evento MQTT.
+static const char *nome_evento_energia(EventoEnergia e) {
+    switch (e) {
+        case EVT_TENSAO_BAIXA:     return "tensao_baixa";
+        case EVT_TENSAO_OSCILACAO: return "tensao_oscilacao";
+        case EVT_BATERIA_BAIXA:    return "bateria_baixa";
+        case EVT_BATERIA_CRITICA:  return "bateria_critica";
+        case EVT_CONSUMO_ALTO:     return "consumo_alto";
+        default:                   return "energia";
+    }
+}
 
 volatile int desiredLeft  = 0;
 volatile int desiredRight = 0;
@@ -202,15 +218,15 @@ static void publish_status_online(void) {
     printf("[STATUS] online publicado (retained)\r\n");
 }
 
-static void publish_evento(const char *tipo) {
+static void publish_evento(const char *tipo, const char *detail = "") {
     if (strlen(current_run_id) == 0) return;
     char topic[128], payload[256], ts[32];
     fill_timestamp(ts, sizeof(ts));
     snprintf(topic,   sizeof(topic),
              "micromouse/%s/evento", MOUSE_ID);
     snprintf(payload, sizeof(payload),
-             "{\"ts\":\"%s\",\"run_id\":\"%s\",\"type\":\"%s\",\"detail\":\"\"}",
-             ts, current_run_id, tipo);
+             "{\"ts\":\"%s\",\"run_id\":\"%s\",\"type\":\"%s\",\"detail\":\"%s\"}",
+             ts, current_run_id, tipo, detail);
     mqtt_publish(topic, payload, 1); // retained
     printf("[EVENTO] %s → %s\r\n", tipo, payload);
 }
@@ -219,7 +235,8 @@ static void publish_evento(const char *tipo) {
 // pose_x/y e maze_delta vêm da navegação; speed/battery/voltage dos sensores.
 // TODO: integrar com MazeMapper para preencher com dados reais.
 static void publish_telemetria(int pose_x, int pose_y, const char *heading,
-                                float speed, int battery, float voltage) {
+                                float speed, int battery, float voltage,
+                                float consumo_wh) {
     if (strlen(current_run_id) == 0 || !running) return;
     char topic[128], payload[512], ts[32];
     fill_timestamp(ts, sizeof(ts));
@@ -229,12 +246,12 @@ static void publish_telemetria(int pose_x, int pose_y, const char *heading,
              "{\"ts\":\"%s\",\"run_id\":\"%s\","
              "\"pose\":{\"x\":%d,\"y\":%d,\"heading\":\"%s\"},"
              "\"maze_delta\":[],"
-             "\"speed\":%.3f,\"battery\":%d,\"voltage\":%.2f}",
+             "\"speed\":%.3f,\"battery\":%d,\"voltage\":%.2f,\"consumo_wh\":%.3f}",
              ts, current_run_id, pose_x, pose_y, heading,
-             speed, battery, voltage);
+             speed, battery, voltage, consumo_wh);
     mqtt_publish(topic, payload, 0);
-    printf("[TELEMETRIA] x=%d y=%d hdg=%s spd=%.2f bat=%d%%\r\n",
-           pose_x, pose_y, heading, speed, battery);
+    printf("[TELEMETRIA] x=%d y=%d hdg=%s spd=%.2f bat=%d%% v=%.2f wh=%.3f\r\n",
+           pose_x, pose_y, heading, speed, battery, voltage, consumo_wh);
 }
 
 // ─── Parser de comandos JSON ──────────────────────────────────────────────────
@@ -272,9 +289,15 @@ static void handle_command(const char *payload) {
         current_run_id[sizeof(current_run_id) - 1] = '\0';
         running = true;
         printf("[CMD] Start → run_id=%s\r\n", current_run_id);
+        energia.resetar_corrida(); // HU10: zera o acumulador de consumo da corrida
         publish_evento("inicio");
 
     } else if (strcmp(acao, "stop") == 0) {
+        // HU10: consolida o consumo total antes de encerrar (run_id ainda válido).
+        char consumo_detail[48];
+        snprintf(consumo_detail, sizeof(consumo_detail),
+                 "consumo_total_wh=%.3f", energia.consumo_wh());
+        publish_evento("fim", consumo_detail);
         running = false;
         current_run_id[0] = '\0';
         mutex_enter_blocking(&motor_mutex);
@@ -381,6 +404,11 @@ int main(void) {
     mutex_init(&motor_mutex);
     printf("[OK] Motores prontos\r\n");
 
+    // Sensores de energia (tensao GP26 + corrente GP27). Calibra o zero do Hall
+    // no boot — a carga de potencia deve estar desligada neste instante.
+    energia.inicializar();
+    printf("[OK] Monitor de energia pronto\r\n");
+
     // Wi-Fi
     if (cyw43_arch_init()) {
         printf("[WIFI] Falha ao inicializar cyw43\r\n");
@@ -418,12 +446,11 @@ int main(void) {
     uint32_t ultimaTelemetria = millis_pico();
     uint32_t ultimoPing       = millis_pico();
     uint32_t ultimaAtualizacaoFrente = 0;
-    // Dados de pose/sensores — substituir com valores reais do MazeMapper
+    // Pose ainda é placeholder (MazeMapper/navegação, frente de Distância).
+    // Energia (bateria/tensão/consumo) já vem dos sensores via EnergyMonitor.
     int   pose_x   = 0, pose_y = 0;
     const char *heading = "N";
     float speed    = 0.0f;
-    int   battery  = 100;
-    float voltage  = 7.4f;
 
     printf("[INIT] Sistema iniciado. Aguardando comandos...\r\n");
 
@@ -464,14 +491,22 @@ int main(void) {
         // Processa mensagens MQTT recebidas (comandos)
         mqtt_receive();
 
+        // Amostra os sensores de energia (respeita a cadência interna de 500ms).
+        energia.atualizar(agora);
+
+        // Encaminha alertas de energia como evento MQTT / log (HU21/HU16/HU10).
+        EventoEnergia evt;
+        while ((evt = energia.consumir_evento()) != EVT_NENHUM) {
+            publish_evento(nome_evento_energia(evt), energia.ultimo_detalhe());
+        }
+
         // Telemetria a 10 Hz somente durante corrida
         if (running && strlen(current_run_id) > 0 &&
             agora - ultimaTelemetria >= 100) {
             ultimaTelemetria = agora;
-            publish_telemetria(pose_x, pose_y, heading, speed, battery, voltage);
-
-            // Desce bateria levemente (placeholder — usar ADC real)
-            if (battery > 0) battery--;
+            publish_telemetria(pose_x, pose_y, heading, speed,
+                               energia.bateria_pct(), energia.tensao_v(),
+                               energia.consumo_wh());
         }
 
         // PINGREQ a cada 30s para manter keepalive com o broker
