@@ -17,5 +17,6 @@ public:
     Motor(uint pwm, uint dir1, uint dir2);
     void inicializar();
     void setVelocidade(int velocidade); // Recebe de -255 a 255
-    void parar();
+    void parar();   // roda-livre: IN1=IN2=0
+    void frear();   // short brake: IN1=IN2=1, para mais rápido que parar()
 };
