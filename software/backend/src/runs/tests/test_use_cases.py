@@ -215,3 +215,24 @@ def test_registrar_evento_desafio_cumprido_fecha_tentativa():
     assert tentativa.status == Tentativa.Status.FINALIZADA
     assert tentativa.sucesso is True
     assert tentativa.tempo_fim is not None
+
+
+@pytest.mark.django_db
+def test_registrar_evento_fim_fecha_sem_sucesso():
+    # "fim" (stop) fecha a tentativa mas NÃO crava sucesso, diferença semântica
+    # de "desafio_cumprido". Trava a regressão de o branch voltar a marcar sucesso.
+    tentativa = TentativaFactory()
+    payload = {
+        "ts": datetime.now(UTC).isoformat(),
+        "run_id": str(tentativa.id),
+        "type": "fim",
+        "detail": "",
+    }
+
+    RegistrarEvento().execute(payload=payload)
+
+    tentativa.refresh_from_db()
+    assert tentativa.status == Tentativa.Status.FINALIZADA
+    assert tentativa.tempo_fim is not None
+    # fim não crava sucesso: fica no default nulo, ao contrário de desafio_cumprido.
+    assert tentativa.sucesso is None
