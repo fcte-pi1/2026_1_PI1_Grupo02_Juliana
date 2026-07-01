@@ -9,7 +9,7 @@ Cobre as Histórias de Usuário:
 | HU | Requisito | Estado |
 |----|-----------|--------|
 | **HU21** | RF21 — Monitoramento da alimentação elétrica | implementado |
-| HU16 | RF16 — Monitoramento da bateria | próxima etapa |
+| **HU16** | RF16 — Monitoramento da bateria | implementado |
 | HU10 | RF10 — Cálculo de consumo energético | próxima etapa |
 
 ## Configuração — `config.h`
@@ -24,6 +24,10 @@ real da eletrônica.
 | `ENERGIA_TENSAO_DIVIDER_RATIO` | 5.0 *(a confirmar)* | HU21 |
 | `ENERGIA_TENSAO_MIN_OP_V` | 6,5 V | HU21 |
 | `ENERGIA_TENSAO_OSCILACAO_V` | 0,5 V | HU21 |
+| `ENERGIA_BAT_TENSAO_CHEIA_V` | 8,4 V (100%) | HU16 |
+| `ENERGIA_BAT_TENSAO_VAZIA_V` | 6,0 V (0%) | HU16 |
+| `ENERGIA_BAT_ALERTA_PCT` | 20% | HU16 |
+| `ENERGIA_BAT_CRITICO_PCT` | 5% | HU16 |
 | `ENERGIA_AMOSTRAGEM_MS` | 500 ms | todas |
 
 ## HU21 — Monitoramento da alimentação elétrica
@@ -40,11 +44,29 @@ critérios de aceitação:
    `ENERGIA_TENSAO_OSCILACAO_V` dispara `EVT_TENSAO_OSCILACAO` com o valor da
    tensão; o firmware principal acrescenta o timestamp ao gravar no log.
 
-### Eventos (edge-triggered)
+## HU16 — Monitoramento da bateria
 
-`consumir_evento()` devolve o evento pendente **uma vez** por transição, evitando
-enxurrada de alertas repetidos enquanto a condição persiste. `ultimo_detalhe()`
-traz o texto com o valor medido, pronto pro log/MQTT.
+`bateria_pct()` converte a tensão lida em nível percentual (`tensao_para_pct()`,
+aproximação linear entre `VAZIA` = 0% e `CHEIA` = 100%, calibrável). Cumpre os
+critérios:
+
+1. **Nível percentual a cada 500 ms** — exposto pra telemetria.
+2. **Alerta de bateria fraca** — em 20% (`ENERGIA_BAT_ALERTA_PCT`) dispara
+   `EVT_BATERIA_BAIXA`.
+3. **Alerta crítico + log** — em 5% (`ENERGIA_BAT_CRITICO_PCT`) dispara
+   `EVT_BATERIA_CRITICA`, que o firmware principal registra no log de operação.
+
+Ambos os alertas têm histerese (`ENERGIA_HISTERESE_PCT`) pra não piscar em torno
+do limiar quando a leitura oscila.
+
+### Eventos (edge-triggered, com fila)
+
+`consumir_evento()` devolve um evento **uma vez** por transição, evitando
+enxurrada de alertas repetidos enquanto a condição persiste. Como um mesmo ciclo
+pode gerar mais de um alerta (ex. tensão baixa + bateria crítica), os eventos vão
+para uma fila; o firmware principal drena chamando `consumir_evento()` em laço até
+`EVT_NENHUM`. `ultimo_detalhe()` traz o texto com o valor medido, pronto pro
+log/MQTT.
 
 ## Pinagem
 
