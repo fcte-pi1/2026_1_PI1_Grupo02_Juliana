@@ -28,6 +28,7 @@ int main(void) {
 
     EnergyMonitor energia;
     energia.inicializar();
+    energia.iniciar_corrida(); // demo integra consumo como se estivesse em corrida
 
     while (true) {
         uint32_t agora = to_ms_since_boot(get_absolute_time());

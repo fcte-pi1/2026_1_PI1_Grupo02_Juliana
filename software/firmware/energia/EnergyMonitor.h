@@ -2,7 +2,7 @@
 #define ENERGY_MONITOR_H
 
 #include "pico/stdlib.h"
-#include "config.h"
+#include "energia_config.h"
 
 // Os drivers de sensor sao C puro: linkagem C ao incluir daqui (C++).
 extern "C" {
@@ -43,9 +43,15 @@ public:
     int   bateria_pct() const { return _bateria_pct; }  // nivel de bateria (0-100)
     float consumo_wh()  const { return _consumo_wh; }   // energia acumulada na corrida (Wh)
 
-    // Zera o acumulador de consumo. Chamar no inicio de cada corrida (comando
-    // "start"). O total anterior deve ser lido antes, pra consolidacao.
-    void resetar_corrida();
+    // Inicia uma corrida: zera o acumulador de consumo, rearma os alertas
+    // (pra a condicao atual ser reavaliada do zero na corrida nova) e passa a
+    // integrar consumo. Chamar no "start". Ler o total anterior antes, se
+    // for consolidar.
+    void iniciar_corrida();
+
+    // Encerra a corrida: para de integrar consumo. O total fica preservado em
+    // consumo_wh() pra consolidacao no evento de fim.
+    void encerrar_corrida();
 
     // Desenfileira o proximo evento pendente (edge-triggered). EVT_NENHUM quando
     // a fila esvazia. Apos um evento != EVT_NENHUM, ultimo_detalhe() traz o texto
@@ -66,6 +72,8 @@ private:
     float    _corrente_a;
     int      _bateria_pct;
     float    _consumo_wh;          // energia acumulada na corrida atual (Wh)
+    bool     _em_corrida;          // so integra consumo enquanto true
+    bool     _primeira_amostra;    // pula a integracao na 1a amostra (sem dt valido)
     bool     _tensao_baixa_ativa;  // estados com histerese (evitam alerta piscando)
     bool     _bat_baixa_ativa;
     bool     _bat_critica_ativa;

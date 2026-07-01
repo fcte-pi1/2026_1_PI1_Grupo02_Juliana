@@ -289,7 +289,7 @@ static void handle_command(const char *payload) {
         current_run_id[sizeof(current_run_id) - 1] = '\0';
         running = true;
         printf("[CMD] Start → run_id=%s\r\n", current_run_id);
-        energia.resetar_corrida(); // HU10: zera o acumulador de consumo da corrida
+        energia.iniciar_corrida(); // HU10/HU16/HU21: zera consumo e rearma alertas
         publish_evento("inicio");
 
     } else if (strcmp(acao, "stop") == 0) {
@@ -298,6 +298,7 @@ static void handle_command(const char *payload) {
         snprintf(consumo_detail, sizeof(consumo_detail),
                  "consumo_total_wh=%.3f", energia.consumo_wh());
         publish_evento("fim", consumo_detail);
+        energia.encerrar_corrida(); // para de integrar consumo apos a corrida
         running = false;
         current_run_id[0] = '\0';
         mutex_enter_blocking(&motor_mutex);
@@ -405,7 +406,7 @@ int main(void) {
     printf("[OK] Motores prontos\r\n");
 
     // Sensores de energia (tensao GP26 + corrente GP27). Calibra o zero do Hall
-    // no boot — a carga de potencia deve estar desligada neste instante.
+    // no boot (a carga de potencia deve estar desligada neste instante).
     energia.inicializar();
     printf("[OK] Monitor de energia pronto\r\n");
 

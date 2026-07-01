@@ -10,6 +10,8 @@ EnergyMonitor::EnergyMonitor()
       _corrente_a(0.0f),
       _bateria_pct(0),
       _consumo_wh(0.0f),
+      _em_corrida(false),
+      _primeira_amostra(true),
       _tensao_baixa_ativa(false),
       _bat_baixa_ativa(false),
       _bat_critica_ativa(false),
@@ -37,18 +39,20 @@ void EnergyMonitor::atualizar(uint32_t agora_ms) {
     if (agora_ms - _ultima_amostra_ms < ENERGIA_AMOSTRAGEM_MS)
         return;
 
-    // dt real entre amostras; 0 na primeira integracao (sem intervalo valido).
-    uint32_t dt_ms = (_ultima_amostra_ms == 0) ? 0 : (agora_ms - _ultima_amostra_ms);
+    // dt real entre amostras; na primeira amostra nao ha intervalo valido.
+    uint32_t dt_ms = _primeira_amostra ? 0 : (agora_ms - _ultima_amostra_ms);
     _ultima_amostra_ms = agora_ms;
+    _primeira_amostra  = false;
 
     _tensao_ant_v = _tensao_v;
     _tensao_v     = voltage_sensor_read_v(&_vsensor);
     _corrente_a   = current_sensor_read_a(&_isensor);
     _bateria_pct  = tensao_para_pct(_tensao_v);
 
-    // HU10: integra energia = potencia * tempo. Usa modulo da corrente pra nao
-    // depender do sentido de montagem do sensor no caminho de potencia.
-    if (dt_ms > 0) {
+    // HU10: integra energia = potencia * tempo, apenas durante a corrida (parado
+    // nao consome "da tentativa"). Usa modulo da corrente pra nao depender do
+    // sentido de montagem do sensor no caminho de potencia.
+    if (_em_corrida && dt_ms > 0) {
         float potencia_w = _tensao_v * fabsf(_corrente_a);
         _consumo_wh += potencia_w * (dt_ms / 3600000.0f); // ms -> h
     }
@@ -58,9 +62,20 @@ void EnergyMonitor::atualizar(uint32_t agora_ms) {
     _avaliar_consumo();
 }
 
-void EnergyMonitor::resetar_corrida() {
+void EnergyMonitor::iniciar_corrida() {
     _consumo_wh = 0.0f;
+    // Rearma todos os alertas: a corrida nova reavalia a condicao atual do zero.
+    // Sem isso, um alerta latchado durante o idle (ex. bateria que ja cruzou o
+    // limiar parado) nunca redispararia na corrida, perdendo o aviso.
     _consumo_alto_ativa = false;
+    _tensao_baixa_ativa = false;
+    _bat_baixa_ativa    = false;
+    _bat_critica_ativa  = false;
+    _em_corrida = true;
+}
+
+void EnergyMonitor::encerrar_corrida() {
+    _em_corrida = false;
 }
 
 // HU16 - conversao linear tensao -> percentual, clampeada em [0, 100].
