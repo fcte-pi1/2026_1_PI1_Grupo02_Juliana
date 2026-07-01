@@ -31,12 +31,18 @@ add_executable(micromouse
     motores/MovimentacaoFrontal.cpp
     motores/Rotacao.cpp
     telemetria/MazeMapper.cpp
+    energia/EnergyMonitor.cpp
+    funcoes_basicas_sensor_tensao/SENSTEN/voltage_sensor.c
+    funcoes_sensor_corrente/current_sensor.c
 )
 
 target_include_directories(micromouse PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/motores
     ${CMAKE_CURRENT_LIST_DIR}/telemetria
+    ${CMAKE_CURRENT_LIST_DIR}/energia
+    ${CMAKE_CURRENT_LIST_DIR}/funcoes_basicas_sensor_tensao/SENSTEN
+    ${CMAKE_CURRENT_LIST_DIR}/funcoes_sensor_corrente
 )
 
 pico_enable_stdio_usb(micromouse 1)
@@ -46,6 +52,7 @@ target_link_libraries(micromouse
     pico_stdlib
     hardware_gpio
     hardware_pwm
+    hardware_adc
     pico_multicore
     pico_sync
     pico_cyw43_arch_lwip_threadsafe_background

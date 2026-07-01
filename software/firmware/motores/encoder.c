@@ -1,15 +1,15 @@
 #include "encoder.h"
 #include "hardware/gpio.h"
 
-// O RP2040 tem um unico callback de IRQ de GPIO por nucleo. Para suportar
-// varios encoders (ate ENCODER_MAX), guardamos os encoders registrados num
-// vetor estatico e despachamos no callback compartilhado.
+// O RP2040 tem um único callback de IRQ de GPIO por núcleo. Para suportar
+// vários encoders (até ENCODER_MAX), guardamos os encoders registrados num
+// vetor estático e despachamos no callback compartilhado.
 static encoder_t *registry[ENCODER_MAX];
 static int registry_len = 0;
 
-// Tabela de transicao para quadratura x4.
-// indice = (estado_anterior << 2) | estado_atual, sendo estado = (A<<1)|B.
-// Valor: +1 (avanco), -1 (retrocesso), 0 (sem mudanca ou transicao invalida).
+// Tabela de transição para quadratura x4.
+// índice = (estado_anterior << 2) | estado_atual, sendo estado = (A<<1)|B.
+// Valor: +1 (avanço), -1 (retrocesso), 0 (sem mudança ou transição inválida).
 static const int8_t QUAD_TABLE[16] = {
     0, -1, +1,  0,
    +1,  0,  0, -1,
@@ -21,7 +21,7 @@ static inline uint8_t read_state(encoder_t *enc) {
     return (uint8_t)((gpio_get(enc->pin_a) << 1) | gpio_get(enc->pin_b));
 }
 
-// Callback unico: atualiza o encoder cujo canal gerou o evento.
+// Callback único: atualiza o encoder cujo canal gerou o evento.
 static void encoder_gpio_callback(uint gpio, uint32_t events) {
     (void)events;
     for (int i = 0; i < registry_len; i++) {
