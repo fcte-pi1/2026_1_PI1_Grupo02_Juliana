@@ -29,6 +29,7 @@ add_executable(motores
     WatchdogMotor.cpp
     MovimentacaoFrontal.cpp
     Rotacao.cpp
+    encoder.c
 )
 
 
@@ -41,6 +42,7 @@ target_link_libraries(motores
     pico_stdlib
     hardware_gpio
     hardware_pwm
+    hardware_clocks
     pico_sync
     pico_cyw43_arch_none
 )
