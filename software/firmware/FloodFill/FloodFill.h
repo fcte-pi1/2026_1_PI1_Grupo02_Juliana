@@ -7,10 +7,15 @@
 //
 // Armazena paredes, pesos (distâncias BFS) e status de visita para cada célula.
 // Não tem nenhuma dependência de hardware — pode ser testado em PC ou simulador.
+//
+// O tamanho do labirinto é definido em runtime via init(size) (ex.: 4, 8 ou 16),
+// permitindo reconfigurar o mesmo robô para labirintos diferentes sem recompilar.
+// FF_MAZE_SIZE_MAX é só a capacidade máxima dos arrays estáticos.
 // ──────────────────────────────────────────────────────────────────────────────
 
-#define FF_MAZE_SIZE  16
-#define FF_WEIGHT_INF 255
+#define FF_MAZE_SIZE_MAX 16
+#define FF_WEIGHT_INF    255
+#define FF_MAX_GOALS     4   // bloco central 2x2 no máximo
 
 // Estado de cada face de parede
 enum WallState : uint8_t {
@@ -40,14 +45,24 @@ class FloodFill {
 public:
     FloodFill();
 
-    // Reinicia todo o mapa: pesos = INF, paredes = UNKNOWN, visited = false.
+    // Reinicia o mapa para um labirinto size x size (size <= FF_MAZE_SIZE_MAX).
+    // Pesos = INF, paredes = UNKNOWN, visited = false.
     // Paredes de borda são marcadas como PRESENT automaticamente.
-    void init();
+    void init(uint8_t size = FF_MAZE_SIZE_MAX);
 
-    // Recalcula todos os pesos via BFS a partir da célula alvo (tx, ty).
-    // Paredes UNKNOWN são tratadas como ABSENT durante a exploração,
-    // permitindo que o robô "veja" caminhos ainda não confirmados.
+    // Tamanho atual configurado (lado do labirinto quadrado).
+    uint8_t size() const;
+
+    // Recalcula todos os pesos via BFS a partir de uma única célula alvo (tx, ty).
+    // Uso típico: caminho de volta à origem.
     void recompute(uint8_t tx, uint8_t ty);
+
+    // Recalcula pesos via BFS multi-origem a partir de várias células alvo simultâneas
+    // (ex.: bloco central 2x2). Cada célula listada começa com peso 0 — o BFS propaga
+    // a partir de todas ao mesmo tempo, então o peso de cada célula reflete a distância
+    // até o alvo MAIS PRÓXIMO, não a um alvo fixo específico.
+    // Paredes UNKNOWN são tratadas como ABSENT durante a exploração.
+    void recomputeMulti(const uint8_t* txs, const uint8_t* tys, uint8_t count);
 
     // Define o estado de uma parede e propaga para a célula vizinha (consistência).
     void      setWall(uint8_t x, uint8_t y, Direction dir, WallState state);
@@ -76,9 +91,10 @@ public:
     static const int8_t DY[4];
 
 private:
-    MazeCell cells_[FF_MAZE_SIZE][FF_MAZE_SIZE];
+    uint8_t  size_;
+    MazeCell cells_[FF_MAZE_SIZE_MAX][FF_MAZE_SIZE_MAX];
 
-    // Fila estática para BFS (256 entradas = tamanho máximo do labirinto)
+    // Fila estática para BFS (capacidade máxima = FF_MAZE_SIZE_MAX²)
     struct QEntry { uint8_t x, y; };
-    QEntry bfs_queue_[FF_MAZE_SIZE * FF_MAZE_SIZE];
+    QEntry bfs_queue_[FF_MAZE_SIZE_MAX * FF_MAZE_SIZE_MAX];
 };

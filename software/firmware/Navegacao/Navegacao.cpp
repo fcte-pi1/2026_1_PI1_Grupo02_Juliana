@@ -12,15 +12,45 @@ Navigation::Navigation(FloodFill& ff, MazeMapper& mapper,
 // ──────────────────────────────────────────────────────────────────────────────
 
 void Navigation::init() {
+    reconfigure(FF_MAZE_SIZE_MAX);
+}
+
+void Navigation::reconfigure(uint8_t mazeSize) {
     pose_ = {NAV_HOME_X, NAV_HOME_Y, DIR_NORTH};
     state_ = NAV_EXPLORE;
 
-    ff_.init();
-    ff_.recompute(NAV_TARGET_X, NAV_TARGET_Y);
+    ff_.init(mazeSize);
+    computeGoalCells();
+    ff_.recomputeMulti(goalX_, goalY_, goalCount_);
 
-    printf("[NAV] Inicio em (%d,%d) heading=%s alvo=(%d,%d)\r\n",
+    printf("[NAV] Inicio em (%d,%d) heading=%s labirinto=%dx%d alvo_celulas=%d\r\n",
            pose_.x, pose_.y, FloodFill::dirToStr(pose_.heading),
-           NAV_TARGET_X, NAV_TARGET_Y);
+           ff_.size(), ff_.size(), goalCount_);
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Bloco central do labirinto: 2x2 se o lado for par (caso normal de competição),
+// 1 célula se for ímpar. Ex.: size=8 → células (3,3),(3,4),(4,3),(4,4).
+// ──────────────────────────────────────────────────────────────────────────────
+
+void Navigation::computeGoalCells() {
+    uint8_t n = ff_.size();
+    uint8_t goalSize = (n % 2 == 0) ? 2 : 1;
+    uint8_t goalMin  = (uint8_t)((n - goalSize) / 2);
+
+    goalCount_ = 0;
+    for (uint8_t dx = 0; dx < goalSize; dx++)
+        for (uint8_t dy = 0; dy < goalSize; dy++) {
+            goalX_[goalCount_] = (uint8_t)(goalMin + dx);
+            goalY_[goalCount_] = (uint8_t)(goalMin + dy);
+            goalCount_++;
+        }
+}
+
+bool Navigation::isAtGoal(uint8_t x, uint8_t y) const {
+    for (uint8_t i = 0; i < goalCount_; i++)
+        if (goalX_[i] == x && goalY_[i] == y) return true;
+    return false;
 }
 
 const RobotPose& Navigation::pose()   const { return pose_; }
@@ -98,11 +128,12 @@ void Navigation::advancePosition() {
 // ──────────────────────────────────────────────────────────────────────────────
 
 void Navigation::stepTowardTarget() {
-    uint8_t tx = (state_ == NAV_RETURN_HOME) ? NAV_HOME_X : NAV_TARGET_X;
-    uint8_t ty = (state_ == NAV_RETURN_HOME) ? NAV_HOME_Y : NAV_TARGET_Y;
-
     // Recalcula sempre — garante que novas paredes sejam consideradas
-    ff_.recompute(tx, ty);
+    if (state_ == NAV_RETURN_HOME) {
+        ff_.recompute(NAV_HOME_X, NAV_HOME_Y);
+    } else {
+        ff_.recomputeMulti(goalX_, goalY_, goalCount_);
+    }
 
     Direction best = ff_.findBestDirection(pose_.x, pose_.y);
     if (best == DIR_NONE) {
@@ -135,7 +166,7 @@ void Navigation::update() {
 
     // 3. Verifica se atingiu o alvo e transiciona de estado
     if (state_ == NAV_EXPLORE) {
-        if (pose_.x == NAV_TARGET_X && pose_.y == NAV_TARGET_Y) {
+        if (isAtGoal(pose_.x, pose_.y)) {
             printf("[NAV] Centro atingido! Retornando a origem.\r\n");
             state_ = NAV_RETURN_HOME;
             // Recalcula flood fill para o caminho de volta
@@ -143,8 +174,9 @@ void Navigation::update() {
         }
     } else if (state_ == NAV_RETURN_HOME) {
         if (pose_.x == NAV_HOME_X && pose_.y == NAV_HOME_Y) {
-            printf("[NAV] Origem atingida! Exploracao concluida. Celulas: %d/256\r\n",
-                   ff_.visitedCount());
+            uint8_t n = ff_.size();
+            printf("[NAV] Origem atingida! Exploracao concluida. Celulas: %d/%d\r\n",
+                   ff_.visitedCount(), (int)n * (int)n);
             state_ = NAV_DONE;
             movFrente_.parar();
         }

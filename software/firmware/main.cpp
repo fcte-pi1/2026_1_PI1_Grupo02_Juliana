@@ -69,6 +69,10 @@ mutex_t motor_mutex;
 // ─── Estado da corrida ────────────────────────────────────────────────────────
 static char    current_run_id[48] = ""; // UUID recebido no comando "start"
 static volatile bool running      = false;
+// Tamanho do labirinto (4, 8...) escolhido no front e recebido no comando "start".
+// TODO: quando a navegação (Navigation/FloodFill) for integrada neste arquivo,
+// usar este valor em navigation.reconfigure(current_maze_size) antes de iniciar.
+static uint8_t current_maze_size = 16;
 
 // ─── Socket MQTT ─────────────────────────────────────────────────────────────
 static int mqtt_sock = -1;
@@ -272,6 +276,21 @@ static int extract_string(const char *json, const char *key, char *out, int out_
     return i > 0;
 }
 
+// Extrai o valor de uma chave numérica simples: "key":123 (sem aspas no valor).
+static int extract_int(const char *json, const char *key, int *out) {
+    char search[64];
+    snprintf(search, sizeof(search), "\"%s\"", key);
+    const char *p = strstr(json, search);
+    if (!p) return 0;
+    p += strlen(search);
+    while (*p == ' ' || *p == ':') p++;
+    char *end = nullptr;
+    long v = strtol(p, &end, 10);
+    if (end == p) return 0;
+    *out = (int)v;
+    return 1;
+}
+
 static void handle_command(const char *payload) {
     printf("[CMD] Recebido: %s\r\n", payload);
 
@@ -287,8 +306,17 @@ static void handle_command(const char *payload) {
         }
         strncpy(current_run_id, run_id, sizeof(current_run_id) - 1);
         current_run_id[sizeof(current_run_id) - 1] = '\0';
+
+        int dimensao = 0;
+        if (extract_int(payload, "dimensao", &dimensao) && (dimensao == 4 || dimensao == 8)) {
+            current_maze_size = (uint8_t)dimensao;
+        }
+        // TODO: chamar navigation.reconfigure(current_maze_size) aqui quando a
+        // Navigation estiver instanciada neste arquivo (hoje core1_navigation é placeholder).
+
         running = true;
-        printf("[CMD] Start → run_id=%s\r\n", current_run_id);
+        printf("[CMD] Start → run_id=%s labirinto=%dx%d\r\n",
+               current_run_id, current_maze_size, current_maze_size);
         energia.iniciar_corrida(); // HU10/HU16/HU21: zera consumo e rearma alertas
         publish_evento("inicio");
 

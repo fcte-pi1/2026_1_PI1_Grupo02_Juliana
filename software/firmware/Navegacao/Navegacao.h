@@ -32,11 +32,9 @@ struct RobotPose {
     Direction heading;
 };
 
-// Posições padrão do labirinto de competição Micromouse
+// Posição de partida — sempre o canto (0,0), qualquer que seja o tamanho do labirinto.
 #define NAV_HOME_X    0u
 #define NAV_HOME_Y    0u
-#define NAV_TARGET_X  8u   // centro do labirinto 16×16
-#define NAV_TARGET_Y  8u
 
 class Navigation {
 public:
@@ -46,8 +44,13 @@ public:
                MovimentacaoFrontal& movFrente,
                Rotacao&             rotacao);
 
-    // Inicializa posição, FloodFill e executa primeira rodada de FloodFill.
+    // Inicializa posição, FloodFill (tamanho default FF_MAZE_SIZE_MAX) e primeira rodada de FloodFill.
     void init();
+
+    // Reconfigura para um labirinto mazeSize x mazeSize (4, 8, 16...) e reinicia a
+    // exploração do zero. Usado quando o operador escolhe o tamanho do labirinto
+    // (ex.: via comando MQTT vindo do front).
+    void reconfigure(uint8_t mazeSize);
 
     // Executa um passo da navegação (chamar em loop).
     // Bloqueia enquanto o robô está em movimento físico.
@@ -66,6 +69,18 @@ private:
 
     RobotPose pose_;
     NavState  state_;
+
+    // Células-alvo da exploração: bloco central 2x2 (ou 1 célula, se o tamanho for ímpar).
+    // Recalculado em reconfigure() a partir de ff_.size().
+    uint8_t goalX_[FF_MAX_GOALS];
+    uint8_t goalY_[FF_MAX_GOALS];
+    uint8_t goalCount_;
+
+    // Preenche goalX_/goalY_/goalCount_ com o bloco central do labirinto atual.
+    void computeGoalCells();
+
+    // true se (x,y) é uma das células-alvo (bloco central).
+    bool isAtGoal(uint8_t x, uint8_t y) const;
 
     // Lê sensores e registra paredes na célula atual no FloodFill.
     void storeWalls();

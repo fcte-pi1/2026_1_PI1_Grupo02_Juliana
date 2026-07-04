@@ -27,7 +27,7 @@ export async function enviarComando(
 }
 
 /** Cria uma nova Tentativa no labirinto escolhido e inicia a corrida. */
-export async function iniciarCorrida(dimensao: 4 | 8 | 16 = 16): Promise<Tentativa> {
+export async function iniciarCorrida(dimensao: 4 | 8 = 4): Promise<Tentativa> {
   const { data } = await apiClient.post<Tentativa>('/v1/runs/tentativas/iniciar/', { dimensao });
   return data;
 }

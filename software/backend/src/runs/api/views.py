@@ -50,8 +50,9 @@ class TentativaViewSet(ReadOnlyModelViewSet):
         """Cria uma nova Tentativa e inicia a corrida.
 
         Modo hardware (MICROMOUSE_MQTT_ID preenchido no .env):
-          - Publica {"acao":"start","run_id":"<uuid>"} em micromouse/<id>/comando.
-          - O firmware recebe, inicia a navegação autônoma e começa a enviar telemetria.
+          - Publica {"acao":"start","run_id":"<uuid>","dimensao":4|8} em micromouse/<id>/comando.
+          - O firmware recebe, reconfigura o FloodFill pro tamanho informado,
+            inicia a navegação autônoma e começa a enviar telemetria.
 
         Modo simulador (MICROMOUSE_MQTT_ID vazio):
           - Dispara a task Celery `simular_corrida` que faz o papel do robô.
@@ -67,9 +68,9 @@ class TentativaViewSet(ReadOnlyModelViewSet):
                 nome="Mouse-Sim", defaults={"algoritmo": "Flood Fill"}
             )
 
-        dimensao = int(request.data.get("dimensao", 16))
-        if dimensao not in (4, 8, 16):
-            dimensao = 16
+        dimensao = int(request.data.get("dimensao", 4))
+        if dimensao not in (4, 8):
+            dimensao = 4
         lab, _ = Labirinto.objects.get_or_create(
             nome=f"Labirinto-{dimensao}x{dimensao}", defaults={"dimensao": dimensao}
         )
@@ -77,7 +78,7 @@ class TentativaViewSet(ReadOnlyModelViewSet):
 
         if mqtt_id:
             topic = f"{settings.MQTT_BASE_TOPIC}/{mqtt_id}/comando"
-            payload = json.dumps({"acao": "start", "run_id": str(tentativa.id)})
+            payload = json.dumps({"acao": "start", "run_id": str(tentativa.id), "dimensao": dimensao})
             auth = (
                 {"username": settings.MQTT_USERNAME, "password": settings.MQTT_PASSWORD}
                 if settings.MQTT_USERNAME
