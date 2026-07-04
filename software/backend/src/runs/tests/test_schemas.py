@@ -150,6 +150,25 @@ def test_evento_payload_reparo_valid():
     assert payload.type == "reparo"
 
 
+# Tipos publicados pelo firmware que o schema precisa aceitar (regressão do
+# contrato firmware<->backend). Espelha nome_evento_energia() + fim/inicio.
+@pytest.mark.parametrize(
+    "tipo",
+    [
+        "fim",
+        "tensao_baixa",
+        "tensao_oscilacao",
+        "bateria_baixa",
+        "bateria_critica",
+        "consumo_alto",
+        "energia",
+    ],
+)
+def test_evento_payload_tipos_do_firmware_validos(tipo):
+    payload = EventoPayload.model_validate(_valid_evento(type=tipo))
+    assert payload.type == tipo
+
+
 def test_evento_payload_invalid_type():
     with pytest.raises(ValidationError):
         EventoPayload.model_validate(_valid_evento(type="inexistente"))

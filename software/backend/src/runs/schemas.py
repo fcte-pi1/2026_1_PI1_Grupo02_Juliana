@@ -43,8 +43,18 @@ class TelemetriaPayload(BaseModel):
     voltage: float | None = None
 
 
+# Tipos de evento publicados pelo firmware: ciclo de vida da corrida
+# (inicio/fim/desafio_cumprido), navegação (colisao/reparo) e alertas de energia
+# (HU21/HU16/HU10). Precisam bater com nome_evento_energia() do firmware.
+EventoType = Literal[
+    "inicio", "fim", "colisao", "reparo", "desafio_cumprido",
+    "tensao_baixa", "tensao_oscilacao", "bateria_baixa", "bateria_critica",
+    "consumo_alto", "energia",
+]
+
+
 class EventoPayload(BaseModel):
     ts: datetime
     run_id: str
-    type: Literal["inicio", "colisao", "reparo", "desafio_cumprido"]
+    type: EventoType
     detail: str = ""

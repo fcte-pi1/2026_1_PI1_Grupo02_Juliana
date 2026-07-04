@@ -25,6 +25,14 @@ class RegistrarEvento:
             tentativa.tempo_fim = data.ts
             tentativa.sucesso = True
             tentativa.status = Tentativa.Status.FINALIZADA
+        elif data.type == "fim":
+            # Corrida encerrada (stop). Fecha sem cravar sucesso: o firmware
+            # só sinaliza que parou, não que cumpriu o objetivo.
+            tentativa.tempo_fim = data.ts
+            tentativa.status = Tentativa.Status.FINALIZADA
+        # Alertas de energia (tensao_baixa, bateria_*, consumo_alto) e navegação
+        # (colisao/reparo) apenas passam: são registrados no snapshot, sem mudar
+        # o ciclo de vida da tentativa.
 
         tentativa.save(
             update_fields=[

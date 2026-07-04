@@ -340,6 +340,14 @@ static void handle_command(const char *payload) {
     }
 }
 
+// Confirma um PUBLISH QoS1 recebido (senão o broker reenvia indefinidamente).
+static void mqtt_puback(uint16_t packet_id) {
+    if (mqtt_sock < 0) return;
+    uint8_t pkt[4] = {0x40, 0x02,
+                      (uint8_t)(packet_id >> 8), (uint8_t)(packet_id & 0xFF)};
+    send(mqtt_sock, pkt, 4, 0);
+}
+
 // ─── Recebe e processa pacotes MQTT recebidos (não-bloqueante) ────────────────
 static void mqtt_receive(void) {
     if (mqtt_sock < 0) return;
@@ -353,10 +361,17 @@ static void mqtt_receive(void) {
         if (idx >= r) break;
         uint8_t pkt_type = (byte1 >> 4) & 0x0F;
 
-        // Lê Remaining Length (assume 1 byte para payloads pequenos)
+        // Lê Remaining Length como 1 byte. Premissa: pacote de comando < 128
+        // bytes e inteiro num único recv. Comando maior ou multi-segmento
+        // desalinharia o parser. Se o protocolo de comando crescer, tratar o
+        // Remaining Length multi-byte (MQTT §2.2.3) e manter estado entre recv.
         uint8_t rem = buf[idx++];
 
         if (pkt_type == 3) { // PUBLISH
+            // QoS nos bits 2-1 do byte fixo. Se QoS>0, ha um Packet Identifier
+            // de 2 bytes ENTRE o tópico e o payload; sem pular, o payload sai
+            // corrompido. O dashboard assina/publica em QoS1, então isso importa.
+            uint8_t qos = (byte1 >> 1) & 0x03;
             if (idx + 2 > r) break;
             uint16_t tlen = ((uint16_t)buf[idx] << 8) | buf[idx + 1];
             idx += 2;
@@ -367,14 +382,30 @@ static void mqtt_receive(void) {
             topic[copy] = '\0';
             idx += tlen;
 
-            int payload_len = rem - 2 - tlen;
+            uint16_t packet_id = 0;
+            int id_bytes = 0;
+            if (qos > 0) {
+                if (idx + 2 > r) break;
+                packet_id = ((uint16_t)buf[idx] << 8) | buf[idx + 1];
+                idx += 2;
+                id_bytes = 2;
+            }
+
+            int payload_len = rem - 2 - tlen - id_bytes;
             if (payload_len < 0) payload_len = 0;
-            if (payload_len > (int)(sizeof(buf) - idx)) payload_len = sizeof(buf) - idx;
+            // Clampa pelos bytes REALMENTE recebidos neste recv (r), não pela
+            // capacidade do buffer: sob fragmentação TCP (Wi-Fi), o rem declarado
+            // pode exceder o que chegou, e copiar até sizeof(buf) leria stack não
+            // inicializada como payload. Comando partido é descartado, não corrompido.
+            int disponivel = r - idx;
+            if (payload_len > disponivel) payload_len = disponivel;
             char payload[256] = "";
             int pl = payload_len < (int)sizeof(payload) - 1 ? payload_len : (int)sizeof(payload) - 1;
             memcpy(payload, buf + idx, pl);
             payload[pl] = '\0';
             idx += payload_len;
+
+            if (qos == 1) mqtt_puback(packet_id); // confirma a entrega
 
             handle_command(payload);
         } else {
