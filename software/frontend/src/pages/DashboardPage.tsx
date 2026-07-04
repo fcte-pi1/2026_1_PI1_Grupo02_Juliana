@@ -125,7 +125,7 @@ export function DashboardPage() {
   const [now, setNow] = useState(0);
   const [lastPacketAt, setLastPacketAt] = useState(0);
   const [initiating, setInitiating] = useState(false);
-  const [selectedDimensao, setSelectedDimensao] = useState<4 | 8 | 16>(16);
+  const [selectedDimensao, setSelectedDimensao] = useState<4 | 8>(4);
   const [trajectory, setTrajectory] = useState<TrajetoriaPonto[]>([]);
   const trajectoryRef = useRef<TrajetoriaPonto[]>([]);
   const startBatteryRef = useRef<number | null>(null);
@@ -341,12 +341,11 @@ export function DashboardPage() {
               className="btn-select"
               disabled={isRunning || initiating}
               value={selectedDimensao}
-              onChange={(e) => setSelectedDimensao(Number(e.target.value) as 4 | 8 | 16)}
+              onChange={(e) => setSelectedDimensao(Number(e.target.value) as 4 | 8)}
               aria-label="Tamanho do labirinto"
             >
               <option value={4}>Labirinto 4×4</option>
               <option value={8}>Labirinto 8×8</option>
-              <option value={16}>Labirinto 16×16</option>
             </select>
             <button className="btn-stop" disabled={!isRunning} onClick={handlePararRun}>
               Parar
