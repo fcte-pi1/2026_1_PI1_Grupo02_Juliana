@@ -25,3 +25,21 @@ export async function enviarComando(
 ): Promise<void> {
   await apiClient.post(`/v1/runs/tentativas/${runId}/comando/`, { acao });
 }
+
+/** Cria uma nova Tentativa no labirinto escolhido e inicia a corrida. */
+export async function iniciarCorrida(dimensao: 4 | 8 | 16 = 16): Promise<Tentativa> {
+  const { data } = await apiClient.post<Tentativa>('/v1/runs/tentativas/iniciar/', { dimensao });
+  return data;
+}
+
+export interface TrajetoriaPonto {
+  x: number;
+  y: number;
+  battery?: number;
+}
+
+/** Trajetória histórica de uma tentativa (lista ordenada de posições com bateria). */
+export async function fetchTrajetoria(runId: string): Promise<TrajetoriaPonto[]> {
+  const { data } = await apiClient.get<TrajetoriaPonto[]>(`/v1/runs/tentativas/${runId}/trajetoria/`);
+  return data;
+}

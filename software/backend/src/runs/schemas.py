@@ -28,8 +28,8 @@ class MazeCell(BaseModel):
 
 
 class Pose(BaseModel):
-    x: int
-    y: int
+    x: float
+    y: float
     heading: Heading
 
 
