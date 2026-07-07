@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VL53L0X — Micromouse</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      padding: 32px;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: #aaa;
+      letter-spacing: 0.05em;
+    }
+
+    .cards {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .card {
+      background: #1a1d27;
+      border: 1px solid #2a2d3a;
+      border-radius: 16px;
+      padding: 32px 40px;
+      text-align: center;
+      min-width: 180px;
+    }
+
+    .card .label {
+      font-size: 0.8rem;
+      color: #888;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .card .value {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #4fc3f7;
+      line-height: 1;
+    }
+
+    .card .unit {
+      font-size: 1rem;
+      color: #555;
+      margin-top: 8px;
+    }
+
+    .card.alert .value { color: #ef5350; }
+    .card.ok    .value { color: #66bb6a; }
+
+    #status {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    #status.connected { color: #66bb6a; }
+    #status.error     { color: #ef5350; }
+
+    button {
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 32px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover  { background: #1565c0; }
+    button:disabled { background: #333; color: #666; cursor: default; }
+  </style>
+</head>
+<body>
+
+  <h1>VL53L0X — Micromouse</h1>
+
+  <div class="cards">
+    <div class="card" id="card-esq">
+      <div class="label">Sensor Esquerdo</div>
+      <div class="value" id="val-esq">—</div>
+      <div class="unit">mm</div>
+    </div>
+    <div class="card" id="card-dir">
+      <div class="label">Sensor Direito</div>
+      <div class="value" id="val-dir">—</div>
+      <div class="unit">mm</div>
+    </div>
+  </div>
+
+  <p id="status">Desconectado</p>
+  <button id="btn">Conectar via Bluetooth</button>
+
+  <script>
+    // UUIDs do serviço e características — devem bater com o arquivo .gatt
+    const SERVICE_UUID = '0f0e0d0c-0b0a-0908-0706-050403020100';
+    const CHAR_ESQ     = '1f1e1d1c-1b1a-1918-1716-151413121110';
+    const CHAR_DIR     = '2f2e2d2c-2b2a-2928-2726-252423222120';
+
+    // Limiar de alerta em mm — abaixo disso o card fica vermelho
+    const ALERT_MM = 150;
+
+    const btn      = document.getElementById('btn');
+    const status   = document.getElementById('status');
+    const valEsq   = document.getElementById('val-esq');
+    const valDir   = document.getElementById('val-dir');
+    const cardEsq  = document.getElementById('card-esq');
+    const cardDir  = document.getElementById('card-dir');
+
+    function updateCard(el, valEl, mm) {
+      if (mm >= 8190) {
+        valEl.textContent = '∞';
+        el.className = 'card';
+      } else {
+        valEl.textContent = mm;
+        el.className = mm < ALERT_MM ? 'card alert' : 'card ok';
+      }
+    }
+
+    function parseDistance(dataView) {
+      // little-endian uint16
+      return dataView.getUint16(0, true);
+    }
+
+    btn.addEventListener('click', async () => {
+      try {
+        status.textContent = 'Procurando dispositivo...';
+        status.className = '';
+        btn.disabled = true;
+
+        const device = await navigator.bluetooth.requestDevice({
+          filters: [{ name: 'VL53L0X_Micromouse' }],
+          optionalServices: [SERVICE_UUID]
+        });
+
+        device.addEventListener('gattserverdisconnected', () => {
+          status.textContent = 'Desconectado';
+          status.className = 'error';
+          btn.disabled = false;
+          valEsq.textContent = '—';
+          valDir.textContent = '—';
+          cardEsq.className = 'card';
+          cardDir.className = 'card';
+        });
+
+        const server  = await device.gatt.connect();
+        const service = await server.getPrimaryService(SERVICE_UUID);
+
+        const charEsq = await service.getCharacteristic(CHAR_ESQ);
+        const charDir = await service.getCharacteristic(CHAR_DIR);
+
+        // Leitura inicial
+        const initEsq = await charEsq.readValue();
+        const initDir = await charDir.readValue();
+        updateCard(cardEsq, valEsq, parseDistance(initEsq));
+        updateCard(cardDir, valDir, parseDistance(initDir));
+
+        // Notificações contínuas
+        charEsq.addEventListener('characteristicvaluechanged', e => {
+          updateCard(cardEsq, valEsq, parseDistance(e.target.value));
+        });
+        charDir.addEventListener('characteristicvaluechanged', e => {
+          updateCard(cardDir, valDir, parseDistance(e.target.value));
+        });
+
+        await charEsq.startNotifications();
+        await charDir.startNotifications();
+
+        status.textContent = `Conectado a: ${device.name}`;
+        status.className = 'connected';
+
+      } catch (err) {
+        status.textContent = `Erro: ${err.message}`;
+        status.className = 'error';
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
