@@ -110,6 +110,8 @@ AS Figuras \ref{fig:montagem3} e \ref{fig:montagem4} mostram a carcaça do micro
 %    \end{itemize}
 %\end{enumerate}
 
+\textcolor{black}{Os testes de sensores descritos nesta seção foram realizados com o microcontrolador Raspberry Pi Pico W, placa originalmente adotada no projeto. Após a execução desses testes, a Pico W sofreu um curto-circuito e precisou ser substituída pelo ESP32, microcontrolador adotado na versão final do robô. Os procedimentos e resultados aqui registrados permanecem válidos como verificação do funcionamento dos sensores; para a integração final, as montagens serão replicadas nos pinos correspondentes do ESP32, com o firmware desenvolvido sobre o framework ESP-IDF.}
+
 \subsection{Teste Sensor Giroscópio MPU-6050}
 
 \textcolor{black}{O funcionamento correto do giroscópio é fundamental para a orientação do robô durante a execução do algoritmo de busca dentro do labirinto. Para a realização do teste, foi preciso fazer uso de elementos e ferramento do laboratório, por essa razão os laboratórios NEI 1 e NEI 2 da faculdade FCTE foram utilizados como espaço de trabalho nos horários disponíveis.}
@@ -297,7 +299,7 @@ Como o \textit{hardware} do micromouse ainda está em fase de montagem e integra
 
 \subsection{Envio de telemetria}
 
-O envio de telemetria funciona via protocolo MQTT. Na integração real, quem publica as mensagens será o Raspberry Pi Pico W embarcado no robô; nos testes realizados, esse papel foi assumido pelo simulador, que se comporta exatamente como o \textit{firmware} faria.
+O envio de telemetria funciona via protocolo MQTT. Na integração real, quem publica as mensagens será o ESP32 embarcado no robô; nos testes realizados, esse papel foi assumido pelo simulador, que se comporta exatamente como o \textit{firmware} faria.
 
 A cada passo simulado, o sistema publica um pacote JSON no tópico \texttt{micromouse/<id>/telemetria} com QoS~1, garantindo entrega confiável ao \textit{broker} Mosquitto. O pacote contém a posição atual do robô (coordenadas $x$, $y$ e orientação cardinal), as paredes da célula recém-visitada, a velocidade instantânea, o nível de bateria e a tensão medida. O simulador também decrementa gradualmente a bateria (0,4\% por passo) e varia a velocidade entre 0,25 e 0,35~m/s para aproximar o comportamento de uma corrida real.
 
