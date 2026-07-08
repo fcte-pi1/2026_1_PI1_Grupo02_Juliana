@@ -28,6 +28,8 @@ Chapa MDF      & Matéria-prima & 168,00   & 168,00 & Larissa                   
 Fita Isolante        & Matéria-prima & 21,00   & 21,00 & Larissa                    \\ \hline
 Mão de Obra & Montagem & 150,00   & 150,00 & Larissa                    \\ \hline
 Raspberry Pi Pico W      & Componente eletrônico & 58,80  & 58,00 & Samuel                     \\ \hline
+% TODO: preencher os valores previsto/realizado e o responsável pela ESP32 adquirida em substituição à Pico W
+ESP32      & Componente eletrônico & --   & -- & --                     \\ \hline
 Sensor VL53L0X     & Componente eletrônico & 75,39   & 75,39 & Samuel                     \\ \hline
 Sensor HC-SR04 & Componente eletrônico & 47,40   & 47,40 & Samuel                     \\ \hline
 MPU-6050 & Componente eletrônico & 29,95   & 29,95 & Samuel                   \\ \hline
@@ -59,8 +61,10 @@ Bateria 3,7V x2 & Componente elétrico & 68,00 & 68,00 &     Georgia            
 \begin{tabularx}{\textwidth}{|l|X|} 
     \hline
     \textbf{Item ou serviço} & \textbf{Justificativa} \\ \hline
-   Microcontrolador & Precisávamos de um módulo ADC com boa resolução e funcionamento,
-     por isso trocamos a ESP32 pela Raspberry Pi Pico W. \\ \hline
+   Microcontrolador & Inicialmente, trocamos a ESP32 pela Raspberry Pi Pico W por precisarmos
+     de um módulo ADC com boa resolução e funcionamento. Durante o desenvolvimento, porém,
+     a Pico W sofreu um curto-circuito e foi substituída por uma ESP32, que atende aos
+     demais requisitos do projeto, como a conectividade Wi-Fi nativa exigida pela telemetria. \\ \hline
 \end{tabularx}
 \caption{Justificativas para itens ou serviços trocados após a aquisição.}
 \end{table}
