@@ -1,30 +1,42 @@
-#ifndef MAZE_MAPPER_H
-#define MAZE_MAPPER_H
+#pragma once
+#include <stddef.h>
+#include <stdint.h>
+#include "../FloodFill/FloodFill.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+// ──────────────────────────────────────────────────────────────────────────────
+// MazeMapper — camada de telemetria sobre o FloodFill
+//
+// Não armazena paredes nem pesos próprios: esses dados vivem exclusivamente no
+// FloodFill, que é a única fonte de verdade. O MazeMapper apenas lê o FloodFill
+// para formatar payloads JSON e calcular métricas de exploração.
+// ──────────────────────────────────────────────────────────────────────────────
 
-// config do labrinto
-const int MAZE_SIZE = 16;
-const int TOTAL_CELLS = MAZE_SIZE * MAZE_SIZE;
+class MazeMapper {
+public:
+    explicit MazeMapper(FloodFill& ff);
 
-// struct da celula
-struct Cell {
-    bool n = false;
-    bool s = false;
-    bool e = false;
-    bool w = false;
-    bool visited = false;
+    // Atualiza o FloodFill com dados de sensor de uma célula.
+    // Se a célula já foi visitada, paredes só são adicionadas (nunca removidas)
+    // — sensores podem ter falso negativo, mas falso positivo é descartado.
+    void updateCell(uint8_t x, uint8_t y,
+                    bool wall_n, bool wall_s, bool wall_e, bool wall_w);
+
+    // Porcentagem de células visitadas (0.0 .. 100.0)
+    float explorationPercentage() const;
+
+    // Gera payload JSON de telemetria compatível com o formato existente do projeto.
+    // buffer deve ter ao menos 512 bytes.
+    // heading_str: "N", "E", "S" ou "W"
+    void generatePayload(char*       buffer,
+                         size_t      buffer_size,
+                         uint8_t     x,
+                         uint8_t     y,
+                         const char* heading_str,
+                         const char* run_id,
+                         float       speed,
+                         int         battery,
+                         float       voltage) const;
+
+private:
+    FloodFill& ff_;
 };
-
-// variaveis globais
-extern Cell maze[MAZE_SIZE][MAZE_SIZE];
-extern int celulas_exploradas;
-
-// funções 
-void atualizar_mapa(int x, int y, bool sensor_n, bool sensor_s, bool sensor_e, bool sensor_w);
-float calcular_porcentagem_explorada();
-void gerar_payload_telemetria(char* buffer, size_t buffer_size, int x, int y, const char* run_id);
-
-#endif
