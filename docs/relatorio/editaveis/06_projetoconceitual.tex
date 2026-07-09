@@ -178,15 +178,15 @@ adequada. O terceiro fator são as eventuais imprecisões nas especificações
 nominais dos componentes, que podem diferir do consumo real em condições de 
 operação \cite{rashid2014}.
 
-Com base nesse critério, optou-se por duas baterias de polímero de lítio (LiPo) de 
-3,7 V e capacidade de 3000 mAh cada, conectadas em série, resultando em uma 
-tensão nominal de 7,4 V e capacidade útil efetiva de 2000 mAh após a aplicação da 
-margem de segurança. Essa configuração proporciona uma autonomia estimada 
-de operação contínua superior a 60 minutos — valor significativamente acima do 
-tempo médio de uma rodada na competição Micro Mouse —, o que confere ao 
-sistema confiabilidade energética adequada para a aplicação proposta. A escolha 
-pela tecnologia LiPo justifica-se pela sua elevada densidade energética, baixo peso 
-e compatibilidade com sistemas embarcados de pequeno porte \cite{feitosa2025}.
+Com base nesse critério, optou-se por duas baterias de polímero de lítio (LiPo) de
+3,7 V e capacidade de 4400 mAh cada, conectadas em série, resultando em uma
+tensão nominal de 7,4 V e capacidade útil efetiva de 4400 mAh após a aplicação
+da margem de segurança. Essa configuração proporciona uma autonomia
+estimada de operação contínua superior a 60 minutos, valor significativamente
+acima do tempo médio de uma rodada na competição Micro Mouse, o que confere
+ao sistema confiabilidade energética adequada para a aplicação proposta. A
+escolha pela tecnologia LiPo justifica-se pela sua elevada densidade energética,
+baixo peso e compatibilidade com sistemas embarcados de pequeno porte. \cite{feitosa2025}.
 
 Após a montagem física do protótipo, deverão ser realizados testes experimentais 
 para validação do modelo energético teórico adotado. Durante esses ensaios, 
@@ -470,6 +470,8 @@ desempenho do robô durante as competições.
 
     Essa separação se justifica porque o microcontrolador não possui recursos para servir interfaces web, porque os requisitos de tempo crítico do controle dos motores inviabilizam o acoplamento da malha de controle a operações de rede, e porque o broker MQTT fornece entrega garantida com QoS 1, persistência de estado por mensagens retained e suporte nativo a múltiplos consumidores -- um padrão consolidado em aplicações IoT.
 
+    Vale ressaltar que, após os testes com a placa, constatou-se que o Raspberry Pi Pico W estava queimado, sendo necessário substituí-lo por uma ESP32 WROOM DevKit V1 para dar continuidade ao desenvolvimento do nó embarcado.
+    
     \textbf{Stack tecnológica:}
     \begin{itemize}
         \item \textbf{Firmware}: C++17 com Pico SDK; drivers de baixo nível em C, consumidos como cabeçalhos pelo firmware em C++.

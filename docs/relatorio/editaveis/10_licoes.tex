@@ -1,6 +1,6 @@
 \chapter{Lições Aprendidas}
 
-\textcolor{red}{Documentar as lições aprendidas de modo a aperfeiçoar os processos e evitar que os erros e problemas encontrados se repitam em futuros projetos.}
+%\textcolor{red}{Documentar as lições aprendidas de modo a aperfeiçoar os processos e evitar que os erros e problemas encontrados se repitam em futuros projetos.}
 
 \section{Análise SWOT}
 
@@ -45,59 +45,70 @@ A análise SWOT (\textit{Strengths}, \textit{Weaknesses}, \textit{Opportunities}
 
 \section{Planejado x realizado}
 \subsection{Objetivos}
-\textcolor{red}{Os objetivos foram alcançados? Responda as questões e comente os pontos mais relevantes – até 700 caracteres, considerando os espaços.}
+%\textcolor{red}{Os objetivos foram alcançados? Responda as questões e comente os pontos mais relevantes – até 700 caracteres, considerando os espaços.}
+
+O chassi proposto inicialmente foi utilizado, mas não da maneira planejada: o plano original previa uma placa perfurada de fibra de vidro com os componentes eletrônicos soldados, e acabou-se utilizando duas protoboards coladas sobre o chassi. A bateria alimentou o robô tranquilamente durante todo o tempo em que ele ficou ligado, e os componentes eletrônicos propostos foram suficientes para que o micromouse atendesse aos requisitos necessários. A solução de software proposta para a telemetria foi alcançada, com as informações coletadas pelo robô aparecendo corretamente no \textit{frontend}. Entretanto, a integração entre os sensores, os motores e o algoritmo de exploração do labirinto não funcionou, devido ao pouquíssimo tempo de teste disponível com o robô montado, de modo que o robô não conseguiu concluir nenhum dos labirintos.
+
 \subsection{Prazos}
-\textcolor{red}{O projeto foi entregue dentro do prazo? Responda as questões e comente os pontos mais relevantes – até 700 caracteres, considerando os espaços.}
+%\textcolor{red}{O projeto foi entregue dentro do prazo? Responda as questões e comente os pontos mais relevantes – até 700 caracteres, considerando os espaços.}
+
+Houve demora na montagem do micromouse devido ao atraso na entrega de componentes eletrônicos e de peças do chassi, a um erro na impressão 3D do chassi que levou dias para ser solucionado e à necessidade de remodelar o chassi para reduzir suas dimensões, já que a versão anterior estava muito grande. Mesmo após o chassi estar pronto, a soldagem dos componentes eletrônicos na placa também demorou, e, com o micromouse totalmente montado, descobriu-se que o Raspberry Pi Pico W estava queimado. Foi então necessário dessoldar todos os componentes, substituí-los pela ESP32 WROOM DevKit V1, remontá-los em uma protoboard e adaptar o firmware, originalmente escrito para a Pico W, à nova placa, o que fez com que o robô não estivesse pronto para completar um labirinto a tempo da apresentação.
+
 \subsection{Orçamento}
-\textcolor{red}{O projeto foi entregue dentro do orçamento? Responda as questões e comente os pontos mais relevantes – até 700 caracteres, considerando os espaços.}
+%\textcolor{red}{O projeto foi entregue dentro do orçamento? Responda as questões e comente os pontos mais relevantes – até 700 caracteres, considerando os espaços.}
+
+O grupo acabou gastando mais do que o orçamento inicial havia previsto, uma vez que foram necessárias diversas compras adicionais de componentes: uma bateria recebida veio com defeito e um dos motores não funcionava, exigindo a aquisição de novas unidades. Ao final do projeto, o orçamento total foi atualizado para refletir essas compras extras.
+
 \subsection{Escopo}
-\textcolor{red}{O  projeto atendeu ao escopo? Responda as questões e comente os pontos mais relevantes – até 700 caracteres, considerando os espaços.}
+%\textcolor{red}{O  projeto atendeu ao escopo? Responda as questões e comente os pontos mais relevantes – até 700 caracteres, considerando os espaços.}
+
+O escopo completo do projeto não foi atingido, já que o robô não conseguiu completar o labirinto. Entretanto, o micromouse era capaz de se locomover de forma autônoma e de enviar dados de telemetria para o \textit{frontend}.
 
 
 \section{Projeto}
-\textcolor{red}{Comente os pontos mais relevantes a serem aperfeiçoados ou adotados em próximos projetos.}
+%\textcolor{red}{Comente os pontos mais relevantes a serem aperfeiçoados ou adotados em próximos projetos.}
 \subsection{Pontos fortes}
 \begin{enumerate}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
+	\item Resiliência da equipe para contornar problemas técnicos que surgiam constantemente ao longo do projeto.
+	\item Capacidade de adaptação a necessidades que surgiam no meio do desenvolvimento do projeto.
+	\item Aprendizado sobre como realizar uma boa pesquisa de mercado na compra de componentes eletrônicos e de peças do chassi.
+	%\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
 \end{enumerate}
 \subsection{Pontos fracos}
 \begin{enumerate}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
+	\item Alta dependência dos líderes das áreas de Eletrônica e de Estrutura na elaboração do chassi e na montagem dos componentes eletrônicos.
+	\item Demora na montagem final do robô, o que impediu a realização de testes de integração a tempo da entrega final.
+	%\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
+	%\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
 \end{enumerate}
 
 \section{Recomendações para projetos futuros}
 
 \begin{enumerate}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
+	\item Comprar materiais em lojas físicas, o que facilita encontrar um substituto rapidamente caso seja necessário adquirir uma nova unidade.
+	\item Comprar o dobro da quantidade necessária de cada componente, por precaução.
+	\item Ter um cronograma mais rigoroso.
+	%\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
 \end{enumerate}
 
 \section{Questões em aberto}
 
-\textcolor{red}{Usar caso haja alguma questão pendente em relação às entregas do projeto (Ex.: Requisitos não entregues, melhoria na programação do software, troca de sensores, entre outros.}
+%\textcolor{red}{Usar caso haja alguma questão pendente em relação às entregas do projeto (Ex.: Requisitos não entregues, melhoria na programação do software, troca de sensores, entre outros.}
 
 \begin{enumerate}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
-	\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
+	\item O robô não conseguiu completar o labirinto, de modo que não houve uma integração completa de todos os componentes eletrônicos.
+	%\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
+	%\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
+	%\item \textcolor{red}{Até 200 caracteres, considerando os espaços.}
 \end{enumerate}
 
-\section{Desempenho dos fornecedores}
-
-\subsection{Fornecedores com desempenho acima do esperado}
-\textcolor{red}{Fornecedores que você certamente convidaria para um próximo projeto. Citar AAAA – justificativa. Até 200 caracteres, considerando os espaços.}
-
-\subsection{Fornecedores com desempenho conforme esperado}
-\textcolor{red}{Fornecedores que você provavelmente convidaria para um próximo projeto. Citar AAAA – justificativa. Até 200 caracteres, considerando os espaços.}
-
-\subsection{Fornecedores com desempenho abaixo do esperado}
-\textcolor{red}{Fornecedores que você não convidaria para um próximo projeto. Citar AAAA – justificativa. Até 200 caracteres, considerando os espaços.}
+%\section{Desempenho dos fornecedores}
+%
+%\subsection{Fornecedores com desempenho acima do esperado}
+%\textcolor{red}{Fornecedores que você certamente convidaria para um próximo projeto. Citar AAAA – justificativa. Até 200 caracteres, considerando os espaços.}
+%
+%\subsection{Fornecedores com desempenho conforme esperado}
+%\textcolor{red}{Fornecedores que você provavelmente convidaria para um próximo projeto. Citar AAAA – justificativa. Até 200 caracteres, considerando os espaços.}
+%
+%\subsection{Fornecedores com desempenho abaixo do esperado}
+%\textcolor{red}{Fornecedores que você não convidaria para um próximo projeto. Citar AAAA – justificativa. Até 200 caracteres, considerando os espaços.}
