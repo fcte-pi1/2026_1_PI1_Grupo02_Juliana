@@ -1,0 +1,75 @@
+\chapter[Introdução]{Introdução}
+
+\textcolor{black}{
+A robótica móvel autônoma tem avançado de forma significativa nas últimas décadas,
+impulsionada pela crescente demanda por sistemas capazes de operar em ambientes
+desconhecidos sem intervenção humana.
+Nesse contexto, os robôs exploradores de labirintos, popularmente conhecidos como
+\textit{micromouse}, constituem uma plataforma clássica e amplamente estudada para
+o desenvolvimento e validação de algoritmos de navegação autônoma, mapeamento e
+tomada de decisão em tempo real \cite{387215}.
+Em trabalho publicado no \textit{IEEE Transactions on Education}, foi reportada a
+integração bem-sucedida do projeto \textit{micromouse} na grade curricular de cursos
+de graduação da California State University, Fullerton, demonstrando que o
+desenvolvimento de um robô autônomo capaz de encontrar um destino predeterminado
+em um labirinto desconhecido constitui uma experiência pedagógica eficaz para
+capacitar estudantes nas áreas de hardware, controle, sensoriamento, integração de
+sistemas e algoritmos de planejamento de rotas.
+}
+
+A competição \textit{Micromouse}, regulamentada pelo
+\textit{Institute of Electrical and Electronics Engineers} (IEEE),
+é realizada anualmente em diversas regiões do mundo, incluindo América do Norte,
+Europa e Ásia, e estabelece como desafio central a navegação autônoma de um robô
+de pequeno porte por labirintos de dimensões padronizadas, sem qualquer intervenção
+externa durante o percurso.
+A norma IEEE vigente define, entre outros requisitos, que o robô não deve exceder
+25~cm em comprimento ou largura, que a locomoção por meios aéreos ou por propulsão
+a combustão é proibida, e que o código embarcado não pode ser alterado durante a
+execução do trajeto~\footnote{
+    IEEE Region 2 Student Activities Committee.
+    \textit{MicroMouse Rules 2020}.
+    Disponível em: \url{https://attend.ieee.org/r2sac-2020/wp-content/uploads/sites/175/2020/01/MicroMouse_Rules_2020.pdf}.
+    Acesso em: maio 2026.
+}.
+
+Do ponto de vista científico, o problema de resolução de labirintos envolve subáreas
+consolidadas da inteligência artificial e da engenharia de controle.
+O algoritmo \textit{Flood Fill}, amplamente empregado em implementações de
+\textit{micromouse}, permite que o robô construa um mapa incremental do labirinto
+e calcule o caminho de menor custo até o objetivo com base nas informações sensoriais
+coletadas em tempo real.
+Conforme destacado por \cite{387215}, o sucesso no desenvolvimento de um
+\textit{micromouse} competitivo exige não apenas domínio técnico individual,
+mas também trabalho em equipe, gestão de tempo e capacidade de comunicação ---
+habilidades centrais na formação de engenheiros e diretamente alinhadas às
+competências desenvolvidas ao longo do presente projeto integrador.
+
+No que diz respeito à legislação e normatização pertinente, o projeto está sujeito
+às diretrizes do IEEE para competições de \textit{Micromouse}, às normas da
+Associação Brasileira de Normas Técnicas (ABNT) aplicáveis a equipamentos
+eletroeletrônicos de baixa tensão --- em especial a ABNT NBR IEC 60950-1 ---,
+e às regulamentações da Agência Nacional de Telecomunicações (ANATEL) referentes
+à utilização de módulos de comunicação sem fio em território nacional, conforme a
+Resolução ANATEL n\textordmasculine{}~715, de 23 de setembro de 2019, que aprova
+o Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita.
+
+O mercado global de robótica educacional e de competição tem apresentado crescimento
+consistente, com estimativas apontando para um valor superior a US\$~1,8~bilhão em
+2023 e projeção de expansão a taxas superiores a 12\% ao ano até 2030, segundo
+relatório da \textit{Markets and Markets Research} (2023).
+Apesar disso, soluções comerciais completas voltadas especificamente para
+\textit{micromouse} permanecem escassas e de elevado custo de importação, criando
+uma lacuna relevante para o desenvolvimento de plataformas abertas, acessíveis e
+adaptadas à realidade brasileira.
+
+Diante desse cenário, o presente projeto propõe o desenvolvimento de um sistema
+\textit{micromouse} autônomo de baixo custo, concebido a partir de componentes
+amplamente disponíveis no mercado nacional e projetado para atender integralmente
+aos requisitos da competição IEEE.
+A solução integra hardware embarcado, algoritmos de navegação e mapeamento, e um
+sistema web de telemetria em tempo real, constituindo uma plataforma didática e
+funcional que, assim como reportado por \cite{387215}, demonstra a viabilidade de
+sistemas robóticos autônomos desenvolvidos no contexto acadêmico, contribuindo
+tanto para a formação multidisciplinar de engenheiros quanto para a democratização
+da robótica de competição no Brasil.

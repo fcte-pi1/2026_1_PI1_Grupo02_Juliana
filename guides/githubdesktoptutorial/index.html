@@ -1,0 +1,1645 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Projeto Integrador I - Grupo 02 com Professora Juliana">
+      
+      
+        <meta name="author" content="Grupo 02">
+      
+      
+        <link rel="canonical" href="https://fcte-pi1.github.io/2026_1_PI1_Grupo02_Juliana/guides/githubdesktoptutorial/">
+      
+      
+        <link rel="prev" href="../contributing/">
+      
+      
+        <link rel="next" href="../quick-reference/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
+    
+    
+      
+        <title>Como Usar o GitHub Desktop - 2026.1 PI1 - Grupo 02 - Juliana</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#4-github-desktop" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../.." title="2026.1 PI1 - Grupo 02 - Juliana" class="md-header__button md-logo" aria-label="2026.1 PI1 - Grupo 02 - Juliana" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            2026.1 PI1 - Grupo 02 - Juliana
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Como Usar o GitHub Desktop
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/fcte-pi1/2026_1_PI1_Grupo02_Juliana" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub Repository
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="2026.1 PI1 - Grupo 02 - Juliana" class="md-nav__button md-logo" aria-label="2026.1 PI1 - Grupo 02 - Juliana" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    2026.1 PI1 - Grupo 02 - Juliana
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/fcte-pi1/2026_1_PI1_Grupo02_Juliana" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub Repository
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Guias
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guias
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Como Começar
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../latextutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Como usar LaTeX
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mkdocstutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Como usar MkDocs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Como Contribuir
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Como Usar o GitHub Desktop
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Como Usar o GitHub Desktop
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#indice" class="md-nav__link">
+    <span class="md-ellipsis">
+      Índice
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instalacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      Instalação
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Instalação">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#passo-1-baixar-github-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 1: Baixar GitHub Desktop
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-2-fazer-login" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 2: Fazer Login
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuracao-inicial" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuração Inicial
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuração Inicial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definir-identidade-do-git" class="md-nav__link">
+    <span class="md-ellipsis">
+      Definir Identidade do Git
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adicionando-um-repositorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adicionando um Repositório
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adicionando um Repositório">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opcao-1-clonar-um-repositorio-remoto" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opção 1: Clonar um Repositório Remoto
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opcao-2-adicionar-um-repositorio-local-existente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opção 2: Adicionar um Repositório Local Existente
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trabalhando-com-branches" class="md-nav__link">
+    <span class="md-ellipsis">
+      Trabalhando com Branches
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Trabalhando com Branches">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#criar-uma-nova-branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Criar uma Nova Branch
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trocar-de-branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Trocar de Branch
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deletar-uma-branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deletar uma Branch
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aviso" class="md-nav__link">
+    <span class="md-ellipsis">
+      Aviso
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fazendo-commits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fazendo Commits
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fazendo Commits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#passo-1-fazer-alteracoes-nos-arquivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 1: Fazer Alterações nos Arquivos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-2-revisar-mudancas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 2: Revisar Mudanças
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-3-selecionar-arquivos-para-stage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 3: Selecionar Arquivos para Stage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dica
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-4-escrever-a-mensagem-de-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 4: Escrever a Mensagem de Commit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-5-relacionar-issues-ao-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 5: Relacionar Issues ao Commit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dica
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#commits-com-co-autores" class="md-nav__link">
+    <span class="md-ellipsis">
+      Commits com Co-autores
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Commits com Co-autores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#o-que-e-um-commit-com-co-autor" class="md-nav__link">
+    <span class="md-ellipsis">
+      O que é um Commit com Co-autor?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#como-adicionar-co-autores" class="md-nav__link">
+    <span class="md-ellipsis">
+      Como Adicionar Co-autores
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Como Adicionar Co-autores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodo-1-usar-a-interface-do-github-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      Método 1: Usar a Interface do GitHub Desktop
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#importante" class="md-nav__link">
+    <span class="md-ellipsis">
+      Importante
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#push-e-pull" class="md-nav__link">
+    <span class="md-ellipsis">
+      Push e Pull
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Push e Pull">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#push-enviar-commits-para-o-servidor" class="md-nav__link">
+    <span class="md-ellipsis">
+      Push: Enviar Commits para o Servidor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dica
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pull-atualizar-do-servidor" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pull: Atualizar do Servidor
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dicas-e-boas-praticas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dicas e Boas Práticas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dicas e Boas Práticas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#o-que-fazer" class="md-nav__link">
+    <span class="md-ellipsis">
+      O que Fazer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-que-evitar" class="md-nav__link">
+    <span class="md-ellipsis">
+      O que Evitar
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-recomendado-de-trabalho" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fluxo Recomendado de Trabalho
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recursos-adicionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recursos Adicionais
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quick-reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Referência Rápida
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Software
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Software
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software/casosteste/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Casos de Teste
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software/eap-software/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EAP Software
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#indice" class="md-nav__link">
+    <span class="md-ellipsis">
+      Índice
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instalacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      Instalação
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Instalação">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#passo-1-baixar-github-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 1: Baixar GitHub Desktop
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-2-fazer-login" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 2: Fazer Login
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuracao-inicial" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuração Inicial
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuração Inicial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definir-identidade-do-git" class="md-nav__link">
+    <span class="md-ellipsis">
+      Definir Identidade do Git
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adicionando-um-repositorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adicionando um Repositório
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adicionando um Repositório">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opcao-1-clonar-um-repositorio-remoto" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opção 1: Clonar um Repositório Remoto
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opcao-2-adicionar-um-repositorio-local-existente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opção 2: Adicionar um Repositório Local Existente
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trabalhando-com-branches" class="md-nav__link">
+    <span class="md-ellipsis">
+      Trabalhando com Branches
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Trabalhando com Branches">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#criar-uma-nova-branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Criar uma Nova Branch
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trocar-de-branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Trocar de Branch
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deletar-uma-branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deletar uma Branch
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aviso" class="md-nav__link">
+    <span class="md-ellipsis">
+      Aviso
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fazendo-commits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fazendo Commits
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fazendo Commits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#passo-1-fazer-alteracoes-nos-arquivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 1: Fazer Alterações nos Arquivos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-2-revisar-mudancas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 2: Revisar Mudanças
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-3-selecionar-arquivos-para-stage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 3: Selecionar Arquivos para Stage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dica
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-4-escrever-a-mensagem-de-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 4: Escrever a Mensagem de Commit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passo-5-relacionar-issues-ao-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Passo 5: Relacionar Issues ao Commit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dica
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#commits-com-co-autores" class="md-nav__link">
+    <span class="md-ellipsis">
+      Commits com Co-autores
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Commits com Co-autores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#o-que-e-um-commit-com-co-autor" class="md-nav__link">
+    <span class="md-ellipsis">
+      O que é um Commit com Co-autor?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#como-adicionar-co-autores" class="md-nav__link">
+    <span class="md-ellipsis">
+      Como Adicionar Co-autores
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Como Adicionar Co-autores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodo-1-usar-a-interface-do-github-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      Método 1: Usar a Interface do GitHub Desktop
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#importante" class="md-nav__link">
+    <span class="md-ellipsis">
+      Importante
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#push-e-pull" class="md-nav__link">
+    <span class="md-ellipsis">
+      Push e Pull
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Push e Pull">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#push-enviar-commits-para-o-servidor" class="md-nav__link">
+    <span class="md-ellipsis">
+      Push: Enviar Commits para o Servidor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dica_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dica
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pull-atualizar-do-servidor" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pull: Atualizar do Servidor
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dicas-e-boas-praticas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dicas e Boas Práticas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dicas e Boas Práticas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#o-que-fazer" class="md-nav__link">
+    <span class="md-ellipsis">
+      O que Fazer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-que-evitar" class="md-nav__link">
+    <span class="md-ellipsis">
+      O que Evitar
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-recomendado-de-trabalho" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fluxo Recomendado de Trabalho
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recursos-adicionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recursos Adicionais
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="4-github-desktop"><strong>4 - GitHub Desktop</strong><a class="headerlink" href="#4-github-desktop" title="Permanent link">&para;</a></h1>
+<p>Este guia ensina como usar o <strong>GitHub Desktop</strong> desde a adição de um repositório até fazer commits com co-autores e associar issues.</p>
+<h2 id="indice">Índice<a class="headerlink" href="#indice" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="#instalação">Instalação</a></li>
+<li><a href="#configuração-inicial">Configuração Inicial</a></li>
+<li><a href="#adicionando-um-repositório">Adicionando um Repositório</a></li>
+<li><a href="#trabalhando-com-branches">Trabalhando com Branches</a></li>
+<li><a href="#fazendo-commits">Fazendo Commits</a></li>
+<li><a href="#relacionar-issues-ao-commit">Relacionando Issues ao Commit</a></li>
+<li><a href="#commits-com-co-autores">Commits com Co-autores</a></li>
+<li><a href="#associando-issues-aos-commits">Associando Issues aos Commits</a></li>
+<li><a href="#push-e-pull">Push e Pull</a></li>
+<li><a href="#dicas-e-boas-práticas">Dicas e Boas Práticas</a></li>
+</ol>
+<hr />
+<h2 id="instalacao">Instalação<a class="headerlink" href="#instalacao" title="Permanent link">&para;</a></h2>
+<h3 id="passo-1-baixar-github-desktop">Passo 1: Baixar GitHub Desktop<a class="headerlink" href="#passo-1-baixar-github-desktop" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Acesse <a href="https://desktop.github.com">desktop.github.com</a></li>
+<li>Clique em <strong>"Download for Windows"</strong> (ou a opção para seu sistema operacional)</li>
+<li>Execute o instalador e siga as instruções</li>
+</ol>
+<h3 id="passo-2-fazer-login">Passo 2: Fazer Login<a class="headerlink" href="#passo-2-fazer-login" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Abra o GitHub Desktop</li>
+<li>Clique em <strong>"Sign in"</strong> no canto superior esquerdo</li>
+<li>Selecione <strong>"GitHub.com"</strong> como sua opção de login</li>
+<li>Você será redirecionado para o navegador para autenticar</li>
+<li>Autorize o GitHub Desktop a acessar sua conta</li>
+<li>Retorne ao GitHub Desktop e confirme o login</li>
+</ol>
+<hr />
+<h2 id="configuracao-inicial">Configuração Inicial<a class="headerlink" href="#configuracao-inicial" title="Permanent link">&para;</a></h2>
+<h3 id="definir-identidade-do-git">Definir Identidade do Git<a class="headerlink" href="#definir-identidade-do-git" title="Permanent link">&para;</a></h3>
+<p>Antes de fazer commits, você precisa configurar seu nome e email:</p>
+<ol>
+<li>Clique em <strong>File</strong> (Windows) ou <strong>GitHub Desktop</strong> (Mac) no menu</li>
+<li>Selecione <strong>Options</strong> (Windows) ou <strong>Preferences</strong> (Mac)</li>
+<li>Vá para a aba <strong>Git</strong></li>
+<li>Preencha:</li>
+<li><strong>Name</strong>: Seu nome completo</li>
+<li><strong>Email</strong>: Seu email associado ao GitHub</li>
+<li>Clique em <strong>Save</strong></li>
+</ol>
+<hr />
+<h2 id="adicionando-um-repositorio">Adicionando um Repositório<a class="headerlink" href="#adicionando-um-repositorio" title="Permanent link">&para;</a></h2>
+<h3 id="opcao-1-clonar-um-repositorio-remoto">Opção 1: Clonar um Repositório Remoto<a class="headerlink" href="#opcao-1-clonar-um-repositorio-remoto" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Clique em <strong>File</strong> → <strong>Add</strong> → <strong>Clone repository</strong></li>
+<li>Escolha a aba <strong>GitHub.com</strong> (se o repositório estiver no GitHub)</li>
+<li>Selecione o repositório da lista ou procure pelo nome</li>
+<li>Escolha o <strong>Local path</strong> (onde deseja salvar a pasta no seu computador)</li>
+<li>Clique em <strong>Clone</strong></li>
+</ol>
+<p><strong>Exemplo:</strong></p>
+<pre><code>Repositório: fcte-pi1/2026_1_PI1_Grupo02_Juliana
+Local path: C:\Users\seu-usuario\Documents\Projetos\grupo02
+</code></pre>
+<p><img alt="Caminho para clonar repositório" src="../../img/caminho%20para%20clonar%20repositorio.png" />
+<em>Figura: Interface de clonagem de repositório no GitHub Desktop</em></p>
+<p><img alt="URL do GitHub" src="../../img/url%20do%20github.png" />
+<em>Figura: Adicionando o link do repositório</em></p>
+<h3 id="opcao-2-adicionar-um-repositorio-local-existente">Opção 2: Adicionar um Repositório Local Existente<a class="headerlink" href="#opcao-2-adicionar-um-repositorio-local-existente" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Clique em <strong>File</strong> → <strong>Add Local Repository</strong></li>
+<li>Navegue até a pasta do seu repositório</li>
+<li>Selecione-a e clique em <strong>Select Folder</strong></li>
+<li>Se não for um repositório Git válido, o GitHub Desktop oferecerá criar um novo</li>
+</ol>
+<hr />
+<h2 id="trabalhando-com-branches">Trabalhando com Branches<a class="headerlink" href="#trabalhando-com-branches" title="Permanent link">&para;</a></h2>
+<h3 id="criar-uma-nova-branch">Criar uma Nova Branch<a class="headerlink" href="#criar-uma-nova-branch" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Clique no botão <strong>Current Branch</strong> no topo da janela</li>
+<li>Clique em <strong>New Branch</strong></li>
+<li>Preencha:</li>
+<li><strong>Name</strong>: Nome descritivo (ex: <code>feat/autenticacao</code>)</li>
+<li><strong>From branch</strong>: Selecione a branch base (geralmente <code>main</code> ou <code>Pages</code>)</li>
+<li>Clique em <strong>Create Branch</strong></li>
+<li>Clique em <strong>Publish branch</strong> para enviar ao repositório remoto</li>
+</ol>
+<h3 id="trocar-de-branch">Trocar de Branch<a class="headerlink" href="#trocar-de-branch" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Clique em <strong>Current Branch</strong></li>
+<li>Selecione a branch desejada da lista</li>
+<li>Clique em <strong>Switch to Branch</strong></li>
+</ol>
+<h3 id="deletar-uma-branch">Deletar uma Branch<a class="headerlink" href="#deletar-uma-branch" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Clique em <strong>Current Branch</strong></li>
+<li>Clique com botão direito na branch que deseja deletar</li>
+<li>Selecione <strong>Delete</strong></li>
+</ol>
+<h3 id="aviso">Aviso<a class="headerlink" href="#aviso" title="Permanent link">&para;</a></h3>
+<pre><code>Sempre certifique-se de que suas mudanças foram enviadas (push) antes de deletar uma branch!
+</code></pre>
+<h2 id="fazendo-commits">Fazendo Commits<a class="headerlink" href="#fazendo-commits" title="Permanent link">&para;</a></h2>
+<h3 id="passo-1-fazer-alteracoes-nos-arquivos">Passo 1: Fazer Alterações nos Arquivos<a class="headerlink" href="#passo-1-fazer-alteracoes-nos-arquivos" title="Permanent link">&para;</a></h3>
+<p>Edite seus arquivos usando seu editor favorito (VS Code, Sublime Text, etc).</p>
+<h3 id="passo-2-revisar-mudancas">Passo 2: Revisar Mudanças<a class="headerlink" href="#passo-2-revisar-mudancas" title="Permanent link">&para;</a></h3>
+<ol>
+<li>No GitHub Desktop, você verá a aba <strong>Changes</strong> automaticamente selecionada</li>
+<li>Na seção <strong>Changes</strong>, você verá:</li>
+<li><strong>Modified files</strong>: Arquivos alterados</li>
+<li><strong>Staged files</strong>: Arquivos prontos para commit</li>
+<li><strong>Untracked files</strong>: Arquivos novos ainda não rastreados</li>
+</ol>
+<h3 id="passo-3-selecionar-arquivos-para-stage">Passo 3: Selecionar Arquivos para Stage<a class="headerlink" href="#passo-3-selecionar-arquivos-para-stage" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Marque os checkboxes dos arquivos que deseja incluir no commit</li>
+<li>Os arquivos selecionados aparecerão em <strong>Staged</strong></li>
+</ol>
+<h3 id="dica">Dica<a class="headerlink" href="#dica" title="Permanent link">&para;</a></h3>
+<pre><code>Se precisar revisar as alterações específicas de um arquivo, clique nele para ver o diff (diferenças) na janela direita.
+</code></pre>
+<h3 id="passo-4-escrever-a-mensagem-de-commit">Passo 4: Escrever a Mensagem de Commit<a class="headerlink" href="#passo-4-escrever-a-mensagem-de-commit" title="Permanent link">&para;</a></h3>
+<ol>
+<li>No campo <strong>Summary</strong>, escreva uma mensagem breve e clara (máx. 50 caracteres)</li>
+<li>Opcionalmente, adicione uma descrição mais detalhada no campo <strong>Description</strong></li>
+<li>Exemplos de boas mensagens:
+   <code>feat: adicionar autenticação com Google
+   fix: corrigir bug no formulário de login
+   docs: atualizar README com instruções de instalação
+   refactor: reorganizar estrutura de pastas</code></li>
+</ol>
+<h3 id="passo-5-relacionar-issues-ao-commit">Passo 5: Relacionar Issues ao Commit<a class="headerlink" href="#passo-5-relacionar-issues-ao-commit" title="Permanent link">&para;</a></h3>
+<p>Para associar seu commit a uma ou mais issues, adicione referências no campo <strong>Description</strong> usando a <code>#</code> seguida do número da issue:</p>
+<p><strong>Como fazer:</strong></p>
+<ol>
+<li>No campo <strong>Description</strong>, após descrever suas mudanças, adicione uma linha em branco</li>
+<li>Digite uma das palavras-chave seguidas pelo número da issue:</li>
+<li><code>Fixes #42</code> - Fecha a issue automaticamente quando o commit for mesclado</li>
+<li><code>Closes #42</code> - Também fecha a issue</li>
+<li><code>Resolves #42</code> - Também fecha a issue</li>
+<li><code>Relacionado com #42</code> - Apenas menciona, não fecha</li>
+</ol>
+<p><strong>Exemplo completo:</strong></p>
+<pre><code>Summary: corrigir validação de email
+
+Description:
+Corrigido o validador de email que estava aceitando
+caracteres especiais inválidos. Adicionada validação
+mais robusta usando regex.
+
+Fixes #15
+Closes #18
+</code></pre>
+<p><strong>Resultado:</strong>
+- O commit será linkado automaticamente às issues #15 e #18
+- Quando o código for mesclado à branch principal, as issues serão fechadas automaticamente</p>
+<p><img alt="Adição de Arquivos Modificados e Relacionando a Issue" src="../../img/adicionando%20arquivos%20e%20relacionando%20issue.png" />
+<em>Figura: Exemplo de commit com relacionamento de issues</em></p>
+<h3 id="dica_1">Dica<a class="headerlink" href="#dica_1" title="Permanent link">&para;</a></h3>
+<pre><code>Você pode mencionar múltiplas issues no mesmo commit. Basta adicionar uma linha para cada uma!
+</code></pre>
+<hr />
+<h2 id="commits-com-co-autores">Commits com Co-autores<a class="headerlink" href="#commits-com-co-autores" title="Permanent link">&para;</a></h2>
+<h3 id="o-que-e-um-commit-com-co-autor">O que é um Commit com Co-autor?<a class="headerlink" href="#o-que-e-um-commit-com-co-autor" title="Permanent link">&para;</a></h3>
+<p>Um commit com co-autor é uma forma de atribuir crédito a múltiplos contribuidores pelo mesmo commit. Isso é importante em trabalhos em grupo!</p>
+<h3 id="como-adicionar-co-autores">Como Adicionar Co-autores<a class="headerlink" href="#como-adicionar-co-autores" title="Permanent link">&para;</a></h3>
+<h4 id="metodo-1-usar-a-interface-do-github-desktop">Método 1: Usar a Interface do GitHub Desktop<a class="headerlink" href="#metodo-1-usar-a-interface-do-github-desktop" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Escreva a mensagem de commit normalmente</li>
+<li>Clique em <strong>Commit details</strong> (você verá um ícone ou menu expandido)</li>
+<li>Procure por <strong>Co-authors</strong> ou <strong>Add co-author</strong></li>
+<li>Clique para adicionar um co-autor</li>
+<li>Procure pelo usuário GitHub do co-autor</li>
+<li>Selecione-o da lista</li>
+<li>Faça o commit</li>
+</ol>
+<p><img alt="Descrição do Commit e Co-autor" src="../../img/Descri%C3%A7%C3%A3o%20do%20commit%20e%20co-autor.png" />
+<em>Figura: Campo de descrição do commit com co-autores no GitHub Desktop</em></p>
+<h3 id="importante">Importante<a class="headerlink" href="#importante" title="Permanent link">&para;</a></h3>
+<pre><code>Os co-autores precisam ter uma conta GitHub. Use o nome de usuário e email associados à conta deles.
+</code></pre>
+<hr />
+<h2 id="push-e-pull">Push e Pull<a class="headerlink" href="#push-e-pull" title="Permanent link">&para;</a></h2>
+<h3 id="push-enviar-commits-para-o-servidor">Push: Enviar Commits para o Servidor<a class="headerlink" href="#push-enviar-commits-para-o-servidor" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Clique no botão <strong>Push origin</strong> no topo da janela</li>
+<li>Aguarde o envio completar</li>
+<li>Você verá uma confirmação de sucesso</li>
+</ol>
+<h3 id="dica_2">Dica<a class="headerlink" href="#dica_2" title="Permanent link">&para;</a></h3>
+<pre><code>Se você criou uma nova branch, será necessário clicar em **Publish branch** antes de fazer push.
+</code></pre>
+<h3 id="pull-atualizar-do-servidor">Pull: Atualizar do Servidor<a class="headerlink" href="#pull-atualizar-do-servidor" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Clique no botão <strong>Fetch origin</strong> para buscar atualizações</li>
+<li>Se houver atualizações, clique em <strong>Pull origin</strong></li>
+<li>Os commits remotos serão mesclados ao seu repositório local</li>
+</ol>
+<hr />
+<h2 id="dicas-e-boas-praticas">Dicas e Boas Práticas<a class="headerlink" href="#dicas-e-boas-praticas" title="Permanent link">&para;</a></h2>
+<h3 id="o-que-fazer">O que Fazer<a class="headerlink" href="#o-que-fazer" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Commits frequentes</strong>: Faça commits pequenos e bem-definidos</li>
+<li><strong>Mensagens claras</strong>: Use mensagens descritivas e em tempo presente</li>
+<li><strong>Uma tarefa por commit</strong>: Cada commit deve resolver uma issue ou implementar um recurso</li>
+<li><strong>Sempre faça pull antes de push</strong>: Evita conflitos</li>
+<li><strong>Use branches</strong>: Desenvolva em branches separadas, nunca na <code>main</code></li>
+<li><strong>Revise antes de commitar</strong>: Sempre veja o diff antes de commitar</li>
+</ul>
+<h3 id="o-que-evitar">O que Evitar<a class="headerlink" href="#o-que-evitar" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Commits gigantes</strong>: Múltiplas tarefas em um só commit</li>
+<li><strong>Mensagens vagas</strong>: "Ajustes", "Correções", "Update"</li>
+<li><strong>Commits diretamente na main</strong>: Sempre use branches</li>
+<li><strong>Push sem revisar</strong>: Sempre revise as mudanças</li>
+<li><strong>Esquecer de fazer pull</strong>: Pode causar conflitos desnecessários</li>
+</ul>
+<h3 id="fluxo-recomendado-de-trabalho">Fluxo Recomendado de Trabalho<a class="headerlink" href="#fluxo-recomendado-de-trabalho" title="Permanent link">&para;</a></h3>
+<pre><code>1. Fetch origin (atualizar)
+2. Pull origin (puxar mudanças)
+3. Create new branch (criar branch feature)
+4. Make changes (fazer alterações)
+5. Stage files (selecionar arquivos)
+6. Commit with description (commitar com descrição clara)
+7. Push origin (enviar commits)
+8. Create Pull Request no GitHub
+9. Peer review
+10. Merge para main
+</code></pre>
+<hr />
+<h2 id="recursos-adicionais">Recursos Adicionais<a class="headerlink" href="#recursos-adicionais" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://docs.github.com/en/desktop">Documentação Oficial do GitHub Desktop</a></li>
+<li><a href="https://guides.github.com/introduction/flow/">GitHub Flow - Fluxo Recomendado</a></li>
+<li><a href="https://www.conventionalcommits.org/pt-br/">Conventional Commits</a></li>
+<li><a href="https://chris.beams.io/posts/git-commit/">Como Escrever Boas Mensagens de Commit</a></li>
+</ul>
+<hr />
+<p><strong>Última atualização:</strong> 2026
+<strong>Autor:</strong> Pedro Luciano</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 Grupo 02 - PI1
+<br>
+Última atualização: {% now 'utc', '%d de %B de %Y' %}
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/fcte-pi1" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "content.code.copy", "content.code.focus", "content.code.highlight"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      
+    
+  </body>
+</html>

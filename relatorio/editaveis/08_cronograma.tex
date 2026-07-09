@@ -1,0 +1,188 @@
+\begin{landscape}
+
+\chapter{Cronograma} 
+
+\begin{table}[htpb]
+\begin{center}
+\caption{Cronograma geral.}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Geral}          & \textbf{Previsto} & \textbf{Realizado} \\ \hline
+Início do projeto       & 13/04/2026        & 13/04/2026         \\ \hline
+Fim do projeto          & 08/07/2026        & 08/07/2026         \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+%\begin{table}[htpb]
+%\begin{center}
+%\caption{Cronograma por atividade.}
+%\begin{tabular}{|c|c|c|c|c|c|c|}
+%\hline
+%& \textbf{Início} & \textbf{Início} & \textbf{Fim} & \textbf{Fim} & \textbf{Atividades} & \\
+%\textbf{Atividade} & \textbf{Previsto} & \textbf{Realizado} & \textbf{Previsto} & \textbf{Realizado} & \textbf{Predecessoras} & \textbf{Responsáveis}\\ \hline
+%1 - ABC                       & DD/MM/AAAA               & DD/MM/AAAA                & DD/MM/AAAA               & DD/MM/AAAA                & ---                               & Fulano \\ \hline
+%2 - DEF                       & DD/MM/AAAA               & DD/MM/AAAA                & DD/MM/AAAA               & DD/MM/AAAA                & 1                                 & Fulano \\ \hline
+%3 - GHI                       & DD/MM/AAAA               & DD/MM/AAAA                & DD/MM/AAAA               & DD/MM/AAAA                & 1, 2                              & Beltrano \\ \hline
+%4 - JKL                       & DD/MM/AAAA               & DD/MM/AAAA                & DD/MM/AAAA               & DD/MM/AAAA                & 3                                 & Beltrano \\ \hline
+%5 - MNO                       & DD/MM/AAAA               & DD/MM/AAAA                & DD/MM/AAAA               & DD/MM/AAAA                & 1, 3, 4                           & Ciclano \\ \hline
+%\end{tabular}
+%\end{center}
+%\end{table}
+
+%%% tabela que ocupa várias páginas
+
+\begin{center}
+\begin{longtable}{|c|c|c|c|c|c|p{3.6cm}|}
+\caption{Cronograma por atividade.} \label{tab:cronograma} \\
+
+\hline
+\textbf{Atividade} &
+\shortstack{\textbf{Início}\\\textbf{Previsto}} &
+\shortstack{\textbf{Início}\\\textbf{Realizado}} &
+\shortstack{\textbf{Fim}\\\textbf{Previsto}} &
+\shortstack{\textbf{Fim}\\\textbf{Realizado}} &
+\shortstack{\textbf{Atividades}\\\textbf{Predecessoras}} &
+\textbf{Responsáveis} \\ \hline
+\endfirsthead
+
+\multicolumn{7}{c}%
+{{\bfseries \tablename\ \thetable{} -- Continuação da página anterior}} \\
+\hline
+\textbf{Atividade} &
+\shortstack{\textbf{Início}\\\textbf{Previsto}} &
+\shortstack{\textbf{Início}\\\textbf{Realizado}} &
+\shortstack{\textbf{Fim}\\\textbf{Previsto}} &
+\shortstack{\textbf{Fim}\\\textbf{Realizado}} &
+\shortstack{\textbf{Atividades}\\\textbf{Predecessoras}} &
+\textbf{Responsáveis} \\ \hline
+\endhead
+
+\hline \multicolumn{7}{|r|}{{Continua na próxima página}} \\ \hline
+\endfoot
+
+\hline \hline
+\endlastfoot
+
+1. Rascunho do chassi & 15/04/2026 & 15/04/2026 & 17/04/2026 & 17/04/2026 & --- & Georgia \\ \hline
+2. Rascunho do labirinto teste & 15/04/2026 & 15/04/2026 & 15/04/2026 & 15/04/2026 & --- & Geovanna, Larissa \\ \hline
+3. CAD do chassi 1.0 & 25/04/2026 & 25/04/2026 & 29/04/2026 & 03/05/2026 & 1 & Georgia\\ \hline
+4. Diagrama de Blocos (Energia) & 26/04/2026 & 26/04/2026 & 26/04/2026 & 26/04/2026 & --- & Karyne \\ \hline
+5. Criar GitPages do projeto & 27/04/2026 & 27/04/2026 & 28/04/2026 & 28/04/2026 & --- & Pedro L. \\ \hline
+6. Diagrama de Blocos (Eletrônica) & 27/05/2026 & 27/05/2026 & 10/05/2026 & 10/05/2026 & --- & Jorge \\ \hline
+7. Esquemático do circuito & 27/04/2026 & 27/04/2026 & 10/05/2026 & 10/05/2026 & 6 & João \\ \hline
+8. CAD do labirinto teste & 27/04/2026 & 27/04/2026 & 28/04/2026 & 28/04/2026 & 2 & Geovanna \\ \hline
+9. Doc: Capa Resumo Equipe & 27/04/2026 & 27/04/2026 & 10/05/2026 & 10/05/2026 & --- & Cairo \\ \hline
+10. Doc: Introdução & 27/04/2026 & 27/04/2026 & 10/05/2026 & 10/05/2026 & --- & Pedro H., Samuel \\ \hline
+11. Doc: Termo de Abertura & 27/04/2026 & 27/04/2026 & 10/05/2026 & 10/05/2026 & --- & Gustavo F., Guilherme \\ \hline
+12. Características gerais, Orçamento & 27/04/2026 & 27/04/2026 & 10/05/2026 & 10/05/2026 & --- & Samuel \\ \hline
+13. Análise de consumo energético & 27/04/2026 & 27/04/2026 & 10/05/2026 & 10/05/2026 & --- & Guilherme, Karyne \\ \hline
+14. Drafting do labirinto teste & 28/04/2026 & 28/04/2026 & 29/04/2026 & 29/04/2026 & 8 & Geovanna \\ \hline
+15. CAD abraçadeiras motores & 30/04/2026 & 30/04/2026 & 30/04/2026 & 30/04/2026 & 3 & Georgia, Lucas \\ \hline
+16. CAD abraçadeiras bateria & 30/04/2026 & 30/04/2026 & 30/04/2026 & 30/04/2026 & 3 & Georgia, Lucas \\ \hline
+17. Diagrama Atividades UML & 01/05/2026 & 01/05/2026 & 10/05/2026 & 10/05/2026 & --- & Giovanni, Augusto \\ \hline
+18. Backlog do Produto & 01/05/2026 & 01/05/2026 & 10/05/2026 & 10/05/2026 & 17 & Cayo, Cairo \\ \hline
+19. Arquitetura SW (modelo 4+1) & 01/05/2026 & 01/05/2026 & 10/05/2026 & 10/05/2026 & 17 & Larissa, Gustavo F. \\ \hline
+20. Roteiro de testes funcionais & 01/05/2026 & 01/05/2026 & 10/05/2026 & 10/05/2026 & 18, 19 & Pedro L., Paulo \\ \hline
+21. Estudos estruturais & 01/05/2026 & 11/05/2026 & 06/05/2026 & 11/05/2026 & --- & Gustavo L. \\ \hline
+22. Compra dos materiais & 01/05/2026 & 01/05/2026 & 03/05/2026 & 03/05/2026 & 21 & Georgia \\ \hline
+23. CAD do assembly 1.0 & 01/05/2026 & 03/05/2026 & 08/05/2026 & 11/05/2026 & 3, 15, 16 & Georgia \\ \hline
+24. Drafting do micromouse 1.0 & 10/05/2026 & 12/05/2026 & 11/05/2026 & 12/05/2026 & 23 & Georgia \\ \hline
+25. Subir Banco de Dados & 12/05/2026 & 18/05/2026 & 09/06/2026 & 21/05/2026 & 19 & Giovanni, Larissa \\ \hline
+26. Funções básicas HC-SR04 & 12/05/2026 & --- & 26/05/2026 & --- & 7 & Pedro H. \\ \hline
+27. Funções básicas MPU6050 & 12/05/2026 & --- & 26/05/2026 & --- & 7 & Jorge \\ \hline
+28. Funções básicas VL53L0X & 12/05/2026 & --- & 26/05/2026 & --- & 7 & Pedro H. \\ \hline
+29. Funções básicas motores & 12/05/2026 & --- & 26/05/2026 & --- & 7 & Pedro H. \\ \hline
+30. Funções básicas MQTT & 12/05/2026 & 18/05/2026 & 26/05/2026 & 25/05/2026 & 25 & Cairo \\ \hline
+31. Funções básicas WebSocket & 12/05/2026 & 18/05/2026 & 26/05/2026 & --- & 25 & Cairo \\ \hline
+32. Modelagem energética & 12/05/2026 & --- & 09/06/2026 & --- & 13 & Guilherme \\ \hline
+33. Teste de espessura de furo & 18/05/2026 & 18/05/2026 & 21/05/2026 & 04/06/2026 & 21, 22 & Georgia, Larissa \\ \hline
+34. Montagem do labirinto & 18/05/2026 & 18/05/2026 & 25/05/2026 & 25/05/2026 & 13, 22 & Geovanna, Larissa \\ \hline
+35. HU19 Controle dos motores & 18/05/2026 & 25/05/2026 & 25/06/2026 & --- & --- & Cayo, Augusto \\ \hline
+36. Impressão 3D do chassi 1.0 & 21/05/2026 & 21/05/2026 & 23/05/2026 & 06/06/2026 & 3, 22, 33 & Larissa \\ \hline
+37. Controle de motores & 26/05/2026 & 26/05/2026 & 09/06/2026 & 09/06/2026 & 29 & Augusto, Cayo \\ \hline
+38. Leitura dos sensores & 26/05/2026 & --- & 09/06/2026 & --- & 26, 27, 28 & Pedro H. \\ \hline
+39. Montagem eletrônica & 26/05/2026 & --- & 09/06/2026 & --- & 7 & João \\ \hline
+40. Montagem mecânica 1.0 & 27/05/2026 & 06/06/2026 & 29/05/2026 & 07/06/2026 & 22, 24, 36 & Georgia, Larissa \\ \hline
+41. Doc: testes da estrutura 1.0 & 30/05/2026 & 30/05/2026 & 01/06/2026 & 07/06/2026 & 33, 36, 41 & Georgia, Lucas \\ \hline
+42. Integração sensores + motores & 09/06/2026 & --- & 23/06/2026 & --- & 38, 39, 40 & Pedro H. \\ \hline
+43. Sistema de alimentação & 09/06/2026 & --- & 16/06/2026 & --- & 32 & Karyne \\ \hline
+44. HU08 Registro de posição & 09/06/2026 & 09/06/2026 & 16/06/2026 & 16/06/2026 & 56 & Augusto, Cayo \\ \hline
+45. HU09 Cálculo de velocidade m. & 09/06/2026 & 09/06/2026 & 16/06/2026 & 16/06/2026 & 39 & Augusto, Cayo \\ \hline
+46. HU10 Cálculo de consumo e. & 09/06/2026 & --- & 16/06/2026 & --- & 39, 44 & Guilherme \\ \hline
+47. HU15 Envio de telemetria & 09/06/2026 & 18/06/2026 & 23/06/2026 & 23/06/2026 & --- & Gustavo F., Cairo \\ \hline
+48. HU16 Monitoramento da bateria & 09/06/2026 & 09/06/2026 & 16/06/2026 & 16/06/2026 & 44 & Giovanni, Larissa, Karyne \\ \hline
+49. HU21 Monitoramento da a. & 09/06/2026 & 09/06/2026 & 16/06/2026 & 16/06/2026 & 44 & Guilherme, Giovanni, Larissa \\ \hline
+50. HU11 Salvamento do caminho & 09/06/2026 & 18/06/2026 & 19/06/2026 & 19/06/2026 & 56 & Augusto, Cayo \\ \hline
+51. Integração SW + Hardware & 09/06/2026 & 09/06/2026 & 23/06/2026 & --- & 43, 56 & Cairo, Samuel \\ \hline
+52. CAD do chassi 2.0 & 10/06/2026 & 10/06/2026 & 12/06/2026 & 12/06/2026 & 42 & Georgia \\ \hline
+53. CAD do assembly 2.0 & 12/06/2026 & 12/06/2026 & 12/06/2026 & 12/06/2026 & 53 & Georgia \\ \hline
+54. Drafting do assembly 2.0 & 13/06/2026 & 13/06/2026 & 14/06/2026 & 14/06/2026 & 54 & Georgia \\ \hline
+55. Implementação Flood-Fill & 14/06/2026 & 14/06/2026 & 19/06/2026 & 19/06/2026 & 39 & Cairo, Gustavo F. \\ \hline
+56. HU01 Movimentação frontal & 14/06/2026 & 14/06/2026 & 21/06/2026 & 21/06/2026 & 39 & Paulo, Pedro L. \\ \hline
+57. HU02 Rotação do micromouse & 14/06/2026 & 14/06/2026 & 21/06/2026 & 21/06/2026 & 39 & Paulo, Pedro L. \\ \hline
+58. HU03 Reconhecimento de p. & 14/06/2026 & --- & 21/06/2026 & --- & 39, 45 & Giovanni, Larissa \\ \hline
+59. HU04 Medição de distância & 14/06/2026 & --- & 21/06/2026 & --- & 39 & Giovanni, Larissa \\ \hline
+60. HU05 Id. de caminhos & 14/06/2026 & --- & 21/06/2026 & --- & 39 & Paulo, Pedro L. \\ \hline
+61. HU06 Navegação autônoma & 14/06/2026 & 14/06/2026 & 21/06/2026 & 08/07/2026 & --- & Cairo, Gustavo F. \\ \hline
+62. HU07 Detecção de chegada & 14/06/2026 & --- & 21/06/2026 & --- & 59, 62 & Cairo, Gustavo F. \\ \hline
+63. Impressão 3D do chassi 2.0 & 15/06/2026 & 15/06/2026 & 17/06/2026 & 17/06/2026 & 52 & Larissa \\ \hline
+64. HU20 Exibição da posição & 16/06/2026 & 18/06/2026 & 23/06/2026 & 25/06/2026 & 45 & Augusto, Cayo \\ \hline
+65. HU13 Armazenamento do mapa & 16/06/2026 & 16/06/2026 & 23/06/2026 & 23/06/2026 & 72 & Augusto, Cayo \\ \hline
+66. HU14 Exibição de telemetria & 16/06/2026 & 18/06/2026 & 23/06/2026 & 25/06/2026 & --- & Pedro L., Paulo \\ \hline
+67. HU17 Registro de tempo de o. & 16/06/2026 & 18/06/2026 & 23/06/2026 & 25/06/2026 & --- & Cairo, Gustavo F. \\ \hline
+68. HU18 Indicação de conclusão d. & 16/06/2026 & --- & 23/06/2026 & --- & 45 & Cairo, Gustavo F. \\ \hline
+69. HU22 Controle remoto da e. & 16/06/2026 & --- & 23/06/2026 & --- & 67 & Paulo, Pedro L. \\ \hline
+70. Montagem mecânica 2.0 & 17/06/2026 & 17/06/2026 & 19/06/2026 & 19/06/2026 & 64, 54 & Georgia, Larissa \\ \hline
+71. HU12 Mapeamento do labirinto & 18/06/2026 & 24/06/2026 & 23/06/2026 & 26/06/2026 & 56 & Augusto, Cayo \\ \hline
+72. Doc: testes de estrutura 2.0 & 19/06/2026 & 19/06/2026 & 22/06/2026 & 22/06/2026 & 71 & Georgia, Lucas \\ \hline
+73. Montagem final & 22/06/2026 & 25/06/2026 & 25/06/2026 & 25/06/2026 & 71, 40 & Georgia, Samuel \\ \hline
+74. Refinamento algoritmo flood-fill & 06/07/2026 & 07/07/2026 & 08/07/2026 & 08/07/2026 & 56 & Giovanni \\ \hline
+75. Calibração final dos sensores & 29/06/2026 & --- & 05/07/2026 & --- & 75 & Pedro H. \\ \hline
+76. Testes finais de autonomia/bateria & 29/06/2026 & --- & 05/07/2026 & --- & 75 & Guilherme \\ \hline
+77. Reajuste de dimensionamento & --- & --- & --- & --- & --- & Karyne \\ \hline
+78. Preparação da apresentação APT & 05/07/2026 & --- & 06/07/2026 & --- & 75 & Giovanni \\ \hline
+79. Testes funcionais no labirinto & 06/07/2026 & 07/07/2026 & 08/07/2026 & 08/07/2026 & 52, 72 & Giovanni \\ \hline
+80. Análise SWOT & 08/07/2026 & 08/07/2026 & 08/07/2026 & 08/07/2026 & --- & Gustavo F. \\ \hline
+
+
+\end{longtable}
+\renewcommand{\arraystretch}{1}
+\normalsize
+\end{center}
+
+\clearpage
+\begin{table}[htpb]
+\begin{center}
+\caption{Justificativas para atrasos ou não-conclusão de atividades.}
+\begin{tabular}{|c|p{15cm}|} \hline
+\textbf{Atividade} & \textbf{Justificativa}  \\ \hline 
+    3 - CAD do chassi 1.0 &
+    Não foi finalizado no tempo previsto pois houve necessidade de adaptação constante a muitas mudanças impostas pelos membros nos componentes eletrônicos e bateria.\\ \hline
+    21 - Estudos estruturais &
+    O responsável pela atividade não iniciou a atividade no tempo previsto pelo conflito de outras atividades universitárias. \\ \hline
+    23 - CAD do assembly 1.0 &
+    Não foi iniciado e finalizado no tempo previsto pois o CAD do chassi não foi finalizado no tempo previsto, pelas adaptações constantes devido a muitas mudanças impostas nos componentes eletrônicos e bateria. \\ \hline
+    24 - Drafting do micromouse &
+    Devido a demora do término do CAD do assembly, a equipe responsável pelo drafting do assembly não finalizou a atividade a tempo do PC1. Será entregue de forma completa e correta no PC2. \\ \hline
+    33 - Teste de espessura do furo &
+    Não foi finalizado no tempo previsto pois teve-se muitos problemas com a impressora 3D. Tentamos conserta-lá e imprimir testes falhos mais de 10 vezes antes de funcionar. \\ \hline
+    36 - Impressão 3D do chassi 1.0 &
+    Não foi finalizado no tempo previsto pois teve-se muitos problemas com a impressora 3D. Tentamos conserta-lá e imprimir testes falhos mais de 10 vezes antes de funcionar.  \\ \hline
+    41 - Montagem mecânica 1.0 &
+    Atrasou-se o início e fim pois a impressão 3D do chassi finalizou-se tardiamente. \\ \hline
+    42 - Doc: testes da estrutura 1.0 &
+    Atrasou-se o fim pois a impressão 3D do chassi finalizou-se tardiamente. \\ \hline
+    73 - Montagem final &
+    Atrasou-se o início e o fim pois um membro chave dessa tarefa foi hospitalizado. \\ \hline
+    79 - Testes funcionais no labirinto &
+    Atrasou-se o início e o fim pois o microcontrolador Raspberry Pi Pico W queimou e tivemos que mudar vários códigos de firmware e software para o novo microcontrolador ESP32. \\ \hline
+    
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+
+\end{landscape}

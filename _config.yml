@@ -1,0 +1,33 @@
+theme: jekyll-theme-minimal
+title: "2026.1 PI1 - Grupo 02 - Juliana"
+description: "Projeto Integrador I - Grupo 02 com Professor Juliana"
+logo: null
+
+# URLs
+url: "https://fcte-pi1.github.io"
+baseurl: "/2026_1_PI1_Grupo02_Juliana"
+
+# Configurações de Build
+markdown: kramdown
+highlighter: rouge
+
+# Incluir estes arquivos na build
+include:
+  - .well-known
+
+# Excluir estes arquivos da build
+exclude:
+  - vendor
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - .git
+  - .gitignore
+  - src/
+  - hw/
+  - mec/
+
+# Configurações de Plugins
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
